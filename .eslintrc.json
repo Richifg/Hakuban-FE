@@ -34,7 +34,8 @@
         "react/jsx-filename-extension": ["warn", {"extensions": [".tsx"]}],
         "react/prop-types": "off",
         "react-hooks/rules-of-hooks": "error",
-        "react-hooks/exhaustive-deps": "warn"
+        "react-hooks/exhaustive-deps": "warn",
+        "linebreak-style": "off"
     },
     "settings": {
         "import/resolver": {
