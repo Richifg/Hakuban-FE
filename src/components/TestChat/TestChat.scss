@@ -1,0 +1,54 @@
+.test-chat {
+    background-color: black;
+    overflow-y: scroll;
+    height: 300px;
+    width: 300px;
+    padding: 1em;
+
+    .messages {
+        padding: 0;
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+
+    
+    .message {
+        border-radius: 8px;
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 0.5em;
+
+        &.own-message {
+            align-self: flex-end;
+            .avatar {
+                order: 1;
+            }
+        }
+
+        &:hover {
+            background-color: #333;
+        }
+        .text {
+            margin: 0;
+        }
+        .avatar {
+            width: 1.5em;
+            height: 1.5em;
+            border-radius: 1.5em;
+            flex-shrink: 0;
+            background-color: white;
+            margin: 0 0.5em;
+            overflow: hidden;
+            img {
+                width: 100%;
+                height: 100%;
+            };
+        }
+    }
+
+    .own-message {
+        align-self: flex-end;
+    }
+}
