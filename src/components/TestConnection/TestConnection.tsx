@@ -18,6 +18,9 @@ const TestConnection = ({ roomId }: ITestConnection): React.ReactElement => {
         socket.addEventListener('open', (event) => {
             console.log('opened!', event);
         });
+        socket.addEventListener('error', (event) => {
+            console.log('error!', event);
+        });
         socket.addEventListener('message', (event) => {
             const message = JSON.parse(event.data) as WSMessage;
             console.log('received message!', message);
