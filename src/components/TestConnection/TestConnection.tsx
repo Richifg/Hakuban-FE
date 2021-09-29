@@ -11,10 +11,25 @@ interface ITestConnection {
 
 const TestConnection = ({ roomId }: ITestConnection): React.ReactElement => {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const [socket, setSocket] = useState<WebSocket>();
+
+    const handleSendMessage = (text: string) => {
+        const message: WSMessage = {
+            type: 'item',
+            item: {
+                itemType: 'text',
+                content: text,
+                coordinates: '0,0',
+                from: 'me',
+            },
+        };
+        socket?.send(JSON.stringify(message));
+    };
 
     // initiate webSocket connection
     useEffect(() => {
         const socket = new WebSocket(`${url}?roomId=${roomId}`);
+        setSocket(socket);
         socket.addEventListener('open', (event) => {
             console.log('opened!', event);
         });
@@ -38,7 +53,7 @@ const TestConnection = ({ roomId }: ITestConnection): React.ReactElement => {
 
     return (
         <div className="test-connection">
-            <TestChat messages={messages} ownId="me" />
+            <TestChat messages={messages} ownId="me" onSendMessage={handleSendMessage} />
         </div>
     );
 };

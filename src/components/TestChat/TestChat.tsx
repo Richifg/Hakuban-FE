@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { ChatMessage } from '../../common/interfaces';
 import avatarImg from './avatar.png';
@@ -7,21 +7,35 @@ import './TestChat.scss';
 interface ITestChat {
     messages: ChatMessage[];
     ownId: string;
+    onSendMessage(text: string): void;
 }
 
-const TestChat = ({ messages, ownId }: ITestChat): React.ReactElement => (
-    <div className="test-chat">
-        <ul className="messages">
-            {messages.map((message, index) => (
-                <div key={index} className={`message ${ownId === message.from && 'own-message'}`}>
-                    <div className="avatar">
-                        <img src={avatarImg} alt="" />
+const TestChat = ({ messages, ownId, onSendMessage }: ITestChat): React.ReactElement => {
+    const [text, setText] = useState('');
+
+    const handleSendMessage = () => {
+        setText('');
+        onSendMessage(text);
+    };
+
+    return (
+        <div className="test-chat">
+            <ul className="chat-messages">
+                {messages.map((message, index) => (
+                    <div key={index} className={`message ${ownId === message.from && 'own-message'}`}>
+                        <div className="avatar">
+                            <img src={avatarImg} alt="" />
+                        </div>
+                        <p className="text">{message.content}</p>
                     </div>
-                    <p className="text">{message.content}</p>
-                </div>
-            ))}
-        </ul>
-    </div>
-);
+                ))}
+            </ul>
+            <div className="chat-input">
+                <input onChange={({ currentTarget }) => setText(currentTarget.value)} value={text} />
+                <button onClick={handleSendMessage}>Send</button>
+            </div>
+        </div>
+    );
+};
 
 export default TestChat;

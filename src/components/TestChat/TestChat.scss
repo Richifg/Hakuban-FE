@@ -1,18 +1,20 @@
 .test-chat {
     background-color: black;
-    overflow-y: scroll;
     height: 300px;
     width: 300px;
-    padding: 1em;
+    display: flex;
+    flex-direction: column;
 
-    .messages {
-        padding: 0;
+    .chat-messages {
+        flex-grow: 1;
+        padding: 1em 0.5em;
+        margin: 0;
         list-style: none;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
+        overflow-y: scroll;
     }
-
     
     .message {
         border-radius: 8px;
@@ -50,5 +52,15 @@
 
     .own-message {
         align-self: flex-end;
+    }
+
+
+    .chat-input {
+        display: flex;
+
+        input {
+            flex-grow: 1;
+            width: 100%;
+        }
     }
 }

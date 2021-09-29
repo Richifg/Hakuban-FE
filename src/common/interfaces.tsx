@@ -1,20 +1,19 @@
 // Items created by users
-export interface NewItem {
+export interface Item {
+    id?: string;
     itemType: string;
     content: string;
     coordinates: string;
     from: string;
 }
-export interface Item extends NewItem {
-    id: string;
-}
 
 // Messages sent through ws
 export interface WSMessage {
-    type: 'error' | 'item' | 'collection';
+    type: 'error' | 'item' | 'collection' | 'id';
     error?: string;
     item?: Item;
     items?: Item[];
+    id?: string;
 }
 
 export interface ChatMessage {
