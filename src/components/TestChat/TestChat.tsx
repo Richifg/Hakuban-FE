@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 
-import { ChatMessage } from '../../common/interfaces';
 import avatarImg from './avatar.png';
 import './TestChat.scss';
 
 interface ITestChat {
-    messages: ChatMessage[];
+    messages: { content: string; from: string }[];
     ownId: string;
     onSendMessage(text: string): void;
 }

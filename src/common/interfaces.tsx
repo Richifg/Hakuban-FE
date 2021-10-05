@@ -1,22 +1,53 @@
-// Items created by users
-export interface Item {
+interface WSItemMessage {
+    type: 'item';
+    content: Item;
+}
+
+interface WSCollectionMessage {
+    type: 'collection';
+    content: Item[];
+}
+
+interface WSIdMessage {
+    type: 'id';
+    content: string;
+}
+
+interface WSErrorMessage {
+    type: 'error';
+    content: string;
+}
+
+// Messages sent via webSocket
+export type WSMessage = WSItemMessage | WSCollectionMessage | WSIdMessage | WSErrorMessage;
+
+interface ItemBase {
     id?: string;
-    itemType: string;
+    creationDate?: Date;
+}
+
+interface Note {
+    type: 'note';
     content: string;
     coordinates: string;
-    from: string;
+    height: number;
+    width: number;
+    color: string;
 }
 
-// Messages sent through ws
-export interface WSMessage {
-    type: 'error' | 'item' | 'collection' | 'id';
-    error?: string;
-    item?: Item;
-    items?: Item[];
-    id?: string;
+interface Text {
+    type: 'text';
+    content: string;
+    coordinates: string;
+    fontSize: string;
+    color: string;
 }
 
-export interface ChatMessage {
+export interface Chat {
+    type: 'chat';
     content: string;
     from: string;
 }
+
+// Items created by users
+export type Item = ItemBase & (Note | Text | Chat);

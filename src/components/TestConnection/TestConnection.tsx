@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { ChatMessage, WSMessage, Item } from '../../common/interfaces';
+import { Item, Chat, WSMessage } from '../../common/interfaces';
 import { TestChat } from '..';
 
 const url = process.env.REACT_APP_SERVER_URL;
@@ -10,17 +10,18 @@ interface ITestConnection {
 }
 
 const TestConnection = ({ roomId }: ITestConnection): React.ReactElement => {
-    const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const [items, setItems] = useState<Item[]>([]);
     const [socket, setSocket] = useState<WebSocket>();
+    const [id, setId] = useState('test');
 
+    // TODO: should not send messages if id has not been set
     const handleSendMessage = (text: string) => {
         const message: WSMessage = {
             type: 'item',
-            item: {
-                itemType: 'text',
+            content: {
+                type: 'chat',
                 content: text,
-                coordinates: '0,0',
-                from: 'me',
+                from: id,
             },
         };
         socket?.send(JSON.stringify(message));
@@ -39,21 +40,28 @@ const TestConnection = ({ roomId }: ITestConnection): React.ReactElement => {
         socket.addEventListener('message', (event) => {
             const message = JSON.parse(event.data) as WSMessage;
             console.log('received message!', message);
-            if (message.type === 'error') console.log(`Error: ${message.error}`);
-            else if (message.type === 'item') {
-                const item = message.item as Item;
-                // eslint-disable-next-line max-len
-                setMessages((oldMessages) => [...oldMessages, { from: item.from, content: item.content }]);
-            } else {
-                const items = (message.items as Item[]).map((item) => ({ from: item.from, content: item.content }));
-                setMessages((oldMessages) => [...oldMessages, ...items]);
+            switch (message.type) {
+                case 'error':
+                    console.log(`Error: ${message.content}`);
+                    break;
+                case 'item':
+                    setItems((oldItems) => [...oldItems, message.content]);
+                    break;
+                case 'collection':
+                    setItems((oldItems) => [...oldItems, ...message.content]);
+                    break;
+                case 'id':
+                    setId(message.content);
+                    break;
             }
         });
     }, [roomId]);
 
+    // TODO: Why isn't typescript narrowing type to Chat on its own???
+    const chatMessages = items.filter((item) => item.type === 'chat') as Chat[];
     return (
         <div className="test-connection">
-            <TestChat messages={messages} ownId="me" onSendMessage={handleSendMessage} />
+            <TestChat messages={chatMessages} ownId={id} onSendMessage={handleSendMessage} />
         </div>
     );
 };
