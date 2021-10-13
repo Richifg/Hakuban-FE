@@ -4,6 +4,7 @@
   min-height: 100vh;
 
   .canvas-container {
+    position: relative;
     width: 100vw;
     height: 100vh;
     border: 2px solid red;
@@ -11,18 +12,12 @@
   }
 
   .ui-container {
-    position: absolute;
-    width: 100vw;
-    height: 100vh;
-    left: 0;
-    top: 0;
-
     // TEMP while connection is still a component
     .test-connection {
       height: 100%;
     }
     .chat-container {
-      position: absolute;
+      position: fixed;
       width: 300px;
       height: 100px;
       right: 0;
@@ -30,7 +25,7 @@
     }
 
     .temp-tools-container {
-      position: absolute;
+      position: fixed;
       top: 0;
       left: calc(50% - 50px);
       height: 20px;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Item, Chat, WSMessage } from '../../common/interfaces';
+import { Item, Chat, WSMessage } from '../../common/interfaces/webSocket';
 import { TestChat } from '..';
 
 const url = process.env.REACT_APP_SERVER_URL;
