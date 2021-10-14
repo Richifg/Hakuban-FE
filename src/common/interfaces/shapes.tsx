@@ -27,3 +27,5 @@ export interface Circle {
 }
 
 export type Shape = Circle | Rect;
+
+export type Point = 'P1' | 'P2' | 'P3' | 'P4';
