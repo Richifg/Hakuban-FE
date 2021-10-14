@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useMemo } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import { Shape, Circle, Rect } from '../interfaces/shapes';
 
 interface useDrawShapeReturn {
@@ -13,9 +13,6 @@ const useCanvasDraw = (
     height: number,
 ): useDrawShapeReturn => {
     const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
-
-    const canvasSize = useMemo(() => ({ width, height }), []);
-
     // capture the rendering context before first render
     useLayoutEffect(() => {
         const renderingContext = canvasRef.current?.getContext('2d');
@@ -67,7 +64,7 @@ const useCanvasDraw = (
         if (ctx) {
             ctx.save();
             ctx.setTransform(1, 0, 0, 1, 0, 0);
-            ctx.clearRect(0, 0, canvasSize.width, canvasSize.height);
+            ctx.clearRect(0, 0, width, height);
             ctx.restore();
         }
     };

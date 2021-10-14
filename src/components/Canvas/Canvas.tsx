@@ -1,12 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import useCanvasDraw from '../../common/hooks/useCanvasDraw';
 import { Shape } from '../../common/interfaces/shapes';
 
 import './Canvas.scss';
 
-// TEMP, need to figure out canvas resizing
-const WIDTH = 500;
-const HEIGHT = 500;
 const FRICTION_INTERVAL = 5; // in ms
 const FRICTION = 0.9;
 
@@ -16,10 +13,21 @@ interface Canvas {
 
 const Canvas = ({ shapes }: Canvas): React.ReactElement => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const { drawShape, transform, clear } = useCanvasDraw(canvasRef, WIDTH, HEIGHT);
-    const [isDragging, setIsDragging] = useState(false);
+    const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+    const { drawShape, transform, clear } = useCanvasDraw(canvasRef, windowSize.width, windowSize.height);
     const [isSliding, setIsSliding] = useState(false);
+    const isDragging = useRef(false);
     const momentum = useRef({ x: 0, y: 0 });
+
+    // resize canvas with window
+    useLayoutEffect(() => {
+        const resizeHandler = () => {
+            setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+        };
+        window.addEventListener('resize', resizeHandler);
+        resizeHandler();
+        return () => window.removeEventListener('resize', resizeHandler);
+    }, []);
 
     useEffect(() => {
         clear();
@@ -31,7 +39,7 @@ const Canvas = ({ shapes }: Canvas): React.ReactElement => {
         if (isSliding) {
             id = setInterval(() => {
                 const { x, y } = momentum.current;
-                if (x !== 0 || y !== 0) {
+                if ((x !== 0 || y !== 0) && !isDragging.current) {
                     clear();
                     transform(1, 0, 0, 1, x, y);
                     shapes.forEach((shape) => drawShape(shape));
@@ -50,9 +58,12 @@ const Canvas = ({ shapes }: Canvas): React.ReactElement => {
         };
     }, [isSliding]);
 
+    const handleMouseDown = () => {
+        isDragging.current = true;
+    };
     const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
         e.preventDefault();
-        if (isDragging) {
+        if (isDragging.current) {
             const [x, y] = [e.movementX, e.movementY];
             clear();
             transform(1, 0, 0, 1, x, y);
@@ -60,9 +71,8 @@ const Canvas = ({ shapes }: Canvas): React.ReactElement => {
             momentum.current = { x, y };
         }
     };
-
     const handleMouseUp = () => {
-        setIsDragging(false);
+        isDragging.current = false;
         setIsSliding(true);
     };
 
@@ -70,10 +80,10 @@ const Canvas = ({ shapes }: Canvas): React.ReactElement => {
         <canvas
             className="canvas"
             ref={canvasRef}
-            width={WIDTH}
-            height={HEIGHT}
+            width={windowSize.width}
+            height={windowSize.height}
+            onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
-            onMouseDown={() => setIsDragging(true)}
             onMouseUp={handleMouseUp}
             onContextMenu={(e) => e.preventDefault()}
         >
