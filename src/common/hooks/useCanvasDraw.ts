@@ -1,8 +1,8 @@
 import React, { useState, useLayoutEffect } from 'react';
-import { Shape, Circle, Rect } from '../interfaces/shapes';
+import { Circle, Rect, Item } from '../interfaces/items';
 
 interface useDrawShapeReturn {
-    drawShape(shape: Shape): void;
+    drawShape(item: Item): void;
     transform(sX: number, skY: number, skX: number, sY: number, dX: number, dY: number): void;
     clear(): void;
 }
@@ -19,23 +19,23 @@ const useCanvasDraw = (
         if (renderingContext) setCtx(renderingContext);
     }, []);
 
-    const drawShape = (shape: Shape) => {
-        if (ctx) {
+    const drawShape = (item: Item) => {
+        if (ctx && item.type === 'shape') {
             ctx.save();
-            if (shape?.style?.strokeColor) ctx.strokeStyle = shape.style.strokeColor;
-            if (shape.type === 'circle') drawCircle(shape);
-            if (shape.type === 'rect') drawRect(shape);
+            if (item?.strokeColor) ctx.strokeStyle = item.strokeColor;
+            if (item.shapeType === 'circle') drawCircle(item);
+            if (item.shapeType === 'rect') drawRect(item);
             ctx.restore();
         }
     };
 
     const drawCircle = (circle: Circle) => {
         if (ctx) {
-            const { cX, cY, rX, rY, style } = circle;
+            const { cX, cY, rX, rY, backgroundColor } = circle;
             ctx.beginPath();
             ctx.ellipse(cX, cY, rX, rY, 0, 0, Math.PI * 2);
-            if (style?.backgroundColor) {
-                ctx.fillStyle = style.backgroundColor;
+            if (backgroundColor) {
+                ctx.fillStyle = backgroundColor;
                 ctx.fill();
             } else {
                 ctx.stroke();
@@ -44,11 +44,11 @@ const useCanvasDraw = (
     };
     const drawRect = (rect: Rect) => {
         if (ctx) {
-            const { x, y, width, height, style } = rect;
+            const { x, y, width, height, backgroundColor } = rect;
             ctx.beginPath();
             ctx.rect(x, y, width, height);
-            if (style?.backgroundColor) {
-                ctx.fillStyle = style.backgroundColor;
+            if (backgroundColor) {
+                ctx.fillStyle = backgroundColor;
                 ctx.fill();
             } else {
                 ctx.stroke();
