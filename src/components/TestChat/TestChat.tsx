@@ -1,20 +1,18 @@
 import React, { useState, useRef, useLayoutEffect } from 'react';
+import { useSelector } from '../../common/hooks';
+import webSocket from '../../services/WebSocketConnection';
 
 import avatarImg from './avatar.png';
 import './TestChat.scss';
 
-interface ITestChat {
-    messages: { content: string; from: string }[];
-    ownId: string;
-    onSendMessage(text: string): void;
-}
-
-const TestChat = ({ messages, ownId, onSendMessage }: ITestChat): React.ReactElement => {
+const TestChat = (): React.ReactElement => {
     const [text, setText] = useState('');
+    const { messages } = useSelector((s) => s.chat);
+    const { id } = useSelector((s) => s.user);
     const chatBoxRef = useRef<HTMLUListElement>(null);
     const handleSendMessage = () => {
         setText('');
-        onSendMessage(text);
+        webSocket.sendMessage(text);
     };
 
     // scroll after change in messages has been rendered
@@ -29,7 +27,7 @@ const TestChat = ({ messages, ownId, onSendMessage }: ITestChat): React.ReactEle
         <div className="test-chat">
             <ul className="chat-box" ref={chatBoxRef}>
                 {messages.map((message, index) => (
-                    <div key={index} className={`message ${ownId === message.from && 'own-message'}`}>
+                    <div key={index} className={`message ${id === message.from && 'own-message'}`}>
                         <div className="avatar">
                             <img src={avatarImg} alt="" />
                         </div>

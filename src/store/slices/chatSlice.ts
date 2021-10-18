@@ -1,13 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-// TEMP
-interface Message {
-    id: string;
-    content: string;
-}
+import { ChatMessage } from '../../common/interfaces/items';
 
 interface ChatState {
-    messages: Message[];
+    messages: ChatMessage[];
     unreadMessageCount: number;
 }
 
@@ -20,10 +15,10 @@ const chatSlice = createSlice({
     name: 'chat',
     initialState,
     reducers: {
-        setMessages: (state, action: PayloadAction<Message[]>) => {
+        setMessages: (state, action: PayloadAction<ChatMessage[]>) => {
             state.messages = action.payload;
         },
-        addMessage: (state, action: PayloadAction<Message>) => {
+        addMessage: (state, action: PayloadAction<ChatMessage>) => {
             state.messages.push(action.payload);
         },
         deleteMessage: (state, action: PayloadAction<string>) => {

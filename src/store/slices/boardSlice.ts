@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { Point } from '../../common/interfaces/shapes';
+import type { Point } from '../../common/interfaces/board';
 
 type Tool = 'POINTER' | 'SHAPE' | 'PEN';
 type Action = 'IDLE' | 'DRAW' | 'DRAG' | 'EDIT' | 'PAN' | 'SLIDE';

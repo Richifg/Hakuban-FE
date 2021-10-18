@@ -1,17 +1,14 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import useCanvasDraw from '../../common/hooks/useCanvasDraw';
-import { Shape } from '../../common/interfaces/shapes';
+import { useSelector } from '../../common/hooks';
 
 import './Canvas.scss';
 
 const FRICTION_INTERVAL = 5; // in ms
 const FRICTION = 0.9;
 
-interface Canvas {
-    shapes: Shape[];
-}
-
-const Canvas = ({ shapes }: Canvas): React.ReactElement => {
+const Canvas = (): React.ReactElement => {
+    const { items } = useSelector((s) => s.items);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
     const { drawShape, transform, clear } = useCanvasDraw(canvasRef, windowSize.width, windowSize.height);
@@ -31,8 +28,8 @@ const Canvas = ({ shapes }: Canvas): React.ReactElement => {
 
     useEffect(() => {
         clear();
-        shapes.forEach((shape) => drawShape(shape));
-    }, [shapes]);
+        items.forEach((item) => drawShape(item));
+    }, [items]);
 
     useEffect(() => {
         let id: NodeJS.Timeout;
@@ -42,7 +39,7 @@ const Canvas = ({ shapes }: Canvas): React.ReactElement => {
                 if ((x !== 0 || y !== 0) && !isDragging.current) {
                     clear();
                     transform(1, 0, 0, 1, x, y);
-                    shapes.forEach((shape) => drawShape(shape));
+                    items.forEach((item) => drawShape(item));
                     momentum.current = {
                         x: Math.abs(x) > 0.1 ? FRICTION * x : 0,
                         y: Math.abs(y) > 0.1 ? FRICTION * y : 0,
@@ -67,7 +64,7 @@ const Canvas = ({ shapes }: Canvas): React.ReactElement => {
             const [x, y] = [e.movementX, e.movementY];
             clear();
             transform(1, 0, 0, 1, x, y);
-            shapes.forEach((shape) => drawShape(shape));
+            items.forEach((item) => drawShape(item));
             momentum.current = { x, y };
         }
     };
