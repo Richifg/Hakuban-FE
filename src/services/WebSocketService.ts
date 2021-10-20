@@ -14,7 +14,7 @@ class WebSocketService {
         this.id = '';
     }
     connect(roomId: string, password?: string): Promise<void> {
-        const fullURL = `${url}?roomId=${roomId}` + (password ? `&password=${password}` : '');
+        const fullURL = `ws://${url}?roomId=${roomId}` + (password ? `&password=${password}` : '');
         const socket = new WebSocket(fullURL);
         this.socket = socket;
 
