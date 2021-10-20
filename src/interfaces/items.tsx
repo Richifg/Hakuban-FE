@@ -1,4 +1,5 @@
 interface ItemBase {
+    type: string;
     id?: string;
     creationDate?: Date;
 }

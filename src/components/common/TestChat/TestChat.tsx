@@ -1,6 +1,6 @@
 import React, { useState, useRef, useLayoutEffect } from 'react';
 import { useSelector } from '../../../hooks';
-import webSocket from '../../../services/WebSocketConnection';
+import webSocket from '../../../services/WebSocketService';
 
 import avatarImg from './avatar.png';
 
@@ -9,7 +9,7 @@ import './TestChat.scss';
 const TestChat = (): React.ReactElement => {
     const [text, setText] = useState('');
     const { messages } = useSelector((s) => s.chat);
-    const { id } = useSelector((s) => s.user);
+    const { id } = useSelector((s) => s.connection);
     const chatBoxRef = useRef<HTMLUListElement>(null);
     const handleSendMessage = () => {
         setText('');

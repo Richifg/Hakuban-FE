@@ -1,5 +1,5 @@
 import HomePage from './HomePage/HomePage';
-import RoomPage from './RoomPage/RoomPage';
 import NotFoundPage from './NotFoundPage/NotFoundPage';
+import RoomPage from './RoomPage/RoomPage';
 
-export { HomePage, RoomPage, NotFoundPage };
+export { HomePage, NotFoundPage, RoomPage };

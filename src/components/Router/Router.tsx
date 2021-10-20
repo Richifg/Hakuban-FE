@@ -12,7 +12,7 @@ const Router = (): React.ReactElement => {
         <BrowserRouter>
             <Switch>
                 <Route component={HomePage} exact path="/" />
-                <Route component={RoomPage} path="/room" />
+                <Route component={RoomPage} path="/room/:roomId" />
                 <Route component={NotFoundPage} />
             </Switch>
         </BrowserRouter>
