@@ -1,8 +1,9 @@
 import React, { useState, useRef, useLayoutEffect } from 'react';
-import { useSelector } from '../../common/hooks';
-import webSocket from '../../services/WebSocketConnection';
+import { useSelector } from '../../../hooks';
+import webSocket from '../../../services/WebSocketConnection';
 
 import avatarImg from './avatar.png';
+
 import './TestChat.scss';
 
 const TestChat = (): React.ReactElement => {

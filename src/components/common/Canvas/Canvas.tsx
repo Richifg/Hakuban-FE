@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
-import useCanvasDraw from '../../common/hooks/useCanvasDraw';
-import { useSelector } from '../../common/hooks';
+import useCanvasDraw from '../../../hooks/useCanvasDraw';
+import { useSelector } from '../../../hooks';
 
 import './Canvas.scss';
 

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Shape, Item } from '../../common/interfaces/items';
+import { Shape, Item } from '../../interfaces/items';
 
 //
 // THINK ABOUT THE SEPARATION OF ITEMS (wich include chat) and the rest of the items that should be stored in thiss slice

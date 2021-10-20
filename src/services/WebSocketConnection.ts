@@ -1,6 +1,6 @@
 import { store } from '../store/store';
 import { setItems, addItem } from '../store/slices/itemsSlice';
-import { WSMessage } from '../common/interfaces/webSocket';
+import { WSMessage } from '../interfaces/webSocket';
 
 const url = process.env.REACT_APP_SERVER_URL;
 
