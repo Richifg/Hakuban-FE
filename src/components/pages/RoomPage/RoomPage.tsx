@@ -3,7 +3,7 @@ import { useParams } from 'react-router';
 
 import { useSelector, useDispatch } from '../../../hooks';
 import { connectToRoom } from '../../../store/slices/connectionSlice';
-import { Canvas, TestChat } from '../../common';
+import { Canvas, TestChat, CanvasUI } from '../../common';
 
 import './RoomPage.scss';
 
@@ -23,6 +23,7 @@ const RoomPage = (): React.ReactElement => {
                 <>
                     <div className="canvas-container">
                         <Canvas />
+                        <CanvasUI />
                     </div>
                     <div className="ui-container">
                         <div className="chat-container">

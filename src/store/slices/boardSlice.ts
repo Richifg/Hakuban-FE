@@ -7,6 +7,8 @@ type Action = 'IDLE' | 'DRAW' | 'DRAG' | 'EDIT' | 'PAN' | 'SLIDE';
 interface BoardState {
     selectedTool: Tool;
     currentAction: Action;
+    cursorMovement: { x: number; y: number };
+    canvasSize: { width: number; height: number };
     selectedItem?: string;
     selectedPoint?: Point;
 }
@@ -14,6 +16,8 @@ interface BoardState {
 const initialState: BoardState = {
     selectedTool: 'POINTER',
     currentAction: 'IDLE',
+    cursorMovement: { x: 0, y: 0 },
+    canvasSize: { width: 0, height: 0 },
 };
 
 export const boardSlice = createSlice({
@@ -26,6 +30,12 @@ export const boardSlice = createSlice({
         setCurrentAction: (state, action: PayloadAction<Action>) => {
             state.currentAction = action.payload;
         },
+        setCursorMovement: (state, action: PayloadAction<{ x: number; y: number }>) => {
+            state.cursorMovement = action.payload;
+        },
+        setCanvasSize: (state, action: PayloadAction<{ width: number; height: number }>) => {
+            state.canvasSize = action.payload;
+        },
         setSelectedItem: (state, action: PayloadAction<string>) => {
             state.selectedItem = action.payload;
         },
@@ -35,6 +45,13 @@ export const boardSlice = createSlice({
     },
 });
 
-export const { setSelectedTool, setCurrentAction, setSelectedItem, setSelectedPoint } = boardSlice.actions;
+export const {
+    setSelectedTool,
+    setCurrentAction,
+    setCursorMovement,
+    setCanvasSize,
+    setSelectedItem,
+    setSelectedPoint,
+} = boardSlice.actions;
 
 export default boardSlice.reducer;

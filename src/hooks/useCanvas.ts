@@ -1,17 +1,13 @@
 import React, { useState, useLayoutEffect } from 'react';
 import { Circle, Rect, Item } from '../interfaces/items';
 
-interface useDrawShapeReturn {
-    drawShape(item: Item): void;
+interface useCanvasReturn {
+    drawItem(item: Item): void;
     transform(sX: number, skY: number, skX: number, sY: number, dX: number, dY: number): void;
-    clear(): void;
+    clear(width: number, height: number): void;
 }
 
-const useCanvasDraw = (
-    canvasRef: React.RefObject<HTMLCanvasElement>,
-    width: number,
-    height: number,
-): useDrawShapeReturn => {
+const useCanvas = (canvasRef: React.RefObject<HTMLCanvasElement>): useCanvasReturn => {
     const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
     // capture the rendering context before first render
     useLayoutEffect(() => {
@@ -19,7 +15,7 @@ const useCanvasDraw = (
         if (renderingContext) setCtx(renderingContext);
     }, []);
 
-    const drawShape = (item: Item) => {
+    const drawItem = (item: Item) => {
         if (ctx && item.type === 'shape') {
             ctx.save();
             if (item?.strokeColor) ctx.strokeStyle = item.strokeColor;
@@ -60,7 +56,7 @@ const useCanvasDraw = (
         ctx?.transform(sX, skY, skX, sY, dX, dY);
     };
 
-    const clear = () => {
+    const clear = (width: number, height: number) => {
         if (ctx) {
             ctx.save();
             ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -70,10 +66,10 @@ const useCanvasDraw = (
     };
 
     return {
-        drawShape,
+        drawItem,
         transform,
         clear,
     };
 };
 
-export default useCanvasDraw;
+export default useCanvas;

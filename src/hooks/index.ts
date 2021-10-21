@@ -1,5 +1,5 @@
-import useCanvasDraw from './useCanvasDraw';
+import useCanvas from './useCanvas';
 import useDispatch from './useDispatch';
 import useSelector from './useSelector';
 
-export { useCanvasDraw, useDispatch, useSelector };
+export { useCanvas, useDispatch, useSelector };
