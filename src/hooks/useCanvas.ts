@@ -9,6 +9,7 @@ interface useCanvasReturn {
 
 const useCanvas = (canvasRef: React.RefObject<HTMLCanvasElement>): useCanvasReturn => {
     const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
+
     // capture the rendering context before first render
     useLayoutEffect(() => {
         const renderingContext = canvasRef.current?.getContext('2d');
