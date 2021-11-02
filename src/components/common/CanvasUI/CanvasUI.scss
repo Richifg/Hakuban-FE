@@ -4,12 +4,20 @@
     left: 0;
     top: 0;
 
-    p {
+    .temp {
         opacity: 0.2;
         transform-origin: center center;
         position: absolute;
         left: 50%;
         top: 50%;
         transform: rotate(45deg);
+    }
+
+    .cursor-position {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        margin: 0;
+        padding: 1em;
     }
 }

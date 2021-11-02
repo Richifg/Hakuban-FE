@@ -4,7 +4,7 @@ const FRICTION = 0.01;
 const MIN_DV = 0.5;
 
 const useMovementFriction = (
-    currentdV: { x: number; y: number },
+    currentdV: { dX: number; dY: number },
     isActive: boolean,
     updateMovementCB: (x: number, y: number) => void,
     onFinishCB: () => void,
@@ -18,12 +18,12 @@ const useMovementFriction = (
         let previousTimeStamp: DOMHighResTimeStamp;
 
         const animationFrameCB = (timeStamp: DOMHighResTimeStamp) => {
-            const { x, y } = refs.current.currentdV;
-            if ((x !== 0 || y !== 0) && refs.current.isActive) {
+            const { dX, dY } = refs.current.currentdV;
+            if ((dX !== 0 || dY !== 0) && refs.current.isActive) {
                 if (!previousTimeStamp) previousTimeStamp = timeStamp;
                 const time = timeStamp - previousTimeStamp;
-                const dVx = x - FRICTION * time * x;
-                const dVy = y - FRICTION * time * y;
+                const dVx = dX - FRICTION * time * dX;
+                const dVy = dY - FRICTION * time * dY;
                 updateMovementCB(Math.abs(dVx) > MIN_DV ? dVx : 0, Math.abs(dVy) > MIN_DV ? dVy : 0);
                 previousTimeStamp = timeStamp;
                 id = window.requestAnimationFrame(animationFrameCB);

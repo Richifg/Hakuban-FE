@@ -3,7 +3,7 @@ import { Circle, Rect, Item } from '../interfaces/items';
 
 interface useCanvasReturn {
     drawItem(item: Item): void;
-    transform(sX: number, skY: number, skX: number, sY: number, dX: number, dY: number): void;
+    transform(transformArray: { sX: number; sY: number; dX: number; dY: number }): void;
     clear(width: number, height: number): void;
 }
 
@@ -53,8 +53,9 @@ const useCanvas = (canvasRef: React.RefObject<HTMLCanvasElement>): useCanvasRetu
         }
     };
 
-    const transform = (sX: number, skY: number, skX: number, sY: number, dX: number, dY: number) => {
-        ctx?.transform(sX, skY, skX, sY, dX, dY);
+    const transform = (transformArray: { sX: number; sY: number; dX: number; dY: number }) => {
+        const { sX, sY, dX, dY } = transformArray;
+        ctx?.setTransform(sX, 0, 0, sY, dX, dY);
     };
 
     const clear = (width: number, height: number) => {

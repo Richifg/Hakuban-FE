@@ -1,20 +1,30 @@
 import React, { useRef, useEffect } from 'react';
-import { useSelector, useCanvas } from '../../../hooks';
-
+import { useDispatch, useSelector, useCanvas, useMovementFriction } from '../../../hooks';
+import { setCurrentAction, translateCanvas } from '../../../store/slices/boardSlice';
 import './Canvas.scss';
 
 const Canvas = (): React.ReactElement => {
+    const dispatch = useDispatch();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const { drawItem, transform, clear } = useCanvas(canvasRef);
     const { items } = useSelector((s) => s.items);
-    const { canvasSize, cursorMovement } = useSelector((s) => s.board);
+    const { canvasSize, canvasTransform, lastTranslate, currentAction } = useSelector((s) => s.board);
     const { width, height } = canvasSize;
 
+    // continue sliding with friction after user pans the camera
+    useMovementFriction(
+        lastTranslate,
+        currentAction === 'SLIDE',
+        (x: number, y: number) => dispatch(translateCanvas([x, y])),
+        () => dispatch(setCurrentAction('IDLE')),
+    );
+
+    // update canvas transform and repaint items
     useEffect(() => {
         clear(width, height);
-        transform(1, 0, 0, 1, cursorMovement.x, cursorMovement.y);
+        transform(canvasTransform);
         items.forEach((item) => drawItem(item));
-    }, [cursorMovement]);
+    }, [canvasTransform]);
 
     return (
         <canvas

@@ -7,7 +7,9 @@ type Action = 'IDLE' | 'DRAW' | 'DRAG' | 'EDIT' | 'PAN' | 'SLIDE';
 interface BoardState {
     selectedTool: Tool;
     currentAction: Action;
-    cursorMovement: { x: number; y: number };
+    cursorPosition: { x: number; y: number };
+    canvasTransform: { dX: number; dY: number; sX: number; sY: number };
+    lastTranslate: { dX: number; dY: number };
     canvasSize: { width: number; height: number };
     selectedItem?: string;
     selectedPoint?: Point;
@@ -16,7 +18,9 @@ interface BoardState {
 const initialState: BoardState = {
     selectedTool: 'POINTER',
     currentAction: 'IDLE',
-    cursorMovement: { x: 0, y: 0 },
+    cursorPosition: { x: 0, y: 0 },
+    canvasTransform: { dX: 0, dY: 0, sX: 1, sY: 1 },
+    lastTranslate: { dX: 0, dY: 0 },
     canvasSize: { width: 0, height: 0 },
 };
 
@@ -30,8 +34,26 @@ export const boardSlice = createSlice({
         setCurrentAction: (state, action: PayloadAction<Action>) => {
             state.currentAction = action.payload;
         },
-        setCursorMovement: (state, action: PayloadAction<{ x: number; y: number }>) => {
-            state.cursorMovement = action.payload;
+        setCursorPosition: (state, action: PayloadAction<[number, number]>) => {
+            const [x, y] = action.payload;
+            state.cursorPosition = { x, y };
+        },
+        translateCanvas: (state, action: PayloadAction<[number, number]>) => {
+            const [dX, dY] = action.payload;
+            state.lastTranslate = { dX, dY };
+            state.canvasTransform = {
+                ...state.canvasTransform,
+                dX: state.canvasTransform.dX + dX,
+                dY: state.canvasTransform.dY + dY,
+            };
+        },
+        scaleCanvas: (state, action: PayloadAction<[number, number]>) => {
+            const [sX, sY] = action.payload;
+            state.canvasTransform = {
+                ...state.canvasTransform,
+                sX: state.canvasTransform.sX + sX,
+                sY: state.canvasTransform.sY + sY,
+            };
         },
         setCanvasSize: (state, action: PayloadAction<{ width: number; height: number }>) => {
             state.canvasSize = action.payload;
@@ -48,7 +70,9 @@ export const boardSlice = createSlice({
 export const {
     setSelectedTool,
     setCurrentAction,
-    setCursorMovement,
+    setCursorPosition,
+    translateCanvas,
+    scaleCanvas,
     setCanvasSize,
     setSelectedItem,
     setSelectedPoint,
