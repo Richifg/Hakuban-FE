@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 // returns a debounced version of the provided function
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getDebouncedFunction<F extends (...args: any[]) => void>(
     func: F,
     delay: number,

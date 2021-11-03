@@ -20,6 +20,7 @@ const Canvas = (): React.ReactElement => {
     );
 
     // update canvas transform and repaint items
+    // ##TODO maybe move this to a animationFrame thingy like the friction
     useEffect(() => {
         clear(width, height);
         transform(canvasTransform);

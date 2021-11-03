@@ -1,3 +1,4 @@
+import boardStateMachine from './boardStateMachine';
 import getDebouncedFunction from './getDebouncedFunction';
 
-export { getDebouncedFunction };
+export { boardStateMachine, getDebouncedFunction };

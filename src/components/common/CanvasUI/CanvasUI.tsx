@@ -1,38 +1,38 @@
 import React, { useLayoutEffect } from 'react';
-import { setCurrentAction, setCanvasSize, setCursorPosition, translateCanvas } from '../../../store/slices/boardSlice';
-import { useSelector, useDispatch } from '../../../hooks';
+import { useSelector, useDebouncedCallback } from '../../../hooks';
+import { boardStateMachine as SM } from '../../../utils';
 
 import './CanvasUI.scss';
 
 const CanvasUI = (): React.ReactElement => {
-    const dispatch = useDispatch();
-    const { canvasSize, currentAction, cursorPosition } = useSelector((s) => s.board);
+    const { canvasSize, cursorPosition } = useSelector((s) => s.board);
     const { width, height } = canvasSize;
 
     // updated canvas size on every window resize
     useLayoutEffect(() => {
-        const resizeHandler = () => dispatch(setCanvasSize({ width: window.innerWidth, height: window.innerHeight }));
+        const resizeHandler = () => SM.windowResize();
         window.addEventListener('resize', resizeHandler);
         resizeHandler();
         return () => window.removeEventListener('resize', resizeHandler);
     }, []);
 
-    // ##TODO potentially call the same function with all 3 handles and create state machine
     // handle user inputs
     const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (currentAction === 'IDLE') dispatch(setCurrentAction('PAN'));
-        if (currentAction === 'SLIDE') dispatch(setCurrentAction('PAN'));
+        e.persist();
+        SM.mouseDown(e);
     };
     const handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (currentAction === 'PAN') dispatch(setCurrentAction('SLIDE'));
+        e.persist();
+        SM.mouseUp(e);
     };
-    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-        dispatch(setCursorPosition([e.clientX, e.clientY]));
-        if (currentAction === 'PAN') {
-            console.log(e.movementX, e.movementY);
-            dispatch(translateCanvas([e.movementX, e.movementY]));
-        }
-    };
+    const handleMouseMove = useDebouncedCallback(
+        (e: React.MouseEvent<HTMLDivElement>) => {
+            e.persist;
+            SM.mouseMove(e);
+        },
+        5,
+        [],
+    );
 
     return (
         <div
