@@ -5,8 +5,9 @@ import { boardStateMachine as SM } from '../../../utils';
 import './CanvasUI.scss';
 
 const CanvasUI = (): React.ReactElement => {
-    const { canvasSize, cursorPosition } = useSelector((s) => s.board);
+    const { canvasSize, cursorPosition, selectedTool } = useSelector((s) => s.board);
     const { width, height } = canvasSize;
+    const tool = selectedTool.toLowerCase();
 
     // updated canvas size on every window resize
     useLayoutEffect(() => {
@@ -37,7 +38,7 @@ const CanvasUI = (): React.ReactElement => {
     return (
         <div
             role="application"
-            className="edit-ui"
+            className={`edit-ui ${tool}`}
             style={{ width, height }}
             onMouseMove={handleMouseMove}
             onMouseDown={handleMouseDown}

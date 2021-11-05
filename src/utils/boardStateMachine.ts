@@ -6,8 +6,8 @@ const { dispatch, getState } = store;
 
 const BoardStateMachine = {
     mouseDown(e: MouseEvent<HTMLDivElement>): void {
-        const { currentAction } = getState().board;
-        if (currentAction === 'IDLE') dispatch(setCurrentAction('PAN'));
+        const { currentAction, selectedTool } = getState().board;
+        if (currentAction === 'IDLE' && selectedTool === 'POINTER') dispatch(setCurrentAction('PAN'));
         if (currentAction === 'SLIDE') dispatch(setCurrentAction('PAN'));
     },
     mouseUp(e: MouseEvent<HTMLDivElement>): void {

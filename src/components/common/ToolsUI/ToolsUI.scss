@@ -1,0 +1,33 @@
+.tools-ui {
+    border: 1px solid black;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+
+    .tool-container {
+        background-color: white;
+        &:hover {
+            background-color: #DDD;
+            color: black;
+        }
+        &.selected {
+            background-color: #999;
+            color: white;
+        }
+        &.selected:hover {
+            background-color: #666;
+            color: white;
+        };
+        .tool-button {
+            cursor: pointer;
+            color: currentColor;
+            background-color: transparent;
+            width: 50px;
+            height: 25px;
+            padding: 0;
+            text-transform: lowercase;
+            border: none;
+
+        }
+    }
+}
