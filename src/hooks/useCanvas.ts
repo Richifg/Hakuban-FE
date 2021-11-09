@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
-import { Circle, Rect, Item } from '../interfaces/items';
-
-type TransformArray = { sX: number; sY: number; dX: number; dY: number };
-type CanvasSize = { width: number; height: number };
+import type { Circle, Rect, Item } from '../interfaces/items';
+import type { CanvasTransform, CanvasSize } from '../interfaces/board';
 
 interface useCanvasReturn {
     drawItem(item: Item): void;
-    transform(transformArray: TransformArray): void;
+    transform(transformObj: CanvasTransform): void;
     clear(): void;
     width: number;
     height: number;
@@ -15,7 +13,7 @@ interface useCanvasReturn {
 const useCanvas = (
     canvasRef: React.RefObject<HTMLCanvasElement>,
     canvasSize: CanvasSize,
-    canvasTransform: TransformArray,
+    canvasTransform: CanvasTransform,
     items: Item[],
 ): useCanvasReturn => {
     const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
@@ -30,7 +28,7 @@ const useCanvas = (
     const drawItem = (item: Item) => {
         if (ctx && item.type === 'shape') {
             ctx.save();
-            if (item?.strokeColor) ctx.strokeStyle = item.strokeColor;
+            if (item?.lineColor) ctx.strokeStyle = item.lineColor;
             if (item.shapeType === 'circle') drawCircle(item);
             if (item.shapeType === 'rect') drawRect(item);
             ctx.restore();
@@ -39,11 +37,13 @@ const useCanvas = (
 
     const drawCircle = (circle: Circle) => {
         if (ctx) {
-            const { cX, cY, rX, rY, backgroundColor } = circle;
+            const { x0, y0, x2, y2, fillColor } = circle;
             ctx.beginPath();
+            const [cX, cY] = [Math.floor(x0 + x2 / 2), Math.floor(y0 + y2 / 2)];
+            const [rX, rY] = [x2 - cX, y2 - cY];
             ctx.ellipse(cX, cY, rX, rY, 0, 0, Math.PI * 2);
-            if (backgroundColor) {
-                ctx.fillStyle = backgroundColor;
+            if (fillColor) {
+                ctx.fillStyle = fillColor;
                 ctx.fill();
             } else {
                 ctx.stroke();
@@ -52,11 +52,11 @@ const useCanvas = (
     };
     const drawRect = (rect: Rect) => {
         if (ctx) {
-            const { x, y, width, height, backgroundColor } = rect;
+            const { x0, y0, x2, y2, fillColor } = rect;
             ctx.beginPath();
-            ctx.rect(x, y, width, height);
-            if (backgroundColor) {
-                ctx.fillStyle = backgroundColor;
+            ctx.rect(x0, y0, x2 - x0, y2 - y0);
+            if (fillColor) {
+                ctx.fillStyle = fillColor;
                 ctx.fill();
             } else {
                 ctx.stroke();
@@ -64,8 +64,8 @@ const useCanvas = (
         }
     };
 
-    const transform = (transformArray: TransformArray) => {
-        const { sX, sY, dX, dY } = transformArray;
+    const transform = (transformObj: CanvasTransform) => {
+        const { sX, sY, dX, dY } = transformObj;
         ctx?.setTransform(sX, 0, 0, sY, dX, dY);
     };
 

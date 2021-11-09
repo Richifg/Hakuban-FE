@@ -1,24 +1,28 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Item } from '../../interfaces/items';
+import type { Item, Point } from '../../interfaces/items';
+
+const defaultItem: Item = {
+    type: 'shape',
+    shapeType: 'rect',
+    x0: 0,
+    y0: 0,
+    x2: 0,
+    y2: 0,
+    lineColor: 'black',
+};
 
 interface ItemsState {
     items: Item[];
     userItems: Item[];
+    selectedItem?: Item;
+    selectedPoint?: Point;
+    defaultItem: Item;
 }
 
 const initialState: ItemsState = {
     items: [],
-    userItems: [
-        {
-            type: 'shape',
-            shapeType: 'rect',
-            x: 500,
-            y: 100,
-            width: 20,
-            height: 300,
-            strokeColor: 'green',
-        },
-    ],
+    userItems: [],
+    defaultItem,
 };
 
 const itemsSlice = createSlice({
@@ -35,7 +39,7 @@ const itemsSlice = createSlice({
             const newItem = action.payload;
             // check for duplicates before adding
             const index = state.items.findIndex((item) => item.id === newItem.id);
-            if (index) state.items[index] = newItem;
+            if (index !== -1) state.items[index] = newItem;
             else state.items.push(newItem);
             // also delete duplicates on userItems
             const userIndex = state.userItems.findIndex((item) => item.id === newItem.id);
@@ -44,17 +48,32 @@ const itemsSlice = createSlice({
         addUserItem(state, action: PayloadAction<Item>) {
             // check for duplicates before adding
             const newItem = action.payload;
-            const index = state.items.findIndex((item) => item.id === newItem.id);
-            if (index) state.items[index] = newItem;
-            else state.items.push(newItem);
+            const index = state.userItems.findIndex((item) => item.id === newItem.id);
+            console.log('tried to add a new one, this is the index', index);
+            if (index !== -1) state.userItems[index] = newItem;
+            else {
+                console.log('im on the else, what da hell is jhappening?', state.userItems);
+                state.userItems.push(newItem);
+                console.log('well?', state.userItems);
+            }
         },
         deleteItem: (state, action: PayloadAction<string>) => {
             state.items = state.items.filter((item) => item.id !== action.payload);
             state.userItems = state.items.filter((item) => item.id !== action.payload);
         },
+        setSelectedItem: (state, action: PayloadAction<Item>) => {
+            state.selectedItem = action.payload;
+        },
+        setSelectedPoint: (state, action: PayloadAction<Point>) => {
+            state.selectedPoint = action.payload;
+        },
+        setDefaultItem: (state, action: PayloadAction<Item>) => {
+            state.defaultItem = action.payload;
+        },
     },
 });
 
-export const { setItems, addItem, addUserItem, deleteItem } = itemsSlice.actions;
+export const { setItems, addItem, addUserItem, deleteItem, setSelectedItem, setSelectedPoint, setDefaultItem } =
+    itemsSlice.actions;
 
 export default itemsSlice.reducer;

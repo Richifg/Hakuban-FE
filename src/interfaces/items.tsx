@@ -1,3 +1,5 @@
+export type Point = 'P0' | 'P1' | 'P2' | 'P3' | 'C';
+
 interface ItemBase {
     type: string;
     id?: string;
@@ -30,27 +32,26 @@ export interface ChatMessage extends ItemBase {
 }
 
 interface Style {
-    strokeWidth?: number;
-    strokeColor?: string;
-    backgroundColor?: string;
+    lineWidth?: number;
+    lineColor?: string;
+    fillColor?: string;
 }
 
-export interface Rect extends Style {
+interface BasicShape {
+    x0: number;
+    y0: number;
+    x2: number;
+    y2: number;
+}
+
+export interface Rect extends Style, BasicShape {
     type: 'shape';
     shapeType: 'rect';
-    x: number;
-    y: number;
-    width: number;
-    height: number;
 }
 
-export interface Circle extends Style {
+export interface Circle extends Style, BasicShape {
     type: 'shape';
     shapeType: 'circle';
-    cX: number;
-    cY: number;
-    rX: number;
-    rY: number;
 }
 
 export type Shape = ItemBase & (Circle | Rect);
