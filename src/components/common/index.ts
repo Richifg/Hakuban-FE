@@ -1,7 +1,8 @@
 import App from '../App/App';
-import Canvas from './Canvas/Canvas';
+import CanvasItems from './CanvasItems/CanvasItems';
 import CanvasUI from './CanvasUI/CanvasUI';
+import CanvasUserItems from './CanvasUserItems/CanvasUserItems';
 import TestChat from './TestChat/TestChat';
 import ToolsUI from './ToolsUI/ToolsUI';
 
-export { App, Canvas, CanvasUI, TestChat, ToolsUI };
+export { App, CanvasItems, CanvasUserItems, CanvasUI, TestChat, ToolsUI };

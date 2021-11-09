@@ -1,14 +1,25 @@
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { Circle, Rect, Item } from '../interfaces/items';
+
+type TransformArray = { sX: number; sY: number; dX: number; dY: number };
+type CanvasSize = { width: number; height: number };
 
 interface useCanvasReturn {
     drawItem(item: Item): void;
-    transform(transformArray: { sX: number; sY: number; dX: number; dY: number }): void;
-    clear(width: number, height: number): void;
+    transform(transformArray: TransformArray): void;
+    clear(): void;
+    width: number;
+    height: number;
 }
 
-const useCanvas = (canvasRef: React.RefObject<HTMLCanvasElement>): useCanvasReturn => {
+const useCanvas = (
+    canvasRef: React.RefObject<HTMLCanvasElement>,
+    canvasSize: CanvasSize,
+    canvasTransform: TransformArray,
+    items: Item[],
+): useCanvasReturn => {
     const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
+    const { width, height } = canvasSize;
 
     // capture the rendering context before first render
     useLayoutEffect(() => {
@@ -53,12 +64,12 @@ const useCanvas = (canvasRef: React.RefObject<HTMLCanvasElement>): useCanvasRetu
         }
     };
 
-    const transform = (transformArray: { sX: number; sY: number; dX: number; dY: number }) => {
+    const transform = (transformArray: TransformArray) => {
         const { sX, sY, dX, dY } = transformArray;
         ctx?.setTransform(sX, 0, 0, sY, dX, dY);
     };
 
-    const clear = (width: number, height: number) => {
+    const clear = () => {
         if (ctx) {
             ctx.save();
             ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -67,10 +78,19 @@ const useCanvas = (canvasRef: React.RefObject<HTMLCanvasElement>): useCanvasRetu
         }
     };
 
+    // ##TODO maybe move this to a animationFrame thingy like the friction
+    useEffect(() => {
+        clear();
+        transform(canvasTransform);
+        items.forEach((item) => drawItem(item));
+    }, [canvasTransform, items]);
+
     return {
         drawItem,
         transform,
         clear,
+        width,
+        height,
     };
 };
 

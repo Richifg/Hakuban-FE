@@ -1,17 +1,20 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { useDispatch, useSelector, useCanvas, useMovementFriction } from '../../../hooks';
 import { setCurrentAction, translateCanvas } from '../../../store/slices/boardSlice';
-import './Canvas.scss';
+import './CanvasItems.scss';
 
-const Canvas = (): React.ReactElement => {
+const CanvasItems = (): React.ReactElement => {
     const dispatch = useDispatch();
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const { drawItem, transform, clear } = useCanvas(canvasRef);
     const { items } = useSelector((s) => s.items);
     const { canvasSize, canvasTransform, lastTranslate, currentAction } = useSelector((s) => s.board);
     const { width, height } = canvasSize;
 
+    // controls canvas camera movement
+    useCanvas(canvasRef, canvasSize, canvasTransform, items);
+
     // continue sliding with friction after user pans the camera
+    // ##TODO maybe this shouldn't be in Canvas, or even in a component??
     useMovementFriction(
         lastTranslate,
         currentAction === 'SLIDE',
@@ -19,18 +22,11 @@ const Canvas = (): React.ReactElement => {
         () => dispatch(setCurrentAction('IDLE')),
     );
 
-    // update canvas transform and repaint items
-    // ##TODO maybe move this to a animationFrame thingy like the friction
-    useEffect(() => {
-        clear(width, height);
-        transform(canvasTransform);
-        items.forEach((item) => drawItem(item));
-    }, [canvasTransform]);
-
     return (
         <canvas
             role="application"
             className="canvas"
+            id="items"
             ref={canvasRef}
             width={width}
             height={height}
@@ -41,4 +37,4 @@ const Canvas = (): React.ReactElement => {
     );
 };
 
-export default Canvas;
+export default CanvasItems;
