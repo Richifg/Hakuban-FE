@@ -1,15 +1,26 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useLayoutEffect, useMemo } from 'react';
 import { useSelector, useDebouncedCallback } from '../../../hooks';
 import { boardStateMachine as SM } from '../../../utils';
+import type { Point } from '../../../interfaces/items';
 
-import './CanvasUI.scss';
+import './BoardUI.scss';
+import getTransformedPointsFromItem from '../../../utils/getTransformedPoints';
+
+type Points = { [key in Point]: { x: number; y: number } };
 
 const CanvasUI = (): React.ReactElement => {
-    const { canvasSize, cursorPosition, selectedTool, currentAction } = useSelector((s) => s.board);
+    const { canvasSize, canvasTransform, cursorPosition, selectedTool, currentAction } = useSelector((s) => s.board);
+    const { selectedItem } = useSelector((s) => s.items);
     const { width, height } = canvasSize;
     const tool = selectedTool.toLowerCase();
 
-    // updated canvas size on every window resize
+    const points: Points | undefined = useMemo(
+        () => (selectedItem ? getTransformedPointsFromItem(selectedItem, canvasTransform) : undefined),
+
+        [canvasTransform, selectedItem],
+    );
+
+    // update canvas size on every window resize
     useLayoutEffect(() => {
         const resizeHandler = () => SM.windowResize();
         window.addEventListener('resize', resizeHandler);
@@ -38,7 +49,7 @@ const CanvasUI = (): React.ReactElement => {
     return (
         <div
             role="application"
-            className={`edit-ui ${tool}`}
+            className={`board-ui ${tool}`}
             style={{ width, height }}
             onMouseMove={handleMouseMove}
             onMouseDown={handleMouseDown}
@@ -48,6 +59,10 @@ const CanvasUI = (): React.ReactElement => {
             <p className="cursor-position">
                 X: {cursorPosition.x} Y:{cursorPosition.y} {currentAction}
             </p>
+            {points &&
+                Object.entries(points).map(([point, { x, y }]) => (
+                    <div key={point} id={point} className="edit-point" style={{ left: x, top: y }} />
+                ))}
         </div>
     );
 };

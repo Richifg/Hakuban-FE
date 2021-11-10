@@ -30,7 +30,6 @@ const BoardStateMachine = {
                     const id = '123132';
                     const newItem = { ...defaultItem, id, x0: x, y0: y, x2: x, y2: y };
                     dispatch(addUserItem(newItem));
-                    dispatch(setSelectedItem(newItem));
                     dispatch(setCurrentAction('RESIZE'));
                 }
                 break;
@@ -38,8 +37,10 @@ const BoardStateMachine = {
                 // ##TODO how to determine if a click was inside an element quickly? cool algorithm shit
                 // possibly RESIZE or DRAG depending on point clicked
                 const item = allItems.find((item) => isPointInsideItem(x, y, item, canvasTransform));
-                if (item && item.id !== selectedItem?.id) dispatch(setSelectedItem(item));
-                if (!item) {
+                if (item) {
+                    if (item.id !== selectedItem?.id) dispatch(setSelectedItem(item));
+                    dispatch(setCurrentAction('DRAG'));
+                } else {
                     dispatch(setCurrentAction('IDLE'));
                     dispatch(setSelectedItem());
                 }

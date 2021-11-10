@@ -49,13 +49,13 @@ const itemsSlice = createSlice({
             // check for duplicates before adding
             const newItem = action.payload;
             const index = state.userItems.findIndex((item) => item.id === newItem.id);
-            console.log('tried to add a new one, this is the index', index);
             if (index !== -1) state.userItems[index] = newItem;
-            else {
-                console.log('im on the else, what da hell is jhappening?', state.userItems);
-                state.userItems.push(newItem);
-                console.log('well?', state.userItems);
-            }
+            else state.userItems.push(newItem);
+            // also delete duplicates on regular items
+            const regularIndex = state.userItems.findIndex((item) => item.id === newItem.id);
+            if (regularIndex) state.items.splice(regularIndex, 1);
+            // updated selected item
+            state.selectedItem = newItem;
         },
         deleteItem: (state, action: PayloadAction<string>) => {
             state.items = state.items.filter((item) => item.id !== action.payload);
