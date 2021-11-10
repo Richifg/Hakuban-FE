@@ -6,23 +6,31 @@ interface ItemBase {
     creationDate?: Date;
 }
 
-export interface Note extends ItemBase {
-    type: 'note';
-    content: string;
+interface Style {
+    lineWidth?: number;
+    lineColor?: string;
+    fillColor?: string;
+}
+
+interface Coordinates {
     x0: number;
     y0: number;
+    x2: number;
+    y2: number;
+}
+
+export interface Note extends ItemBase, Coordinates {
+    type: 'note';
+    content: string;
     height: number;
     width: number;
     color: string;
 }
 
-export interface Text extends ItemBase {
+export interface Text extends ItemBase, Coordinates {
     type: 'text';
     content: string;
-    x0: number;
-    y0: number;
     fontSize: string;
-    color: string;
 }
 
 export interface ChatMessage extends ItemBase {
@@ -31,30 +39,17 @@ export interface ChatMessage extends ItemBase {
     from: string;
 }
 
-interface Style {
-    lineWidth?: number;
-    lineColor?: string;
-    fillColor?: string;
-}
-
-interface BasicShape {
-    x0: number;
-    y0: number;
-    x2: number;
-    y2: number;
-}
-
-export interface Rect extends Style, BasicShape {
+export interface Rect extends ItemBase, Style, Coordinates {
     type: 'shape';
     shapeType: 'rect';
 }
 
-export interface Circle extends Style, BasicShape {
+export interface Circle extends ItemBase, Style, Coordinates {
     type: 'shape';
     shapeType: 'circle';
 }
 
-export type Shape = ItemBase & (Circle | Rect);
+export type Shape = Circle | Rect;
 
 // Items created by users
 export type BoardItem = Note | Text | Shape;

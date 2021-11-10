@@ -5,7 +5,7 @@ import { boardStateMachine as SM } from '../../../utils';
 import './CanvasUI.scss';
 
 const CanvasUI = (): React.ReactElement => {
-    const { canvasSize, cursorPosition, selectedTool } = useSelector((s) => s.board);
+    const { canvasSize, cursorPosition, selectedTool, currentAction } = useSelector((s) => s.board);
     const { width, height } = canvasSize;
     const tool = selectedTool.toLowerCase();
 
@@ -46,7 +46,7 @@ const CanvasUI = (): React.ReactElement => {
         >
             <p className="temp">EDIT UI TEMP</p>
             <p className="cursor-position">
-                X: {cursorPosition.x} Y:{cursorPosition.y}
+                X: {cursorPosition.x} Y:{cursorPosition.y} {currentAction}
             </p>
         </div>
     );

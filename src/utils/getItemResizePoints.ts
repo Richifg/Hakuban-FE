@@ -37,8 +37,8 @@ function getItemResizePoints(
             y2 = newY;
     }
     const { dX, dY } = transform;
-    x0 -= dX;
-    x2 -= dX;
+    x0 -= dX; // ##TODO why all the points have to be translated
+    x2 -= dX; // shouldnt instead the intact points be left as is?
     y0 -= dY;
     y2 -= dY;
     return { x0, y0, x2, y2 };

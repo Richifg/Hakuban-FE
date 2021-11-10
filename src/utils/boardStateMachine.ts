@@ -2,20 +2,29 @@ import { MouseEvent } from 'react';
 import { store } from '../store/store';
 import { setCurrentAction, setCursorPosition, setCanvasSize, translateCanvas } from '../store/slices/boardSlice';
 import { addUserItem, setSelectedItem, setSelectedPoint } from '../store/slices/itemsSlice';
-import { getItemResizePoints, getItemTranslatePoints } from '../utils';
+import { getItemResizePoints, getItemTranslatePoints, isPointInsideItem } from '../utils';
 
 const { dispatch, getState } = store;
 
 const BoardStateMachine = {
     mouseDown(e: MouseEvent<HTMLDivElement>): void {
-        const { currentAction, selectedTool } = getState().board;
-        const { defaultItem } = getState().items;
+        const { currentAction, selectedTool, canvasTransform } = getState().board;
+        const { defaultItem, selectedItem, items, userItems } = getState().items;
+        const allItems = [...items, ...userItems];
         const [x, y] = [e.clientX, e.clientY];
         dispatch(setCursorPosition([x, y]));
         switch (currentAction) {
             case 'IDLE':
             case 'SLIDE':
-                if (selectedTool === 'POINTER') dispatch(setCurrentAction('PAN'));
+                if (selectedTool === 'POINTER') {
+                    const item = allItems.find((item) => isPointInsideItem(x, y, item, canvasTransform));
+                    if (item) {
+                        dispatch(setSelectedItem(item));
+                        dispatch(setCurrentAction('DRAG'));
+                    } else {
+                        dispatch(setCurrentAction('PAN'));
+                    }
+                }
                 if (selectedTool === 'SHAPE') {
                     dispatch(setSelectedPoint('P2'));
                     const id = '123132';
@@ -28,9 +37,12 @@ const BoardStateMachine = {
             case 'EDIT':
                 // ##TODO how to determine if a click was inside an element quickly? cool algorithm shit
                 // possibly RESIZE or DRAG depending on point clicked
-                // possibly IDLE if click on empty space
-                // possible change edit item id and stay EDIT
-                dispatch(setCurrentAction('IDLE'));
+                const item = allItems.find((item) => isPointInsideItem(x, y, item, canvasTransform));
+                if (item && item.id !== selectedItem?.id) dispatch(setSelectedItem(item));
+                if (!item) {
+                    dispatch(setCurrentAction('IDLE'));
+                    dispatch(setSelectedItem());
+                }
                 break;
             default:
                 break;
@@ -43,6 +55,7 @@ const BoardStateMachine = {
         const [x, y] = [e.clientX, e.clientY];
         dispatch(setCursorPosition([x, y]));
         switch (currentAction) {
+            // ##TODO possibly a case IDLE checking if mouseButton is clicked and transition to PAN
             case 'PAN':
                 dispatch(translateCanvas([x - cursorPosition.x, y - cursorPosition.y]));
                 break;
@@ -69,11 +82,9 @@ const BoardStateMachine = {
                 dispatch(setCurrentAction('SLIDE'));
                 break;
             case 'DRAG':
-                // possible update posistion again maybe?? see mouseMouseMove
                 dispatch(setCurrentAction('EDIT'));
                 break;
             case 'RESIZE':
-                // possibly update position 1 last time mouseMouseMove
                 dispatch(setCurrentAction('EDIT'));
                 break;
             default:

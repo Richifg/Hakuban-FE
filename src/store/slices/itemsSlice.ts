@@ -61,7 +61,7 @@ const itemsSlice = createSlice({
             state.items = state.items.filter((item) => item.id !== action.payload);
             state.userItems = state.items.filter((item) => item.id !== action.payload);
         },
-        setSelectedItem: (state, action: PayloadAction<BoardItem>) => {
+        setSelectedItem: (state, action: PayloadAction<BoardItem | undefined>) => {
             state.selectedItem = action.payload;
         },
         setSelectedPoint: (state, action: PayloadAction<Point>) => {
