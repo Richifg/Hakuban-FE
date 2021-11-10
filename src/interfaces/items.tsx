@@ -1,4 +1,4 @@
-export type Point = 'P0' | 'P1' | 'P2' | 'P3' | 'C';
+export type Point = 'P0' | 'P1' | 'P2' | 'P3';
 
 interface ItemBase {
     type: string;
@@ -9,8 +9,8 @@ interface ItemBase {
 export interface Note extends ItemBase {
     type: 'note';
     content: string;
-    x: number;
-    y: number;
+    x0: number;
+    y0: number;
     height: number;
     width: number;
     color: string;
@@ -19,8 +19,8 @@ export interface Note extends ItemBase {
 export interface Text extends ItemBase {
     type: 'text';
     content: string;
-    x: number;
-    y: number;
+    x0: number;
+    y0: number;
     fontSize: string;
     color: string;
 }
@@ -57,4 +57,5 @@ export interface Circle extends Style, BasicShape {
 export type Shape = ItemBase & (Circle | Rect);
 
 // Items created by users
-export type Item = Note | Text | Shape | ChatMessage;
+export type BoardItem = Note | Text | Shape;
+export type Item = BoardItem | ChatMessage;

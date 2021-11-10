@@ -1,10 +1,7 @@
 import type { Item } from '../interfaces/items';
-import type { CanvasTransform } from '../interfaces/board';
 import getItemResizePoints from './getItemResizePoints';
 
-const defaultTransform: CanvasTransform = { dX: 0, dY: 0, sX: 0, sY: 0 };
-
-test('calculates new points correctly', () => {
+test('calculates new resize points correctly', () => {
     const dX = 50;
     const dY = -26;
     const newX = 45;
@@ -17,7 +14,7 @@ test('calculates new points correctly', () => {
         y0: 60,
         y2: 100,
     };
-    const transform = { ...defaultTransform, dX, dY };
+    const transform = { dX, dY, sX: 0, sY: 0 };
     const { x0, x2, y0, y2 } = getItemResizePoints(item, 'P1', newX, newY, transform);
 
     expect(x0).toBe(item.x0);

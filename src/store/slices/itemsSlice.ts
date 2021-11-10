@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { Item, Point } from '../../interfaces/items';
+import type { BoardItem, Point } from '../../interfaces/items';
 
-const defaultItem: Item = {
+const defaultItem: BoardItem = {
     type: 'shape',
     shapeType: 'rect',
     x0: 0,
@@ -12,11 +12,11 @@ const defaultItem: Item = {
 };
 
 interface ItemsState {
-    items: Item[];
-    userItems: Item[];
-    selectedItem?: Item;
+    items: BoardItem[];
+    userItems: BoardItem[];
+    selectedItem?: BoardItem;
     selectedPoint?: Point;
-    defaultItem: Item;
+    defaultItem: BoardItem;
 }
 
 const initialState: ItemsState = {
@@ -29,13 +29,13 @@ const itemsSlice = createSlice({
     name: 'items',
     initialState,
     reducers: {
-        setItems: (state, action: PayloadAction<Item[]>) => {
+        setItems: (state, action: PayloadAction<BoardItem[]>) => {
             state.items = action.payload;
         },
-        setUserItems: (state, action: PayloadAction<Item[]>) => {
+        setUserItems: (state, action: PayloadAction<BoardItem[]>) => {
             state.userItems = action.payload;
         },
-        addItem: (state, action: PayloadAction<Item>) => {
+        addItem: (state, action: PayloadAction<BoardItem>) => {
             const newItem = action.payload;
             // check for duplicates before adding
             const index = state.items.findIndex((item) => item.id === newItem.id);
@@ -45,7 +45,7 @@ const itemsSlice = createSlice({
             const userIndex = state.userItems.findIndex((item) => item.id === newItem.id);
             if (userIndex) state.userItems.splice(userIndex, 1);
         },
-        addUserItem(state, action: PayloadAction<Item>) {
+        addUserItem(state, action: PayloadAction<BoardItem>) {
             // check for duplicates before adding
             const newItem = action.payload;
             const index = state.userItems.findIndex((item) => item.id === newItem.id);
@@ -61,13 +61,13 @@ const itemsSlice = createSlice({
             state.items = state.items.filter((item) => item.id !== action.payload);
             state.userItems = state.items.filter((item) => item.id !== action.payload);
         },
-        setSelectedItem: (state, action: PayloadAction<Item>) => {
+        setSelectedItem: (state, action: PayloadAction<BoardItem>) => {
             state.selectedItem = action.payload;
         },
         setSelectedPoint: (state, action: PayloadAction<Point>) => {
             state.selectedPoint = action.payload;
         },
-        setDefaultItem: (state, action: PayloadAction<Item>) => {
+        setDefaultItem: (state, action: PayloadAction<BoardItem>) => {
             state.defaultItem = action.payload;
         },
     },

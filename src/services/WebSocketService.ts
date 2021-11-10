@@ -1,9 +1,9 @@
 import { store } from '../store/store';
 import { setItems, addItem } from '../store/slices/itemsSlice';
 import { setId, setError } from '../store/slices/connectionSlice';
-import { setMessages } from '../store/slices/chatSlice';
+import { setMessages, addMessage } from '../store/slices/chatSlice';
 import { WSMessage } from '../interfaces/webSocket';
-import { ChatMessage } from '../interfaces/items';
+import { ChatMessage, BoardItem } from '../interfaces/items';
 
 const url = process.env.REACT_APP_SERVER_URL;
 
@@ -38,12 +38,13 @@ class WebSocketService {
                         reject(message.content);
                         break;
                     case 'item':
-                        store.dispatch(addItem(message.content));
+                        if (message.content.type === 'chat') store.dispatch(addMessage(message.content));
+                        else store.dispatch(addItem(message.content));
                         break;
                     case 'collection':
                         // TODO: check TypeScript Handbook to see alternative to importing and asserting the type here
                         const chatMessages = message.content.filter((item) => item.type === 'chat') as ChatMessage[];
-                        const otherItems = message.content.filter((item) => item.type !== 'chat');
+                        const otherItems = message.content.filter((item) => item.type !== 'chat') as BoardItem[];
                         store.dispatch(setItems(otherItems));
                         store.dispatch(setMessages(chatMessages));
                         break;

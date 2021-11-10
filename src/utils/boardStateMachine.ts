@@ -2,7 +2,7 @@ import { MouseEvent } from 'react';
 import { store } from '../store/store';
 import { setCurrentAction, setCursorPosition, setCanvasSize, translateCanvas } from '../store/slices/boardSlice';
 import { addUserItem, setSelectedItem, setSelectedPoint } from '../store/slices/itemsSlice';
-import { getItemResizePoints } from '../utils';
+import { getItemResizePoints, getItemTranslatePoints } from '../utils';
 
 const { dispatch, getState } = store;
 
@@ -26,6 +26,7 @@ const BoardStateMachine = {
                 }
                 break;
             case 'EDIT':
+                // ##TODO how to determine if a click was inside an element quickly? cool algorithm shit
                 // possibly RESIZE or DRAG depending on point clicked
                 // possibly IDLE if click on empty space
                 // possible change edit item id and stay EDIT
@@ -35,6 +36,7 @@ const BoardStateMachine = {
                 break;
         }
     },
+
     mouseMove(e: MouseEvent<HTMLDivElement>): void {
         const { currentAction, cursorPosition, canvasTransform } = getState().board;
         const { selectedItem, selectedPoint } = getState().items;
@@ -45,10 +47,12 @@ const BoardStateMachine = {
                 dispatch(translateCanvas([x - cursorPosition.x, y - cursorPosition.y]));
                 break;
             case 'DRAG':
-                // move whole selected item
+                if (selectedItem?.type === 'shape' && selectedPoint) {
+                    const { x0, y0, x2, y2 } = getItemTranslatePoints(selectedItem, selectedPoint, x, y, canvasTransform);
+                    dispatch(addUserItem({ ...selectedItem, x0, y0, x2, y2 }));
+                }
                 break;
             case 'RESIZE':
-                dispatch(setCursorPosition([x, y]));
                 if (selectedItem?.type === 'shape' && selectedPoint) {
                     const { x0, y0, x2, y2 } = getItemResizePoints(selectedItem, selectedPoint, x, y, canvasTransform);
                     dispatch(addUserItem({ ...selectedItem, x0, y0, x2, y2 }));
@@ -56,6 +60,7 @@ const BoardStateMachine = {
                 break;
         }
     },
+
     mouseUp(e: MouseEvent<HTMLDivElement>): void {
         const { currentAction } = getState().board;
         dispatch(setCursorPosition([e.clientX, e.clientY]));

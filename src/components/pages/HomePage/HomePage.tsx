@@ -43,11 +43,7 @@ const HomePage = (): React.ReactElement => {
                 </label>
                 <label>
                     password:
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={({ currentTarget }) => setPassword(currentTarget.value)}
-                    />
+                    <input type="password" value={password} onChange={({ currentTarget }) => setPassword(currentTarget.value)} />
                 </label>
                 <button disabled={isLoading} onClick={handleJoinRoom}>
                     Join

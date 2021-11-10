@@ -33,7 +33,6 @@ const chatSlice = createSlice({
     },
 });
 
-export const { setMessages, addMessage, deleteMessage, resetUnreadMessages, increaseUnreadMessages } =
-    chatSlice.actions;
+export const { setMessages, addMessage, deleteMessage, resetUnreadMessages, increaseUnreadMessages } = chatSlice.actions;
 
 export default chatSlice.reducer;
