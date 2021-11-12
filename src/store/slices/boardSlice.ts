@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { Tool, Action } from '../../interfaces/board';
+import type { Tool, Action, CanvasTransform } from '../../interfaces/board';
 
 interface BoardState {
     selectedTool: Tool;
     currentAction: Action;
     cursorPosition: { x: number; y: number };
     relDragPoint: { x: number; y: number };
-    canvasTransform: { dX: number; dY: number; sX: number; sY: number };
+    canvasTransform: CanvasTransform;
     lastTranslate: { dX: number; dY: number };
     canvasSize: { width: number; height: number };
 }
@@ -16,7 +16,7 @@ const initialState: BoardState = {
     currentAction: 'IDLE',
     cursorPosition: { x: 0, y: 0 },
     relDragPoint: { x: 0, y: 0 },
-    canvasTransform: { dX: 0, dY: 0, sX: 1, sY: 1 },
+    canvasTransform: { dX: 0, dY: 0, scale: 1 },
     lastTranslate: { dX: 0, dY: 0 },
     canvasSize: { width: 0, height: 0 },
 };
@@ -48,12 +48,11 @@ export const boardSlice = createSlice({
                 dY: state.canvasTransform.dY + dY,
             };
         },
-        scaleCanvas: (state, action: PayloadAction<[sX: number, sY: number]>) => {
-            const [sX, sY] = action.payload;
+        scaleCanvas: (state, action: PayloadAction<number>) => {
+            const { canvasTransform } = state;
             state.canvasTransform = {
-                ...state.canvasTransform,
-                sX: state.canvasTransform.sX + sX,
-                sY: state.canvasTransform.sY + sY,
+                ...canvasTransform,
+                scale: canvasTransform.scale + action.payload,
             };
         },
         setCanvasSize: (state, action: PayloadAction<{ width: number; height: number }>) => {

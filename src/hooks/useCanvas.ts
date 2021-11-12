@@ -65,8 +65,8 @@ const useCanvas = (
     };
 
     const transform = (transformObj: CanvasTransform) => {
-        const { sX, sY, dX, dY } = transformObj;
-        ctx?.setTransform(sX, 0, 0, sY, dX, dY);
+        const { scale, dX, dY } = transformObj;
+        ctx?.setTransform(scale, 0, 0, scale, dX, dY);
     };
 
     const clear = () => {

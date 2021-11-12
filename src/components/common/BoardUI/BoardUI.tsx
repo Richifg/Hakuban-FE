@@ -46,6 +46,11 @@ const CanvasUI = (): React.ReactElement => {
         [],
     );
 
+    const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+        e.persist();
+        SM.mouseWheel(e);
+    };
+
     return (
         <div
             role="application"
@@ -54,6 +59,7 @@ const CanvasUI = (): React.ReactElement => {
             onMouseMove={handleMouseMove}
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}
+            onWheel={handleWheel}
         >
             <p className="temp">EDIT UI TEMP</p>
             <p className="cursor-position">

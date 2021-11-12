@@ -14,7 +14,7 @@ test('calculates new resize points correctly', () => {
         y0: 60,
         y2: 100,
     };
-    const transform = { dX, dY, sX: 0, sY: 0 };
+    const transform = { dX, dY, scale: 0 };
     const { x0, x2, y0, y2 } = getItemResizePoints(item, 'P1', newX, newY, transform);
 
     expect(x0).toBe(item.x0 - dX);

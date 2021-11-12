@@ -9,7 +9,7 @@ test('returns true on an inside point', () => {
         x2: 0,
         y2: 100,
     } as const;
-    const transform = { dX: 0, dY: 0, sX: 1, sY: 1 };
+    const transform = { dX: 0, dY: 0, scale: 1 };
 
     expect(isPointInsideItem(50, 0, item, transform)).toBe(true);
 });
@@ -23,7 +23,7 @@ test('return false on an outside point', () => {
         x2: 26,
         y2: 89,
     } as const;
-    const transform = { dX: 0, dY: 0, sX: 1, sY: 1 };
+    const transform = { dX: 0, dY: 0, scale: 1 };
 
     expect(isPointInsideItem(16, 3, item, transform)).toBe(false);
 });
