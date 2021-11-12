@@ -1,27 +1,21 @@
 import type { CanvasTransform } from '../interfaces/board';
-import type { Shape, Point } from '../interfaces/items';
+import type { Shape } from '../interfaces/items';
+import { getDetransformedCoordinates } from './';
 
 type TranslatePoints = { x0: number; y0: number; x2: number; y2: number };
 
-/*
-// THE BIG QUESTION //
-
-    should I allow translate only on C point?
-    can someone drag a shape from any point (not Point) in Miro?
-    check that out and consider you options....
-*/
-
 function getItemTranslatePoints(
     item: Shape,
-    selectedPoint: Point,
+    offset: { x: number; y: number },
     newX: number,
     newY: number,
     transform: CanvasTransform,
 ): TranslatePoints {
-    const { x0, x2, y0, y2 } = item;
-    const dX = newX - transform.dX;
-    const dY = newY - transform.dY;
-    return { x0: x0 + dX, x2: x2 + dX, y0: y0 + dY, y2: y2 + dY };
+    const [width, height] = [item.x2 - item.x0, item.y2 - item.y0];
+    const [realNewX, realNewY] = getDetransformedCoordinates(newX, newY, transform);
+    const [x0, y0] = [realNewX - offset.x, realNewY - offset.y];
+    const [x2, y2] = [x0 + width, y0 + height];
+    return { x0, y0, x2, y2 };
 }
 
 export default getItemTranslatePoints;

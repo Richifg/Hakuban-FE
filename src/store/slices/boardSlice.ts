@@ -5,7 +5,7 @@ interface BoardState {
     selectedTool: Tool;
     currentAction: Action;
     cursorPosition: { x: number; y: number };
-    relDragPoint: { x: number; y: number };
+    referenceDragPoint: { x: number; y: number };
     canvasTransform: CanvasTransform;
     lastTranslate: { dX: number; dY: number };
     canvasSize: { width: number; height: number };
@@ -15,7 +15,7 @@ const initialState: BoardState = {
     selectedTool: 'POINTER',
     currentAction: 'IDLE',
     cursorPosition: { x: 0, y: 0 },
-    relDragPoint: { x: 0, y: 0 },
+    referenceDragPoint: { x: 0, y: 0 },
     canvasTransform: { dX: 0, dY: 0, scale: 1 },
     lastTranslate: { dX: 0, dY: 0 },
     canvasSize: { width: 0, height: 0 },
@@ -34,10 +34,6 @@ export const boardSlice = createSlice({
         setCursorPosition: (state, action: PayloadAction<[x: number, y: number]>) => {
             const [x, y] = action.payload;
             state.cursorPosition = { x, y };
-        },
-        setRelDragPoint: (state, action: PayloadAction<[x: number, y: number]>) => {
-            const [x, y] = action.payload;
-            state.relDragPoint = { x, y };
         },
         translateCanvas: (state, action: PayloadAction<[dX: number, dY: number]>) => {
             const [dX, dY] = action.payload;
@@ -61,14 +57,7 @@ export const boardSlice = createSlice({
     },
 });
 
-export const {
-    setSelectedTool,
-    setCurrentAction,
-    setCursorPosition,
-    setRelDragPoint,
-    translateCanvas,
-    scaleCanvas,
-    setCanvasSize,
-} = boardSlice.actions;
+export const { setSelectedTool, setCurrentAction, setCursorPosition, translateCanvas, scaleCanvas, setCanvasSize } =
+    boardSlice.actions;
 
 export default boardSlice.reducer;

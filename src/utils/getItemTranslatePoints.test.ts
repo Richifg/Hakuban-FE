@@ -12,9 +12,10 @@ test('calculates new translate points correctly', () => {
     };
     const newX = 60;
     const newY = 40;
-    const transform = { dX: 90, dY: -14, sX: 1, sY: 1 };
+    const transform = { dX: 90, dY: -14, scale: 1 };
 
-    const { x0, x2, y0, y2 } = getItemTranslatePoints(testItem, 'P0', newX, newY, transform);
+    const { x0, y2 } = getItemTranslatePoints(testItem, 'P0', newX, newY, transform);
 
-    expect(x0).toBeDefined();
+    expect(x0).toBe((testItem.x0 - transform.dX) / transform.scale);
+    expect(y2).toBe((testItem.y2 - transform.dY) / transform.scale);
 });

@@ -1,10 +1,9 @@
 import React, { useLayoutEffect, useMemo } from 'react';
 import { useSelector, useDebouncedCallback } from '../../../hooks';
-import { boardStateMachine as SM } from '../../../utils';
+import { boardStateMachine as SM, getItemTransformedPoints } from '../../../utils';
 import type { Point } from '../../../interfaces/items';
 
 import './BoardUI.scss';
-import getTransformedPointsFromItem from '../../../utils/getTransformedPoints';
 
 type Points = { [key in Point]: { x: number; y: number } };
 
@@ -15,7 +14,7 @@ const CanvasUI = (): React.ReactElement => {
     const tool = selectedTool.toLowerCase();
 
     const points: Points | undefined = useMemo(
-        () => (selectedItem ? getTransformedPointsFromItem(selectedItem, canvasTransform) : undefined),
+        () => (selectedItem ? getItemTransformedPoints(selectedItem, canvasTransform) : undefined),
 
         [canvasTransform, selectedItem],
     );

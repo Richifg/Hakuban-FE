@@ -1,13 +1,14 @@
 import { MouseEvent, WheelEvent } from 'react';
 import { store } from '../store/store';
 import { setCurrentAction, setCursorPosition, setCanvasSize, translateCanvas, scaleCanvas } from '../store/slices/boardSlice';
-import { addUserItem, setSelectedItem, setSelectedPoint } from '../store/slices/itemsSlice';
+import { addUserItem, setSelectedItem, setSelectedPoint, setDragOffset } from '../store/slices/itemsSlice';
 import { getItemResizePoints, getItemTranslatePoints, isPointInsideItem } from '../utils';
+import getDetransformedCoordinates from './getDetransformedCoordinates';
 
 const { dispatch, getState } = store;
 
 const BoardStateMachine = {
-    mouseDown(e: React.MouseEvent<HTMLDivElement>): void {
+    mouseDown(e: MouseEvent<HTMLDivElement>): void {
         const { currentAction, selectedTool, canvasTransform } = getState().board;
         const { defaultItem, selectedItem, items, userItems } = getState().items;
         const allItems = [...items, ...userItems];
@@ -21,15 +22,27 @@ const BoardStateMachine = {
                     if (item) {
                         dispatch(setSelectedItem(item));
                         dispatch(setCurrentAction('DRAG'));
+                        const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
+                        dispatch(setDragOffset([realX - item.x0, realY - item.y0]));
                     } else {
                         dispatch(setCurrentAction('PAN'));
                     }
                 }
                 if (selectedTool === 'SHAPE') {
                     dispatch(setSelectedPoint('P2'));
-                    const { dX, dY } = canvasTransform;
+                    const { dX, dY, scale } = canvasTransform;
+                    // ##TODO add item id generation
                     const id = '123132';
-                    const newItem = { ...defaultItem, id, x0: x - dX, y0: y - dY, x2: x - dX, y2: y - dY };
+                    const initX = (x - dX) / scale;
+                    const initY = (y - dY) / scale;
+                    const newItem = {
+                        ...defaultItem,
+                        id,
+                        x0: initX,
+                        y0: initY,
+                        x2: initX,
+                        y2: initY,
+                    };
                     dispatch(addUserItem(newItem));
                     dispatch(setCurrentAction('RESIZE'));
                 }
@@ -40,6 +53,8 @@ const BoardStateMachine = {
                 const item = allItems.find((item) => isPointInsideItem(x, y, item, canvasTransform));
                 if (item) {
                     if (item.id !== selectedItem?.id) dispatch(setSelectedItem(item));
+                    const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
+                    dispatch(setDragOffset([realX - item.x0, realY - item.y0]));
                     dispatch(setCurrentAction('DRAG'));
                 } else {
                     dispatch(setCurrentAction('IDLE'));
@@ -51,9 +66,9 @@ const BoardStateMachine = {
         }
     },
 
-    mouseMove(e: React.MouseEvent<HTMLDivElement>): void {
+    mouseMove(e: MouseEvent<HTMLDivElement>): void {
         const { currentAction, cursorPosition, canvasTransform } = getState().board;
-        const { selectedItem, selectedPoint } = getState().items;
+        const { selectedItem, selectedPoint, dragOffset } = getState().items;
         const [x, y] = [e.clientX, e.clientY];
         dispatch(setCursorPosition([x, y]));
         switch (currentAction) {
@@ -62,21 +77,21 @@ const BoardStateMachine = {
                 dispatch(translateCanvas([x - cursorPosition.x, y - cursorPosition.y]));
                 break;
             case 'DRAG':
-                if (selectedItem?.type === 'shape' && selectedPoint) {
-                    const { x0, y0, x2, y2 } = getItemTranslatePoints(selectedItem, selectedPoint, x, y, canvasTransform);
-                    dispatch(addUserItem({ ...selectedItem, x0, y0, x2, y2 }));
+                if (selectedItem?.type === 'shape') {
+                    const points = getItemTranslatePoints(selectedItem, dragOffset, x, y, canvasTransform);
+                    dispatch(addUserItem({ ...selectedItem, ...points }));
                 }
                 break;
             case 'RESIZE':
                 if (selectedItem?.type === 'shape' && selectedPoint) {
-                    const { x0, y0, x2, y2 } = getItemResizePoints(selectedItem, selectedPoint, x, y, canvasTransform);
-                    dispatch(addUserItem({ ...selectedItem, x0, y0, x2, y2 }));
+                    const points = getItemResizePoints(selectedItem, selectedPoint, x, y, canvasTransform);
+                    dispatch(addUserItem({ ...selectedItem, ...points }));
                 }
                 break;
         }
     },
 
-    mouseUp(e: React.MouseEvent<HTMLDivElement>): void {
+    mouseUp(e: MouseEvent<HTMLDivElement>): void {
         const { currentAction } = getState().board;
         dispatch(setCursorPosition([e.clientX, e.clientY]));
         switch (currentAction) {
@@ -95,6 +110,7 @@ const BoardStateMachine = {
     },
 
     mouseWheel(e: WheelEvent<HTMLDivElement>): void {
+        // ## TODO: turn mouse wheel sensitity into a constant. Also it should build up slightly
         const delta = -Math.round(e.deltaY) * 0.0005;
         dispatch(scaleCanvas(delta));
     },

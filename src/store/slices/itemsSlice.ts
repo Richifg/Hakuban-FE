@@ -14,15 +14,17 @@ const defaultItem: BoardItem = {
 interface ItemsState {
     items: BoardItem[];
     userItems: BoardItem[];
+    defaultItem: BoardItem;
+    dragOffset: { x: number; y: number };
     selectedItem?: BoardItem;
     selectedPoint?: Point;
-    defaultItem: BoardItem;
 }
 
 const initialState: ItemsState = {
     items: [],
     userItems: [],
     defaultItem,
+    dragOffset: { x: 0, y: 0 },
 };
 
 const itemsSlice = createSlice({
@@ -61,19 +63,23 @@ const itemsSlice = createSlice({
             state.items = state.items.filter((item) => item.id !== action.payload);
             state.userItems = state.items.filter((item) => item.id !== action.payload);
         },
+        setDefaultItem: (state, action: PayloadAction<BoardItem>) => {
+            state.defaultItem = action.payload;
+        },
+        setDragOffset: (state, action: PayloadAction<[x: number, y: number]>) => {
+            const [x, y] = action.payload;
+            state.dragOffset = { x, y };
+        },
         setSelectedItem: (state, action: PayloadAction<BoardItem | undefined>) => {
             state.selectedItem = action.payload;
         },
         setSelectedPoint: (state, action: PayloadAction<Point>) => {
             state.selectedPoint = action.payload;
         },
-        setDefaultItem: (state, action: PayloadAction<BoardItem>) => {
-            state.defaultItem = action.payload;
-        },
     },
 });
 
-export const { setItems, addItem, addUserItem, deleteItem, setSelectedItem, setSelectedPoint, setDefaultItem } =
+export const { setItems, addItem, addUserItem, deleteItem, setDefaultItem, setDragOffset, setSelectedItem, setSelectedPoint } =
     itemsSlice.actions;
 
 export default itemsSlice.reducer;
