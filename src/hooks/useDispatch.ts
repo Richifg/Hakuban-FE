@@ -1,4 +1,6 @@
 import { useDispatch as ogUseDispatch } from 'react-redux';
 import { AppDispatch } from '../store/store';
 
-export default () => ogUseDispatch<AppDispatch>();
+const useDispatch: typeof ogUseDispatch = () => ogUseDispatch<AppDispatch>();
+
+export default useDispatch;

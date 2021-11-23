@@ -3,7 +3,7 @@ import { useParams } from 'react-router';
 
 import { useSelector, useDispatch } from '../../../hooks';
 import { connectToRoom } from '../../../store/slices/connectionSlice';
-import { CanvasItems, CanvasUserItems, BoardUI, TestChat, ToolsUI, ZoomControls } from '../../common';
+import { CanvasItems, CanvasUserItems, BoardUI, TestChat, ToolsMenu, ZoomControls } from '../../common';
 
 import './RoomPage.scss';
 
@@ -28,7 +28,7 @@ const RoomPage = (): React.ReactElement => {
                     </div>
                     <div className="ui-container">
                         <div className="tools-container">
-                            <ToolsUI />
+                            <ToolsMenu />
                         </div>
                         <div className="chat-container">
                             <TestChat />

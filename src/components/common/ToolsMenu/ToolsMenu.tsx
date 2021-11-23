@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from '../../../hooks';
 import { setSelectedTool } from '../../../store/slices/boardSlice';
 import type { Tool } from '../../../interfaces/board';
 
-import './ToolsUI.scss';
+import './ToolsMenu.scss';
 
 const tools: { name: Tool; icon: string }[] = [
     {
@@ -20,7 +20,7 @@ const tools: { name: Tool; icon: string }[] = [
     },
 ];
 
-const ToolsUI = (): React.ReactElement => {
+const ToolsMenu = (): React.ReactElement => {
     const dispatch = useDispatch();
     const { selectedTool } = useSelector((s) => s.board);
 
@@ -30,7 +30,7 @@ const ToolsUI = (): React.ReactElement => {
     };
 
     return (
-        <div className="tools-ui">
+        <div className="tools-menu">
             {tools.map((tool) => (
                 <div className={`tool-container  ${selectedTool === tool.name ? 'selected' : ''}`} key={tool.name}>
                     <button value={tool.name} onClick={handleToolClick} className={'tool-button'}>
@@ -42,4 +42,4 @@ const ToolsUI = (): React.ReactElement => {
     );
 };
 
-export default ToolsUI;
+export default ToolsMenu;

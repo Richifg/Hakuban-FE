@@ -57,7 +57,7 @@ const BoardStateMachine = {
                     dispatch(setDragOffset([realX - item.x0, realY - item.y0]));
                     dispatch(setCurrentAction('DRAG'));
                 } else {
-                    dispatch(setCurrentAction('IDLE'));
+                    dispatch(setCurrentAction('PAN'));
                     dispatch(setSelectedItem());
                 }
                 break;

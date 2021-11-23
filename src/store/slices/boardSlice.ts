@@ -5,7 +5,6 @@ interface BoardState {
     selectedTool: Tool;
     currentAction: Action;
     cursorPosition: { x: number; y: number };
-    referenceDragPoint: { x: number; y: number };
     canvasTransform: CanvasTransform;
     lastTranslate: { dX: number; dY: number };
     canvasSize: { width: number; height: number };
@@ -15,7 +14,6 @@ const initialState: BoardState = {
     selectedTool: 'POINTER',
     currentAction: 'IDLE',
     cursorPosition: { x: 0, y: 0 },
-    referenceDragPoint: { x: 0, y: 0 },
     canvasTransform: { dX: 0, dY: 0, scale: 1 },
     lastTranslate: { dX: 0, dY: 0 },
     canvasSize: { width: 0, height: 0 },

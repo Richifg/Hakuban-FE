@@ -1,23 +1,14 @@
-import React, { useLayoutEffect, useMemo } from 'react';
+import React, { useLayoutEffect } from 'react';
 import { useSelector, useDebouncedCallback } from '../../../hooks';
-import { boardStateMachine as SM, getItemTransformedPoints } from '../../../utils';
-import type { Point } from '../../../interfaces/items';
+import { boardStateMachine as SM } from '../../../utils';
+import { EditPoints } from '../../common';
 
 import './BoardUI.scss';
 
-type Points = { [key in Point]: { x: number; y: number } };
-
 const CanvasUI = (): React.ReactElement => {
-    const { canvasSize, canvasTransform, cursorPosition, selectedTool, currentAction } = useSelector((s) => s.board);
-    const { selectedItem } = useSelector((s) => s.items);
+    const { canvasSize, cursorPosition, selectedTool, currentAction } = useSelector((s) => s.board);
     const { width, height } = canvasSize;
     const tool = selectedTool.toLowerCase();
-
-    const points: Points | undefined = useMemo(
-        () => (selectedItem ? getItemTransformedPoints(selectedItem, canvasTransform) : undefined),
-
-        [canvasTransform, selectedItem],
-    );
 
     // update canvas size on every window resize
     useLayoutEffect(() => {
@@ -64,10 +55,7 @@ const CanvasUI = (): React.ReactElement => {
             <p className="cursor-position">
                 X: {cursorPosition.x} Y:{cursorPosition.y} {currentAction}
             </p>
-            {points &&
-                Object.entries(points).map(([point, { x, y }]) => (
-                    <div key={point} id={point} className="edit-point" style={{ left: x, top: y }} />
-                ))}
+            <EditPoints />
         </div>
     );
 };
