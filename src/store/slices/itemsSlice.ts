@@ -45,7 +45,7 @@ const itemsSlice = createSlice({
             else state.items.push(newItem);
             // also delete duplicates on userItems
             const userIndex = state.userItems.findIndex((item) => item.id === newItem.id);
-            if (userIndex) state.userItems.splice(userIndex, 1);
+            if (userIndex !== -1) state.userItems.splice(userIndex, 1);
         },
         addUserItem(state, action: PayloadAction<BoardItem>) {
             // check for duplicates before adding
@@ -54,8 +54,8 @@ const itemsSlice = createSlice({
             if (index !== -1) state.userItems[index] = newItem;
             else state.userItems.push(newItem);
             // also delete duplicates on regular items
-            const regularIndex = state.userItems.findIndex((item) => item.id === newItem.id);
-            if (regularIndex) state.items.splice(regularIndex, 1);
+            const regularIndex = state.items.findIndex((item) => item.id === newItem.id);
+            if (regularIndex !== -1) state.items.splice(regularIndex, 1);
             // updated selected item
             state.selectedItem = newItem;
         },

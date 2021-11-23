@@ -4,6 +4,8 @@ import getDetransformedCoordinates from './getDetransformedCoordinates';
 import getItemResizePoints from './getItemResizePoints';
 import getItemTransformedPoints from './getItemTransformedPoints';
 import getItemTranslatePoints from './getItemTranslatePoints';
+import getNewId from './getNewId';
+import getNewItem from './getNewItem';
 import getTransformedCoordinates from './getTransformedCoodinates';
 import isPointInsideItem from './isPointInsideItem';
 
@@ -14,6 +16,8 @@ export {
     getItemResizePoints,
     getItemTransformedPoints,
     getItemTranslatePoints,
+    getNewId,
+    getNewItem,
     getTransformedCoordinates,
     isPointInsideItem,
 };

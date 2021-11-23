@@ -2,7 +2,7 @@ import { MouseEvent, WheelEvent } from 'react';
 import { store } from '../store/store';
 import { setCurrentAction, setCursorPosition, setCanvasSize, translateCanvas, scaleCanvas } from '../store/slices/boardSlice';
 import { addUserItem, setSelectedItem, setSelectedPoint, setDragOffset } from '../store/slices/itemsSlice';
-import { getItemResizePoints, getItemTranslatePoints, isPointInsideItem } from '../utils';
+import { getItemResizePoints, getItemTranslatePoints, isPointInsideItem, getNewItem } from '../utils';
 import getDetransformedCoordinates from './getDetransformedCoordinates';
 
 const { dispatch, getState } = store;
@@ -30,19 +30,7 @@ const BoardStateMachine = {
                 }
                 if (selectedTool === 'SHAPE') {
                     dispatch(setSelectedPoint('P2'));
-                    const { dX, dY, scale } = canvasTransform;
-                    // ##TODO add item id generation
-                    const id = '123132';
-                    const initX = (x - dX) / scale;
-                    const initY = (y - dY) / scale;
-                    const newItem = {
-                        ...defaultItem,
-                        id,
-                        x0: initX,
-                        y0: initY,
-                        x2: initX,
-                        y2: initY,
-                    };
+                    const newItem = getNewItem(x, y, selectedTool, canvasTransform, defaultItem);
                     dispatch(addUserItem(newItem));
                     dispatch(setCurrentAction('RESIZE'));
                 }
@@ -51,7 +39,7 @@ const BoardStateMachine = {
                 // ##TODO how to determine if a click was inside an element quickly? cool algorithm shit
                 // possibly RESIZE or DRAG depending on point clicked
                 const item = allItems.find((item) => isPointInsideItem(x, y, item, canvasTransform));
-                if (item) {
+                if (item && selectedTool === 'POINTER') {
                     if (item.id !== selectedItem?.id) dispatch(setSelectedItem(item));
                     const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
                     dispatch(setDragOffset([realX - item.x0, realY - item.y0]));
@@ -70,20 +58,22 @@ const BoardStateMachine = {
         const { currentAction, cursorPosition, canvasTransform } = getState().board;
         const { selectedItem, selectedPoint, dragOffset } = getState().items;
         const [x, y] = [e.clientX, e.clientY];
-        dispatch(setCursorPosition([x, y]));
         switch (currentAction) {
             // ##TODO possibly a case IDLE checking if mouseButton is clicked and transition to PAN
             case 'PAN':
+                dispatch(setCursorPosition([x, y]));
                 dispatch(translateCanvas([x - cursorPosition.x, y - cursorPosition.y]));
                 break;
             case 'DRAG':
                 if (selectedItem?.type === 'shape') {
+                    dispatch(setCursorPosition([x, y]));
                     const points = getItemTranslatePoints(selectedItem, dragOffset, x, y, canvasTransform);
                     dispatch(addUserItem({ ...selectedItem, ...points }));
                 }
                 break;
             case 'RESIZE':
                 if (selectedItem?.type === 'shape' && selectedPoint) {
+                    dispatch(setCursorPosition([x, y]));
                     const points = getItemResizePoints(selectedItem, selectedPoint, x, y, canvasTransform);
                     dispatch(addUserItem({ ...selectedItem, ...points }));
                 }
