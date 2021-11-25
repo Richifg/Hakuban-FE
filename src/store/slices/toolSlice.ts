@@ -1,8 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { Tool } from '../../interfaces/board';
-import type { ShapeStyle, TextStyle } from '../../interfaces/items';
-
-type ShapeType = 'rect' | 'circle';
+import type { ShapeStyle, TextStyle, ShapeType } from '../../interfaces/items';
 
 interface ToolsState {
     selectedTool: Tool;
@@ -15,8 +13,9 @@ const initialState: ToolsState = {
     selectedTool: 'POINTER',
     shapeType: 'rect',
     shapeStyle: {
-        fillColor: undefined,
+        lineWidth: 1,
         lineColor: 'black',
+        fillColor: 'transparent',
     },
     textStyle: {
         fontSize: 32,

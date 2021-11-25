@@ -1,23 +1,26 @@
 export type Point = 'P0' | 'P1' | 'P2' | 'P3';
 export type Align = 'start' | 'center' | 'end';
+type BoardItemType = 'note' | 'text' | 'shape';
+type ItemType = BoardItemType | 'chat';
+export type ShapeType = 'rect' | 'circle';
 
 interface ItemBase {
-    type: string;
+    type: ItemType;
     id?: string;
     creationDate?: Date;
 }
 
 export interface ShapeStyle {
-    lineWidth?: number;
-    lineColor?: string;
-    fillColor?: string;
+    lineWidth: number;
+    lineColor: string;
+    fillColor: string;
 }
 
 export interface TextStyle {
-    fontSize?: number;
-    fontFamily?: string;
-    hAlign?: Align;
-    vAlign?: Align;
+    fontSize: number;
+    fontFamily: string;
+    hAlign: Align;
+    vAlign: Align;
 }
 
 interface Coordinates {
@@ -46,12 +49,16 @@ export interface ChatMessage extends ItemBase {
     from: string;
 }
 
-export interface Rect extends ItemBase, ShapeStyle, Coordinates {
+interface ShapeBase extends ItemBase, ShapeStyle, Coordinates {
+    shapeType: ShapeType;
+}
+
+export interface Rect extends ShapeBase {
     type: 'shape';
     shapeType: 'rect';
 }
 
-export interface Circle extends ItemBase, ShapeStyle, Coordinates {
+export interface Circle extends ShapeBase {
     type: 'shape';
     shapeType: 'circle';
 }

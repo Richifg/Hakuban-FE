@@ -2,7 +2,7 @@ import { MouseEvent, WheelEvent } from 'react';
 import { store } from '../store/store';
 import { setCurrentAction, setCursorPosition, setCanvasSize, translateCanvas, scaleCanvas } from '../store/slices/boardSlice';
 import { addUserItem, setSelectedItem, setSelectedPoint, setDragOffset } from '../store/slices/itemsSlice';
-import { getItemResizePoints, getItemTranslatePoints, isPointInsideItem, getNewItem } from '../utils';
+import { getItemResizePoints, getItemTranslatePoints, isPointInsideItem, getNewShape } from '../utils';
 import getDetransformedCoordinates from './getDetransformedCoordinates';
 
 const { dispatch, getState } = store;
@@ -10,8 +10,8 @@ const { dispatch, getState } = store;
 const BoardStateMachine = {
     mouseDown(e: MouseEvent<HTMLDivElement>): void {
         const { currentAction, canvasTransform } = getState().board;
-        const { defaultItem, selectedItem, items, userItems } = getState().items;
-        const { selectedTool } = getState().tools;
+        const { selectedItem, items, userItems } = getState().items;
+        const { selectedTool, shapeStyle, shapeType } = getState().tools;
         const allItems = [...items, ...userItems];
         const [x, y] = [e.clientX, e.clientY];
         dispatch(setCursorPosition([x, y]));
@@ -31,7 +31,8 @@ const BoardStateMachine = {
                 }
                 if (selectedTool === 'SHAPE') {
                     dispatch(setSelectedPoint('P2'));
-                    const newItem = getNewItem(x, y, selectedTool, canvasTransform, defaultItem);
+                    const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
+                    const newItem = getNewShape(realX, realY, shapeType, shapeStyle);
                     dispatch(addUserItem(newItem));
                     dispatch(setCurrentAction('RESIZE'));
                 }

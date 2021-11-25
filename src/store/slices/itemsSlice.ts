@@ -1,20 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { BoardItem, Point } from '../../interfaces/items';
 
-const defaultItem: BoardItem = {
-    type: 'shape',
-    shapeType: 'rect',
-    x0: 0,
-    y0: 0,
-    x2: 0,
-    y2: 0,
-    lineColor: 'black',
-};
-
 interface ItemsState {
     items: BoardItem[];
     userItems: BoardItem[];
-    defaultItem: BoardItem;
     dragOffset: { x: number; y: number };
     selectedItem?: BoardItem;
     selectedPoint?: Point;
@@ -23,7 +12,6 @@ interface ItemsState {
 const initialState: ItemsState = {
     items: [],
     userItems: [],
-    defaultItem,
     dragOffset: { x: 0, y: 0 },
 };
 
@@ -63,9 +51,6 @@ const itemsSlice = createSlice({
             state.items = state.items.filter((item) => item.id !== action.payload);
             state.userItems = state.items.filter((item) => item.id !== action.payload);
         },
-        setDefaultItem: (state, action: PayloadAction<BoardItem>) => {
-            state.defaultItem = action.payload;
-        },
         setDragOffset: (state, action: PayloadAction<[x: number, y: number]>) => {
             const [x, y] = action.payload;
             state.dragOffset = { x, y };
@@ -79,7 +64,7 @@ const itemsSlice = createSlice({
     },
 });
 
-export const { setItems, addItem, addUserItem, deleteItem, setDefaultItem, setDragOffset, setSelectedItem, setSelectedPoint } =
+export const { setItems, addItem, addUserItem, deleteItem, setDragOffset, setSelectedItem, setSelectedPoint } =
     itemsSlice.actions;
 
 export default itemsSlice.reducer;

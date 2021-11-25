@@ -29,7 +29,9 @@ const useCanvas = (
         if (ctx) {
             ctx.save();
             if (item.type === 'shape') {
-                if (item?.lineColor) ctx.strokeStyle = item.lineColor;
+                ctx.strokeStyle = item.lineColor;
+                ctx.fillStyle = item.fillColor;
+                ctx.lineWidth = item.lineWidth;
                 if (item.shapeType === 'circle') drawCircle(item);
                 if (item.shapeType === 'rect') drawRect(item);
             } else if (item.type === 'text') {
@@ -41,27 +43,21 @@ const useCanvas = (
 
     const drawCircle = (circle: Circle) => {
         if (ctx) {
-            const { x0, y0, x2, y2, fillColor } = circle;
+            const { x0, y0, x2, y2 } = circle;
             ctx.beginPath();
             const [cX, cY] = [Math.floor((x0 + x2) / 2), Math.floor((y0 + y2) / 2)];
             const [rX, rY] = [Math.abs(x2 - cX), Math.abs(y2 - cY)];
             ctx.ellipse(cX, cY, rX, rY, 0, 0, Math.PI * 2);
-            if (fillColor) {
-                ctx.fillStyle = fillColor;
-                ctx.fill();
-            }
+            ctx.fill();
             ctx.stroke();
         }
     };
     const drawRect = (rect: Rect) => {
         if (ctx) {
-            const { x0, y0, x2, y2, fillColor } = rect;
+            const { x0, y0, x2, y2 } = rect;
             ctx.beginPath();
             ctx.rect(x0, y0, x2 - x0, y2 - y0);
-            if (fillColor) {
-                ctx.fillStyle = fillColor;
-                ctx.fill();
-            }
+            ctx.fill();
             ctx.stroke();
         }
     };
@@ -69,8 +65,8 @@ const useCanvas = (
     const drawText = (text: Text) => {
         if (ctx) {
             const { content, x0, y0, x2, y2, fontSize, fontFamily, hAlign, vAlign } = text;
-            if (fontSize && fontFamily) ctx.font = `${fontSize}px ${fontFamily}`;
-            if (hAlign) ctx.textAlign = hAlign;
+            ctx.font = `${fontSize}px ${fontFamily}`;
+            ctx.textAlign = hAlign;
             // clipping region for rendering text
             ctx.beginPath();
             ctx.rect(x0, y0, x2 - x0, y2 - y0);
