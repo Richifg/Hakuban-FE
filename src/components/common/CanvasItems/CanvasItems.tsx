@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { setCurrentAction, translateCanvas } from '../../../store/slices/boardSlice';
-import { useDispatch, useSelector, useCanvas, useMovementFriction } from '../../../hooks';
+import { useCanvas, useDispatch, useSelector, useMovementFriction } from '../../../hooks';
 import './CanvasItems.scss';
 
 const CanvasItems = (): React.ReactElement => {

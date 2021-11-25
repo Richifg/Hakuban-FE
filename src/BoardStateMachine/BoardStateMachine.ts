@@ -2,10 +2,24 @@ import { MouseEvent, WheelEvent } from 'react';
 import { store } from '../store/store';
 import { setCurrentAction, setCursorPosition, setCanvasSize, translateCanvas, scaleCanvas } from '../store/slices/boardSlice';
 import { addUserItem, setSelectedItem, setSelectedPoint, setDragOffset } from '../store/slices/itemsSlice';
-import { getItemResizePoints, getItemTranslatePoints, isPointInsideItem, getNewShape } from '../utils';
-import getDetransformedCoordinates from './getDetransformedCoordinates';
+import {
+    getItemResizePoints,
+    getItemTranslatePoints,
+    isPointInsideItem,
+    getNewShape,
+    getDetransformedCoordinates,
+} from '../utils';
 
 const { dispatch, getState } = store;
+
+/* 
+    Board is at all times in one of many possible states (IDLE, PAN, DRAG, DRAW, etc)
+    State machine does the following:
+        - receives user inputs like mouse, wheel and window resize events
+        - reads current state in addition to other variables from various store slices (e.g. selectedTool)
+        - updates the new state
+        - and also dispatches some actions like updating mouse position from events
+*/
 
 const BoardStateMachine = {
     mouseDown(e: MouseEvent<HTMLDivElement>): void {
@@ -47,8 +61,8 @@ const BoardStateMachine = {
                     dispatch(setDragOffset([realX - item.x0, realY - item.y0]));
                     dispatch(setCurrentAction('DRAG'));
                 } else {
-                    dispatch(setCurrentAction('PAN'));
                     dispatch(setSelectedItem());
+                    dispatch(setCurrentAction('PAN'));
                 }
                 break;
             default:

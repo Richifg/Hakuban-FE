@@ -1,6 +1,6 @@
 import React, { useLayoutEffect } from 'react';
 import { useSelector, useDebouncedCallback } from '../../../hooks';
-import { boardStateMachine as SM } from '../../../utils';
+import SM from '../../../BoardStateMachine/BoardStateMachine';
 import { EditPoints } from '../../common';
 
 import './BoardUI.scss';

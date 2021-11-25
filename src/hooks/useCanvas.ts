@@ -1,111 +1,37 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
-import type { Circle, Rect, Item, Text } from '../interfaces/items';
-import type { CanvasTransform, CanvasSize } from '../interfaces/board';
+import { useLayoutEffect, useEffect, useState } from 'react';
+import CanvasManager from '../CanvasManager/CanvasManager';
+import type { CanvasSize, CanvasTransform, Item } from '../interfaces';
 
-interface useCanvasReturn {
-    drawItem(item: Item): void;
-    transform(transformObj: CanvasTransform): void;
-    clear(): void;
-    width: number;
-    height: number;
-}
-
-const useCanvas = (
+function useCanvas(
     canvasRef: React.RefObject<HTMLCanvasElement>,
     canvasSize: CanvasSize,
     canvasTransform: CanvasTransform,
     items: Item[],
-): useCanvasReturn => {
-    const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
-    const { width, height } = canvasSize;
+): void {
+    const [manager, setManager] = useState<CanvasManager>();
 
     // capture the rendering context before first render
     useLayoutEffect(() => {
         const renderingContext = canvasRef.current?.getContext('2d');
-        if (renderingContext) setCtx(renderingContext);
+        if (renderingContext) {
+            const manager = new CanvasManager(renderingContext, canvasSize, canvasTransform, items);
+            setManager(manager);
+            manager.animate();
+        }
+        // stop animation when unmounting
+        return () => {
+            manager?.stop();
+        };
     }, []);
 
-    const drawItem = (item: Item) => {
-        if (ctx) {
-            ctx.save();
-            if (item.type === 'shape') {
-                ctx.strokeStyle = item.lineColor;
-                ctx.fillStyle = item.fillColor;
-                ctx.lineWidth = item.lineWidth;
-                if (item.shapeType === 'circle') drawCircle(item);
-                if (item.shapeType === 'rect') drawRect(item);
-            } else if (item.type === 'text') {
-                drawText(item);
-            }
-            ctx.restore();
-        }
-    };
-
-    const drawCircle = (circle: Circle) => {
-        if (ctx) {
-            const { x0, y0, x2, y2 } = circle;
-            ctx.beginPath();
-            const [cX, cY] = [Math.floor((x0 + x2) / 2), Math.floor((y0 + y2) / 2)];
-            const [rX, rY] = [Math.abs(x2 - cX), Math.abs(y2 - cY)];
-            ctx.ellipse(cX, cY, rX, rY, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-        }
-    };
-    const drawRect = (rect: Rect) => {
-        if (ctx) {
-            const { x0, y0, x2, y2 } = rect;
-            ctx.beginPath();
-            ctx.rect(x0, y0, x2 - x0, y2 - y0);
-            ctx.fill();
-            ctx.stroke();
-        }
-    };
-
-    const drawText = (text: Text) => {
-        if (ctx) {
-            const { content, x0, y0, x2, y2, fontSize, fontFamily, hAlign, vAlign } = text;
-            ctx.font = `${fontSize}px ${fontFamily}`;
-            ctx.textAlign = hAlign;
-            // clipping region for rendering text
-            ctx.beginPath();
-            ctx.rect(x0, y0, x2 - x0, y2 - y0);
-            ctx.clip();
-            // text alignment
-            let x: number;
-            if (hAlign === 'start') x = Math.min(x0, x2);
-            else if (hAlign === 'end') x = Math.max(x0, x2);
-            else x = (x0 + x2) / 2;
-            ctx.fillText(content, x, Math.max(y0, y2));
-        }
-    };
-
-    const transform = (transformObj: CanvasTransform) => {
-        const { scale, dX, dY } = transformObj;
-        ctx?.setTransform(scale, 0, 0, scale, dX, dY);
-    };
-
-    const clear = () => {
-        ctx?.save();
-        ctx?.setTransform(1, 0, 0, 1, 0, 0);
-        ctx?.clearRect(0, 0, width, height);
-        ctx?.restore();
-    };
-
-    // ##TODO maybe move this to a animationFrame thingy like the friction
+    // update manager variables
     useEffect(() => {
-        clear();
-        transform(canvasTransform);
-        items.forEach((item) => drawItem(item));
-    }, [canvasTransform, items]);
-
-    return {
-        drawItem,
-        transform,
-        clear,
-        width,
-        height,
-    };
-};
+        if (manager) {
+            manager.size = canvasSize;
+            manager.transform = canvasTransform;
+            manager.items = items;
+        }
+    }, [canvasSize, canvasTransform, items]);
+}
 
 export default useCanvas;
