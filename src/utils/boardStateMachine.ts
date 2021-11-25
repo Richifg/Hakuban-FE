@@ -9,8 +9,9 @@ const { dispatch, getState } = store;
 
 const BoardStateMachine = {
     mouseDown(e: MouseEvent<HTMLDivElement>): void {
-        const { currentAction, selectedTool, canvasTransform } = getState().board;
+        const { currentAction, canvasTransform } = getState().board;
         const { defaultItem, selectedItem, items, userItems } = getState().items;
+        const { selectedTool } = getState().tools;
         const allItems = [...items, ...userItems];
         const [x, y] = [e.clientX, e.clientY];
         dispatch(setCursorPosition([x, y]));
@@ -21,9 +22,9 @@ const BoardStateMachine = {
                     const item = allItems.find((item) => isPointInsideItem(x, y, item, canvasTransform));
                     if (item) {
                         dispatch(setSelectedItem(item));
-                        dispatch(setCurrentAction('DRAG'));
                         const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
                         dispatch(setDragOffset([realX - item.x0, realY - item.y0]));
+                        dispatch(setCurrentAction('DRAG'));
                     } else {
                         dispatch(setCurrentAction('PAN'));
                     }
@@ -65,14 +66,14 @@ const BoardStateMachine = {
                 dispatch(translateCanvas([x - cursorPosition.x, y - cursorPosition.y]));
                 break;
             case 'DRAG':
-                if (selectedItem?.type === 'shape') {
+                if (selectedItem) {
                     dispatch(setCursorPosition([x, y]));
                     const points = getItemTranslatePoints(selectedItem, dragOffset, x, y, canvasTransform);
                     dispatch(addUserItem({ ...selectedItem, ...points }));
                 }
                 break;
             case 'RESIZE':
-                if (selectedItem?.type === 'shape' && selectedPoint) {
+                if (selectedItem && selectedPoint) {
                     dispatch(setCursorPosition([x, y]));
                     const points = getItemResizePoints(selectedItem, selectedPoint, x, y, canvasTransform);
                     dispatch(addUserItem({ ...selectedItem, ...points }));

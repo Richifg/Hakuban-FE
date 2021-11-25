@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from '../../../hooks';
-import { setSelectedTool } from '../../../store/slices/boardSlice';
+import { setSelectedTool } from '../../../store/slices/toolSlice';
 import type { Tool } from '../../../interfaces/board';
 
 import './ToolsMenu.scss';
@@ -22,7 +22,7 @@ const tools: { name: Tool; icon: string }[] = [
 
 const ToolsMenu = (): React.ReactElement => {
     const dispatch = useDispatch();
-    const { selectedTool } = useSelector((s) => s.board);
+    const { selectedTool } = useSelector((s) => s.tools);
 
     const handleToolClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         const tool = e.currentTarget.value as Tool;

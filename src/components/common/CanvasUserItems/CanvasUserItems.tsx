@@ -7,7 +7,7 @@ const CanvasUserItems = (): React.ReactElement => {
     const { canvasSize, canvasTransform } = useSelector((s) => s.board);
     const { width, height } = canvasSize;
 
-    // controls canvas camera movement
+    // renders user items on every update
     useCanvas(canvasRef, canvasSize, canvasTransform, userItems);
 
     return (

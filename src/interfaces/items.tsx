@@ -1,4 +1,5 @@
 export type Point = 'P0' | 'P1' | 'P2' | 'P3';
+export type Align = 'start' | 'center' | 'end';
 
 interface ItemBase {
     type: string;
@@ -6,10 +7,17 @@ interface ItemBase {
     creationDate?: Date;
 }
 
-interface Style {
+export interface ShapeStyle {
     lineWidth?: number;
     lineColor?: string;
     fillColor?: string;
+}
+
+export interface TextStyle {
+    fontSize?: number;
+    fontFamily?: string;
+    hAlign?: Align;
+    vAlign?: Align;
 }
 
 interface Coordinates {
@@ -27,10 +35,9 @@ export interface Note extends ItemBase, Coordinates {
     color: string;
 }
 
-export interface Text extends ItemBase, Coordinates {
+export interface Text extends ItemBase, TextStyle, Coordinates {
     type: 'text';
     content: string;
-    fontSize: string;
 }
 
 export interface ChatMessage extends ItemBase {
@@ -39,12 +46,12 @@ export interface ChatMessage extends ItemBase {
     from: string;
 }
 
-export interface Rect extends ItemBase, Style, Coordinates {
+export interface Rect extends ItemBase, ShapeStyle, Coordinates {
     type: 'shape';
     shapeType: 'rect';
 }
 
-export interface Circle extends ItemBase, Style, Coordinates {
+export interface Circle extends ItemBase, ShapeStyle, Coordinates {
     type: 'shape';
     shapeType: 'circle';
 }

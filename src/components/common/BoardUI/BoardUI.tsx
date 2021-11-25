@@ -6,7 +6,8 @@ import { EditPoints } from '../../common';
 import './BoardUI.scss';
 
 const CanvasUI = (): React.ReactElement => {
-    const { canvasSize, cursorPosition, selectedTool, currentAction } = useSelector((s) => s.board);
+    const { canvasSize, cursorPosition, currentAction } = useSelector((s) => s.board);
+    const { selectedTool } = useSelector((s) => s.tools);
     const { width, height } = canvasSize;
     const tool = selectedTool.toLowerCase();
 
@@ -51,7 +52,7 @@ const CanvasUI = (): React.ReactElement => {
             onMouseUp={handleMouseUp}
             onWheel={handleWheel}
         >
-            <p className="temp">EDIT UI TEMP</p>
+            <p className="temp">Work In Progress!</p>
             <p className="cursor-position">
                 X: {cursorPosition.x} Y:{cursorPosition.y} {currentAction}
             </p>

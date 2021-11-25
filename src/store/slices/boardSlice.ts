@@ -1,8 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { Tool, Action, CanvasTransform } from '../../interfaces/board';
+import type { Action, CanvasTransform } from '../../interfaces/board';
 
 interface BoardState {
-    selectedTool: Tool;
     currentAction: Action;
     cursorPosition: { x: number; y: number };
     canvasTransform: CanvasTransform;
@@ -11,7 +10,6 @@ interface BoardState {
 }
 
 const initialState: BoardState = {
-    selectedTool: 'POINTER',
     currentAction: 'IDLE',
     cursorPosition: { x: 0, y: 0 },
     canvasTransform: { dX: 0, dY: 0, scale: 1 },
@@ -23,9 +21,6 @@ export const boardSlice = createSlice({
     name: 'board',
     initialState,
     reducers: {
-        setSelectedTool: (state, action: PayloadAction<Tool>) => {
-            state.selectedTool = action.payload;
-        },
         setCurrentAction: (state, action: PayloadAction<Action>) => {
             state.currentAction = action.payload;
         },
@@ -55,7 +50,6 @@ export const boardSlice = createSlice({
     },
 });
 
-export const { setSelectedTool, setCurrentAction, setCursorPosition, translateCanvas, scaleCanvas, setCanvasSize } =
-    boardSlice.actions;
+export const { setCurrentAction, setCursorPosition, translateCanvas, scaleCanvas, setCanvasSize } = boardSlice.actions;
 
 export default boardSlice.reducer;

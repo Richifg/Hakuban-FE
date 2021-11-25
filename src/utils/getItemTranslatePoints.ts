@@ -1,11 +1,11 @@
 import type { CanvasTransform } from '../interfaces/board';
-import type { Shape } from '../interfaces/items';
+import type { BoardItem } from '../interfaces/items';
 import { getDetransformedCoordinates } from './';
 
 type TranslatePoints = { x0: number; y0: number; x2: number; y2: number };
 
 function getItemTranslatePoints(
-    item: Shape,
+    item: BoardItem,
     offset: { x: number; y: number },
     newX: number,
     newY: number,

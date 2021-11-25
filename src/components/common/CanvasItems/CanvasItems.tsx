@@ -10,10 +10,10 @@ const CanvasItems = (): React.ReactElement => {
     const { canvasSize, canvasTransform, lastTranslate, currentAction } = useSelector((s) => s.board);
     const { width, height } = canvasSize;
 
-    // controls canvas camera movement
+    // renders items on every update
     useCanvas(canvasRef, canvasSize, canvasTransform, items);
 
-    // continue sliding with friction after user pans the camera
+    // controls camera slide after user pans the camera
     // ##TODO maybe this shouldn't be in Canvas, or even in a component??
     useMovementFriction(
         lastTranslate,

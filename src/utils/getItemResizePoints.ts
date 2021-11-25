@@ -1,11 +1,11 @@
-import type { Shape, Point } from '../interfaces/items';
+import type { BoardItem, Point } from '../interfaces/items';
 import type { CanvasTransform } from '../interfaces/board';
 import { getDetransformedCoordinates } from '.';
 
 type ResizePoints = { x0: number; y0: number; x2: number; y2: number };
 
 function getItemResizePoints(
-    item: Shape,
+    item: BoardItem,
     selectedPoint: Point,
     newX: number,
     newY: number,
