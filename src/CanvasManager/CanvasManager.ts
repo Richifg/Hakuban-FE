@@ -1,5 +1,8 @@
 import type { Circle, Rect, Item, Text } from '../interfaces/items';
 import type { CanvasTransform, CanvasSize } from '../interfaces/board';
+import { getWrappedTextLines } from '../utils';
+
+const LINE_HEIGHT = 5;
 
 /*
     Manages the animation cycle of a canvas html element, by constantly
@@ -57,18 +60,41 @@ class CanvasManager {
 
     drawText(text: Text): void {
         const { content, x0, y0, x2, y2, fontSize, fontFamily, hAlign, vAlign } = text;
+        // initial settings and text split into lines
         this.ctx.font = `${fontSize}px ${fontFamily}`;
         this.ctx.textAlign = hAlign;
+        this.ctx.textBaseline = 'top';
+        const maxWidth = Math.abs(x2 - x0);
+        const maxHeight = Math.abs(y2 - y0);
+        const textLines = getWrappedTextLines(content + '/nAnother Line here?', maxWidth, this.ctx);
+        // ##TODO posisbly simplify this if every line has the same measured height independent of used characters
+        const fullTextHeight =
+            textLines.reduce((totalHeight, line) => (totalHeight += this.ctx.measureText(line).actualBoundingBoxDescent), 0) +
+            LINE_HEIGHT * (textLines.length - 1);
+
         // clipping region for rendering text
         this.ctx.beginPath();
-        this.ctx.rect(x0, y0, x2 - x0, y2 - y0);
+        this.ctx.rect(x0, y0, maxWidth, maxHeight);
         this.ctx.clip();
-        // text alignment
+
+        // calculate x position for all lines of text
         let x: number;
         if (hAlign === 'start') x = Math.min(x0, x2);
         else if (hAlign === 'end') x = Math.max(x0, x2);
-        else x = (x0 + x2) / 2;
-        this.ctx.fillText(content, x, Math.max(y0, y2));
+        else x = Math.min(x0, x2) + maxWidth / 2;
+
+        // calculate y position for the first line of text
+        let y: number;
+        if (vAlign === 'start') y = Math.min(y0, y2);
+        else if (vAlign === 'end') y = Math.max(y0, y2) - fullTextHeight;
+        else y = Math.min(y0, y2) + (maxHeight - fullTextHeight) / 2;
+
+        // draw every line, recalculating each time the next y position
+        textLines.forEach((text) => {
+            this.ctx.fillText(text, x, y);
+            const lineHeight = this.ctx.measureText(text).actualBoundingBoxDescent;
+            y += lineHeight + LINE_HEIGHT;
+        });
     }
 
     transformCanvas(): void {
