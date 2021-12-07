@@ -53,7 +53,6 @@ const BoardStateMachine = {
                 break;
             case 'EDIT':
                 // ##TODO how to determine if a click was inside an element quickly? cool algorithm shit
-                // possibly RESIZE or DRAG depending on point clicked
                 const item = allItems.find((item) => isPointInsideItem(x, y, item, canvasTransform));
                 if (item && selectedTool === 'POINTER') {
                     if (item.id !== selectedItem?.id) dispatch(setSelectedItem(item));
@@ -75,7 +74,6 @@ const BoardStateMachine = {
         const { selectedItem, selectedPoint, dragOffset } = getState().items;
         const [x, y] = [e.clientX, e.clientY];
         switch (currentAction) {
-            // ##TODO possibly a case IDLE checking if mouseButton is clicked and transition to PAN
             case 'PAN':
                 dispatch(setCursorPosition([x, y]));
                 dispatch(translateCanvas([x - cursorPosition.x, y - cursorPosition.y]));
