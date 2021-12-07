@@ -1,6 +1,6 @@
 import { MouseEvent, WheelEvent } from 'react';
 import { store } from '../store/store';
-import { setCurrentAction, setCursorPosition, setCanvasSize, translateCanvas, scaleCanvas } from '../store/slices/boardSlice';
+import { setCurrentAction, setCursorPosition, setCanvasSize, translateCanvas, scaleCanvasTo } from '../store/slices/boardSlice';
 import { addUserItem, setSelectedItem, setSelectedPoint, setDragOffset } from '../store/slices/itemsSlice';
 import {
     getItemResizePoints,
@@ -8,6 +8,7 @@ import {
     isPointInsideItem,
     getNewShape,
     getDetransformedCoordinates,
+    getTransformedCoordinates,
 } from '../utils';
 
 const { dispatch, getState } = store;
@@ -73,9 +74,9 @@ const BoardStateMachine = {
         const { currentAction, cursorPosition, canvasTransform } = getState().board;
         const { selectedItem, selectedPoint, dragOffset } = getState().items;
         const [x, y] = [e.clientX, e.clientY];
+        dispatch(setCursorPosition([x, y]));
         switch (currentAction) {
             case 'PAN':
-                dispatch(setCursorPosition([x, y]));
                 dispatch(translateCanvas([x - cursorPosition.x, y - cursorPosition.y]));
                 break;
             case 'DRAG':
@@ -114,9 +115,18 @@ const BoardStateMachine = {
     },
 
     mouseWheel(e: WheelEvent<HTMLDivElement>): void {
-        // ## TODO: turn mouse wheel sensitity into a constant. Also it should build up slightly
-        const delta = -Math.round(e.deltaY) * 0.0005;
-        dispatch(scaleCanvas(delta));
+        const { canvasTransform, currentAction } = getState().board;
+        if (currentAction === 'IDLE') dispatch(setCurrentAction('IDLE'));
+        // calculate new scale
+        const delta = -Math.round(e.deltaY) * 0.001;
+        const scale = canvasTransform.scale + delta;
+        // translate canvas so cursor remains in the same relative position
+        const [x, y] = [e.clientX, e.clientY];
+        const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
+        const [newX, newY] = getTransformedCoordinates(realX, realY, { ...canvasTransform, scale });
+        const [dX, dY] = [x - newX, y - newY];
+        dispatch(scaleCanvasTo(scale));
+        dispatch(translateCanvas([dX, dY]));
     },
 
     windowResize(): void {

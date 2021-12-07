@@ -37,6 +37,11 @@ export const boardSlice = createSlice({
                 dY: state.canvasTransform.dY + dY,
             };
         },
+        tranlateCanvasTo: (state, action: PayloadAction<[dX: number, dY: number]>) => {
+            const [dX, dY] = action.payload;
+            state.lastTranslate = state.canvasTransform;
+            state.canvasTransform = { ...state.canvasTransform, dX, dY };
+        },
         scaleCanvas: (state, action: PayloadAction<number>) => {
             const { canvasTransform } = state;
             state.canvasTransform = {
@@ -44,12 +49,25 @@ export const boardSlice = createSlice({
                 scale: canvasTransform.scale + action.payload,
             };
         },
+        scaleCanvasTo: (state, action: PayloadAction<number>) => {
+            const { canvasTransform } = state;
+            const scale = action.payload;
+            state.canvasTransform = { ...canvasTransform, scale };
+        },
         setCanvasSize: (state, action: PayloadAction<{ width: number; height: number }>) => {
             state.canvasSize = action.payload;
         },
     },
 });
 
-export const { setCurrentAction, setCursorPosition, translateCanvas, scaleCanvas, setCanvasSize } = boardSlice.actions;
+export const {
+    setCurrentAction,
+    setCursorPosition,
+    translateCanvas,
+    tranlateCanvasTo,
+    scaleCanvas,
+    scaleCanvasTo,
+    setCanvasSize,
+} = boardSlice.actions;
 
 export default boardSlice.reducer;
