@@ -1,7 +1,7 @@
 import React, { useLayoutEffect } from 'react';
 import { useSelector, useDebouncedCallback } from '../../../hooks';
 import SM from '../../../BoardStateMachine/BoardStateMachine';
-import { EditPoints } from '../../common';
+import { EditPoints, TextEditor } from '../../common';
 
 import './BoardUI.scss';
 
@@ -57,6 +57,7 @@ const CanvasUI = (): React.ReactElement => {
                 X: {cursorPosition.x} Y:{cursorPosition.y} {currentAction}
             </p>
             <EditPoints />
+            <TextEditor />
         </div>
     );
 };

@@ -1,0 +1,9 @@
+.text-editor {
+    border: 1px solid red;
+    padding: 5px;
+    width: fit-content;
+
+    textarea {
+        resize: none;
+    }
+}
