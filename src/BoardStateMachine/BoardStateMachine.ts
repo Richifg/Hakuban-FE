@@ -74,9 +74,9 @@ const BoardStateMachine = {
         const { currentAction, cursorPosition, canvasTransform } = getState().board;
         const { selectedItem, selectedPoint, dragOffset } = getState().items;
         const [x, y] = [e.clientX, e.clientY];
-        dispatch(setCursorPosition([x, y]));
         switch (currentAction) {
             case 'PAN':
+                dispatch(setCursorPosition([x, y]));
                 dispatch(translateCanvas([x - cursorPosition.x, y - cursorPosition.y]));
                 break;
             case 'DRAG':

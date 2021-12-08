@@ -61,6 +61,7 @@ class WebSocketService {
     }
 
     // TODO: remove id from the service, it should be a parameter of sendMessage
+    // what does this comment even mean?
     sendMessage(text: string): void {
         const message: WSMessage = {
             type: 'item',
