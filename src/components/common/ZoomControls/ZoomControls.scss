@@ -1,0 +1,18 @@
+.zoom-controls {
+    display: flex;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid black;
+
+    .zoom-button {
+        background-color: transparent;
+        border: none;
+        &:hover {
+            background-color: #CCC;
+        }
+    }
+
+    .zoom-display {
+        margin: 0;
+    }
+}
