@@ -52,8 +52,10 @@ const BoardStateMachine = {
                     dispatch(setCurrentAction('RESIZE'));
                 }
                 break;
+            case 'WRITE':
             case 'EDIT':
-                // ##TODO how to determine if a click was inside an element quickly? cool algorithm shit
+                // ##TODO how to determine if a click was inside an element quickly?
+                // also how about staking order of elementes
                 const item = allItems.find((item) => isPointInsideItem(x, y, item, canvasTransform));
                 if (item && selectedTool === 'POINTER') {
                     if (item.id !== selectedItem?.id) dispatch(setSelectedItem(item));
@@ -108,6 +110,17 @@ const BoardStateMachine = {
                 break;
             case 'RESIZE':
                 dispatch(setCurrentAction('EDIT'));
+                break;
+            default:
+                break;
+        }
+    },
+
+    mouseDoubleClick(): void {
+        const { currentAction } = getState().board;
+        switch (currentAction) {
+            case 'EDIT':
+                dispatch(setCurrentAction('WRITE'));
                 break;
             default:
                 break;

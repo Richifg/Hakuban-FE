@@ -61,7 +61,7 @@ class CanvasManager {
     drawText(text: Text): void {
         const { content, x0, y0, x2, y2, fontFamily, fontSize, vAlign, hAlign } = text;
         // initial settings
-        this.ctx.font = `italic bold${fontSize}px ${fontFamily}`;
+        this.ctx.font = `${fontSize}px ${fontFamily}`;
         this.ctx.textAlign = hAlign;
         this.ctx.textBaseline = 'top';
         const [maxWidth, maxHeight] = [Math.abs(x2 - x0), Math.abs(y2 - y0)];

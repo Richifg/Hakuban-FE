@@ -33,11 +33,11 @@ export const boardSlice = createSlice({
             state.lastTranslate = { dX, dY };
             state.canvasTransform = {
                 ...state.canvasTransform,
-                dX: state.canvasTransform.dX + dX,
-                dY: state.canvasTransform.dY + dY,
+                dX: Math.round(state.canvasTransform.dX + dX),
+                dY: Math.round(state.canvasTransform.dY + dY),
             };
         },
-        tranlateCanvasTo: (state, action: PayloadAction<[dX: number, dY: number]>) => {
+        translateCanvasTo: (state, action: PayloadAction<[dX: number, dY: number]>) => {
             const [dX, dY] = action.payload;
             state.lastTranslate = state.canvasTransform;
             state.canvasTransform = { ...state.canvasTransform, dX, dY };
@@ -51,7 +51,7 @@ export const boardSlice = createSlice({
         },
         scaleCanvasTo: (state, action: PayloadAction<number>) => {
             const { canvasTransform } = state;
-            const scale = action.payload;
+            const scale = parseFloat(action.payload.toFixed(2));
             state.canvasTransform = { ...canvasTransform, scale };
         },
         setCanvasSize: (state, action: PayloadAction<{ width: number; height: number }>) => {
@@ -64,7 +64,7 @@ export const {
     setCurrentAction,
     setCursorPosition,
     translateCanvas,
-    tranlateCanvasTo,
+    translateCanvasTo,
     scaleCanvas,
     scaleCanvasTo,
     setCanvasSize,

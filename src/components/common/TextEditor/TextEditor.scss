@@ -1,9 +1,8 @@
 .text-editor {
+    left: 0;
+    top: 0;
+    position: absolute;
     border: 1px solid red;
-    padding: 5px;
-    width: fit-content;
-
-    textarea {
-        resize: none;
-    }
+    overflow: hidden;
+    user-select: none;
 }

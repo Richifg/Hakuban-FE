@@ -28,6 +28,9 @@ const CanvasUI = (): React.ReactElement => {
         e.persist();
         SM.mouseUp(e);
     };
+    const handleDoubleClick = () => {
+        SM.mouseDoubleClick();
+    };
     const handleMouseMove = useDebouncedCallback(
         (e: React.MouseEvent<HTMLDivElement>) => {
             e.persist;
@@ -49,6 +52,7 @@ const CanvasUI = (): React.ReactElement => {
             style={{ width, height }}
             onMouseMove={handleMouseMove}
             onMouseDown={handleMouseDown}
+            onDoubleClick={handleDoubleClick}
             onMouseUp={handleMouseUp}
             onWheel={handleWheel}
         >
