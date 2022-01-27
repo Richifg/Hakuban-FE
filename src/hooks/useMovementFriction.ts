@@ -3,6 +3,8 @@ import { useEffect, useRef } from 'react';
 const FRICTION = 0.01;
 const MIN_DV = 0.5;
 
+// TODO: why did I made thi a hook?
+
 const useMovementFriction = (
     currentdV: { dX: number; dY: number },
     isActive: boolean,

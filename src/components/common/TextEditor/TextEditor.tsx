@@ -30,16 +30,15 @@ const TextEditor = ({ initText }: TextEditor): React.ReactElement => {
 
     const handleChange = (e: React.ChangeEvent<HTMLDivElement>) => {
         setText(e.currentTarget.innerHTML);
-        // console.log(e.currentTarget.innerHTML);
         // console.log(e.currentTarget.innerText);
     };
 
-    const { dX, dY, scale } = canvasTransform;
+    const { scale } = canvasTransform;
     if (!selectedItem || currentAction !== 'WRITE') return <div />;
     return (
         <div
             className="text-editor"
-            style={{ width: w, height: h, transform: `translate(${dX}px, ${dY}px)  scale(${scale})` }}
+            style={{ left: x, top: y, width: w, height: h, transform: `scale(${scale})` }}
             onMouseDown={handleMouseDown}
         >
             <div
