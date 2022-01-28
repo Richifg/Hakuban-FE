@@ -1,9 +1,7 @@
 export type Point = 'P0' | 'P1' | 'P2' | 'P3';
-export type Align = 'start' | 'center' | 'end';
+
 type BoardItemType = 'note' | 'text' | 'shape';
 type ItemType = BoardItemType | 'chat';
-export type ShapeType = 'rect' | 'circle';
-
 interface ItemBase {
     type: ItemType;
     id?: string;
@@ -16,41 +14,41 @@ export interface ShapeStyle {
     fillColor: string;
 }
 
+export type Align = 'start' | 'center' | 'end';
 export interface TextStyle {
     fontSize: number;
     fontFamily: string;
+    color: string;
     hAlign: Align;
     vAlign: Align;
 }
 
-interface Coordinates {
+export interface Coordinates {
     x0: number;
     y0: number;
     x2: number;
     y2: number;
 }
 
+export interface TextData extends TextStyle {
+    content: string;
+}
+
 export interface Note extends ItemBase, Coordinates {
     type: 'note';
-    content: string;
-    height: number;
-    width: number;
     color: string;
+    text?: TextData;
 }
 
-export interface Text extends ItemBase, TextStyle, Coordinates {
+export interface Text extends ItemBase, Coordinates {
     type: 'text';
-    content: string;
+    text: TextData;
 }
 
-export interface ChatMessage extends ItemBase {
-    type: 'chat';
-    content: string;
-    from: string;
-}
-
+export type ShapeType = 'rect' | 'circle';
 interface ShapeBase extends ItemBase, ShapeStyle, Coordinates {
     shapeType: ShapeType;
+    text?: TextData;
 }
 
 export interface Rect extends ShapeBase {
@@ -64,6 +62,12 @@ export interface Circle extends ShapeBase {
 }
 
 export type Shape = Circle | Rect;
+
+export interface ChatMessage extends ItemBase {
+    type: 'chat';
+    content: string;
+    from: string;
+}
 
 // Items created by users
 export type BoardItem = Note | Text | Shape;

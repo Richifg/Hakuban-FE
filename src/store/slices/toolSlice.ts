@@ -20,6 +20,7 @@ const initialState: ToolsState = {
     textStyle: {
         fontSize: 32,
         fontFamily: 'serif',
+        color: 'black',
         hAlign: 'start',
         vAlign: 'start',
     },
