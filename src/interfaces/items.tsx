@@ -21,6 +21,8 @@ export interface TextStyle {
     color: string;
     hAlign: Align;
     vAlign: Align;
+    italics?: boolean;
+    bold?: boolean;
 }
 
 export interface Coordinates {

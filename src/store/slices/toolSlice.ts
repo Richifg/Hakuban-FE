@@ -18,11 +18,11 @@ const initialState: ToolsState = {
         fillColor: 'transparent',
     },
     textStyle: {
-        fontSize: 32,
+        fontSize: 20,
         fontFamily: 'serif',
         color: 'black',
-        hAlign: 'start',
-        vAlign: 'start',
+        hAlign: 'center',
+        vAlign: 'center',
     },
 };
 

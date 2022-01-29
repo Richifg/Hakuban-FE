@@ -10,5 +10,7 @@
 
     .text {
         height: inherit;
+        display: table-cell;
+        word-break: break-word;
     }
 }
