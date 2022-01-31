@@ -1,4 +1,4 @@
-import type { Circle, Rect, Item, Text } from '../interfaces/items';
+import type { Circle, Rect, BoardItem, TextData, Coordinates } from '../interfaces/items';
 import type { CanvasTransform, CanvasSize } from '../interfaces/board';
 import { getWrappedTextLines } from '../utils';
 
@@ -8,7 +8,7 @@ const LINE_HEIGHT = 1.1; // em
     Manages the animation cycle of a canvas html element by constantly:
      - clearing screen
      - transforming canvas (scale, translate)
-     - and drawing items on screen
+     - and drawing items on screen 
     Uses animationFrames to keep a consistent framerate 
 */
 
@@ -16,26 +16,29 @@ class CanvasManager {
     private ctx: CanvasRenderingContext2D;
     size: CanvasSize;
     transform: CanvasTransform;
-    items: Item[];
+    items: BoardItem[];
     animationId?: number;
 
-    constructor(ctx: CanvasRenderingContext2D, size: CanvasSize, transform: CanvasTransform, items: Item[]) {
+    constructor(ctx: CanvasRenderingContext2D, size: CanvasSize, transform: CanvasTransform, items: BoardItem[]) {
         this.ctx = ctx;
         this.size = size;
         this.transform = transform;
         this.items = items;
     }
 
-    drawItem(item: Item): void {
+    drawItem(item: BoardItem): void {
         this.ctx.save();
-        if (item.type === 'shape') {
+        const { type, x0, x2, y0, y2 } = item;
+        if (type === 'shape') {
+            const { shapeType, text } = item;
             this.ctx.strokeStyle = item.lineColor;
             this.ctx.fillStyle = item.fillColor;
             this.ctx.lineWidth = item.lineWidth;
-            if (item.shapeType === 'circle') this.drawCircle(item);
-            if (item.shapeType === 'rect') this.drawRect(item);
-        } else if (item.type === 'text') {
-            this.drawText(item);
+            if (shapeType === 'circle') this.drawCircle(item);
+            else if (shapeType === 'rect') this.drawRect(item);
+            if (text && !text.skipRendering) this.drawText(text, { x0, x2, y0, y2 });
+        } else if (type === 'text' && !item.text.skipRendering) {
+            this.drawText(item.text, { x0, x2, y0, y2 });
         }
         this.ctx.restore();
     }
@@ -58,10 +61,12 @@ class CanvasManager {
         this.ctx.stroke();
     }
 
-    drawText(text: Text): void {
-        const { content, x0, y0, x2, y2, fontFamily, fontSize, vAlign, hAlign } = text;
+    drawText(text: TextData, coordinates: Coordinates): void {
+        const { content, color, fontFamily, fontSize, vAlign, hAlign, bold } = text;
+        const { x0, y0, x2, y2 } = coordinates;
         // initial settings
-        this.ctx.font = `${fontSize}px ${fontFamily}`;
+        this.ctx.font = `${bold ? 'bold' : ''} ${fontSize}px ${fontFamily}`;
+        this.ctx.fillStyle = color;
         this.ctx.textAlign = hAlign;
         this.ctx.textBaseline = 'top';
         const [maxWidth, maxHeight] = [Math.abs(x2 - x0), Math.abs(y2 - y0)];

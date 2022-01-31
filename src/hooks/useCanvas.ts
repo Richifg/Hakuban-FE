@@ -1,12 +1,12 @@
 import { useLayoutEffect, useEffect, useState } from 'react';
 import CanvasManager from '../CanvasManager/CanvasManager';
-import type { CanvasSize, CanvasTransform, Item } from '../interfaces';
+import type { CanvasSize, CanvasTransform, BoardItem } from '../interfaces';
 
 function useCanvas(
     canvasRef: React.RefObject<HTMLCanvasElement>,
     canvasSize: CanvasSize,
     canvasTransform: CanvasTransform,
-    items: Item[],
+    items: BoardItem[],
 ): void {
     const [manager, setManager] = useState<CanvasManager>();
 

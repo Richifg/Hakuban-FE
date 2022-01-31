@@ -7,6 +7,7 @@ interface BoardState {
     canvasTransform: CanvasTransform;
     lastTranslate: { dX: number; dY: number };
     canvasSize: { width: number; height: number };
+    isWriting: boolean;
 }
 
 const initialState: BoardState = {
@@ -15,6 +16,7 @@ const initialState: BoardState = {
     canvasTransform: { dX: 0, dY: 0, scale: 1 },
     lastTranslate: { dX: 0, dY: 0 },
     canvasSize: { width: 0, height: 0 },
+    isWriting: false,
 };
 
 export const boardSlice = createSlice({
@@ -33,11 +35,11 @@ export const boardSlice = createSlice({
             state.lastTranslate = { dX, dY };
             state.canvasTransform = {
                 ...state.canvasTransform,
-                dX: state.canvasTransform.dX + dX,
-                dY: state.canvasTransform.dY + dY,
+                dX: Math.round(state.canvasTransform.dX + dX),
+                dY: Math.round(state.canvasTransform.dY + dY),
             };
         },
-        tranlateCanvasTo: (state, action: PayloadAction<[dX: number, dY: number]>) => {
+        translateCanvasTo: (state, action: PayloadAction<[dX: number, dY: number]>) => {
             const [dX, dY] = action.payload;
             state.lastTranslate = state.canvasTransform;
             state.canvasTransform = { ...state.canvasTransform, dX, dY };
@@ -51,11 +53,14 @@ export const boardSlice = createSlice({
         },
         scaleCanvasTo: (state, action: PayloadAction<number>) => {
             const { canvasTransform } = state;
-            const scale = action.payload;
+            const scale = parseFloat(action.payload.toFixed(2));
             state.canvasTransform = { ...canvasTransform, scale };
         },
         setCanvasSize: (state, action: PayloadAction<{ width: number; height: number }>) => {
             state.canvasSize = action.payload;
+        },
+        setIsWriting: (state, action: PayloadAction<boolean>) => {
+            state.isWriting = action.payload;
         },
     },
 });
@@ -64,10 +69,11 @@ export const {
     setCurrentAction,
     setCursorPosition,
     translateCanvas,
-    tranlateCanvasTo,
+    translateCanvasTo,
     scaleCanvas,
     scaleCanvasTo,
     setCanvasSize,
+    setIsWriting,
 } = boardSlice.actions;
 
 export default boardSlice.reducer;

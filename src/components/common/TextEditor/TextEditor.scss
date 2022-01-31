@@ -1,0 +1,16 @@
+.text-editor {
+    left: 0;
+    top: 0;
+    position: absolute;
+    transform-origin: top left;
+    box-sizing: border-box;
+    border: 1px solid red;
+    overflow: hidden;
+    user-select: none;
+
+    .text {
+        height: inherit;
+        display: table-cell;
+        word-break: break-word;
+    }
+}
