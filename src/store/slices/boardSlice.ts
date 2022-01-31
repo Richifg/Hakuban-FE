@@ -7,6 +7,7 @@ interface BoardState {
     canvasTransform: CanvasTransform;
     lastTranslate: { dX: number; dY: number };
     canvasSize: { width: number; height: number };
+    isWriting: boolean;
 }
 
 const initialState: BoardState = {
@@ -15,6 +16,7 @@ const initialState: BoardState = {
     canvasTransform: { dX: 0, dY: 0, scale: 1 },
     lastTranslate: { dX: 0, dY: 0 },
     canvasSize: { width: 0, height: 0 },
+    isWriting: false,
 };
 
 export const boardSlice = createSlice({
@@ -57,6 +59,9 @@ export const boardSlice = createSlice({
         setCanvasSize: (state, action: PayloadAction<{ width: number; height: number }>) => {
             state.canvasSize = action.payload;
         },
+        setIsWriting: (state, action: PayloadAction<boolean>) => {
+            state.isWriting = action.payload;
+        },
     },
 });
 
@@ -68,6 +73,7 @@ export const {
     scaleCanvas,
     scaleCanvasTo,
     setCanvasSize,
+    setIsWriting,
 } = boardSlice.actions;
 
 export default boardSlice.reducer;

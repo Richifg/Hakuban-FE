@@ -23,6 +23,7 @@ export interface TextStyle {
     vAlign: Align;
     italics?: boolean;
     bold?: boolean;
+    skipRendering?: boolean;
 }
 
 export interface Coordinates {
@@ -49,17 +50,16 @@ export interface Text extends ItemBase, Coordinates {
 
 export type ShapeType = 'rect' | 'circle';
 interface ShapeBase extends ItemBase, ShapeStyle, Coordinates {
+    type: 'shape';
     shapeType: ShapeType;
     text?: TextData;
 }
 
 export interface Rect extends ShapeBase {
-    type: 'shape';
     shapeType: 'rect';
 }
 
 export interface Circle extends ShapeBase {
-    type: 'shape';
     shapeType: 'circle';
 }
 

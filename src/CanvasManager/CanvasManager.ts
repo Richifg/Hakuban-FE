@@ -36,8 +36,8 @@ class CanvasManager {
             this.ctx.lineWidth = item.lineWidth;
             if (shapeType === 'circle') this.drawCircle(item);
             else if (shapeType === 'rect') this.drawRect(item);
-            if (text) this.drawText(text, { x0, x2, y0, y2 });
-        } else if (type === 'text') {
+            if (text && !text.skipRendering) this.drawText(text, { x0, x2, y0, y2 });
+        } else if (type === 'text' && !item.text.skipRendering) {
             this.drawText(item.text, { x0, x2, y0, y2 });
         }
         this.ctx.restore();

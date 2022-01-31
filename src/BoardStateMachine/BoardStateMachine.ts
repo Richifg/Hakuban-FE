@@ -1,6 +1,13 @@
 import { MouseEvent, WheelEvent } from 'react';
 import { store } from '../store/store';
-import { setCurrentAction, setCursorPosition, setCanvasSize, translateCanvas, scaleCanvasTo } from '../store/slices/boardSlice';
+import {
+    setCurrentAction,
+    setCursorPosition,
+    setCanvasSize,
+    translateCanvas,
+    scaleCanvasTo,
+    setIsWriting,
+} from '../store/slices/boardSlice';
 import { addUserItem, setSelectedItem, setSelectedPoint, setDragOffset } from '../store/slices/itemsSlice';
 import {
     getItemResizePoints,
@@ -52,17 +59,20 @@ const BoardStateMachine = {
                     dispatch(setCurrentAction('RESIZE'));
                 }
                 break;
-            case 'WRITE':
             case 'EDIT':
                 // ##TODO how to determine if a click was inside an element quickly?
                 // also how about staking order of elementes
                 const item = allItems.find((item) => isPointInsideItem(x, y, item, canvasTransform));
                 if (item && selectedTool === 'POINTER') {
-                    if (item.id !== selectedItem?.id) dispatch(setSelectedItem(item));
+                    if (item.id !== selectedItem?.id) {
+                        dispatch(setSelectedItem(item));
+                        dispatch(setIsWriting(false));
+                    } else dispatch(setIsWriting(true));
                     const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
                     dispatch(setDragOffset([realX - item.x0, realY - item.y0]));
                     dispatch(setCurrentAction('DRAG'));
                 } else {
+                    dispatch(setIsWriting(false));
                     dispatch(setSelectedItem());
                     dispatch(setCurrentAction('PAN'));
                 }
@@ -86,6 +96,7 @@ const BoardStateMachine = {
                     dispatch(setCursorPosition([x, y]));
                     const points = getItemTranslatePoints(selectedItem, dragOffset, x, y, canvasTransform);
                     dispatch(addUserItem({ ...selectedItem, ...points }));
+                    dispatch(setIsWriting(false));
                 }
                 break;
             case 'RESIZE':
@@ -110,17 +121,6 @@ const BoardStateMachine = {
                 break;
             case 'RESIZE':
                 dispatch(setCurrentAction('EDIT'));
-                break;
-            default:
-                break;
-        }
-    },
-
-    mouseDoubleClick(): void {
-        const { currentAction } = getState().board;
-        switch (currentAction) {
-            case 'EDIT':
-                dispatch(setCurrentAction('WRITE'));
                 break;
             default:
                 break;
