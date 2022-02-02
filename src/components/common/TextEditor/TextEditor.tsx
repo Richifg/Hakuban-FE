@@ -1,11 +1,12 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { getTransformedCoordinates } from '../../../utils';
+import { getItemPositionCSSVars } from '../../../utils';
 import { useSelector, useDispatch } from '../../../hooks';
 import { addUserItem } from '../../../store/slices/itemsSlice';
 import { Align, BoardItem } from '../../../interfaces';
 
 import './TextEditor.scss';
 
+// ##TODO maybe should return earlier when no item is selected to avoid all position calculations when moving canvas around
 const TextEditor = (): React.ReactElement => {
     const dispatch = useDispatch();
     const { canvasTransform, isWriting } = useSelector((s) => s.board);
@@ -53,14 +54,10 @@ const TextEditor = (): React.ReactElement => {
     }, [selectedItem, textStyle]);
 
     // css position vars for texteditor
-    const [left, top, width, height]: [number, number, number, number] = useMemo(() => {
-        if (selectedItem) {
-            const { x0, y0, x2, y2 } = selectedItem;
-            const [x, y] = [Math.min(x0, x2), Math.min(y0, y2)];
-            return [...getTransformedCoordinates(x, y, canvasTransform), Math.abs(x0 - x2), Math.abs(y0 - y2)];
-        }
-        return [0, 0, 0, 0];
-    }, [selectedItem, canvasTransform]);
+    const { left, top, width, height } = useMemo(
+        () => getItemPositionCSSVars(canvasTransform, selectedItem),
+        [canvasTransform, selectedItem],
+    );
 
     const handleMouseDown = (e: React.MouseEvent) => e.stopPropagation();
 
@@ -68,7 +65,7 @@ const TextEditor = (): React.ReactElement => {
         setHtmlText(e.currentTarget.innerHTML);
     };
 
-    if (!isWriting || !selectedItem) return <div />;
+    if (!isWriting || !selectedItem) return <></>;
 
     const { scale } = canvasTransform;
     return (

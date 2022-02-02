@@ -1,7 +1,7 @@
 import React, { useLayoutEffect } from 'react';
 import { useSelector, useDebouncedCallback } from '../../../hooks';
 import SM from '../../../BoardStateMachine/BoardStateMachine';
-import { EditPoints, TextEditor } from '../../common';
+import { EditPoints, TextEditor, StylesMenu } from '../../common';
 
 import './BoardUI.scss';
 
@@ -58,6 +58,7 @@ const CanvasUI = (): React.ReactElement => {
             </p>
             <EditPoints />
             <TextEditor />
+            <StylesMenu />
         </div>
     );
 };
