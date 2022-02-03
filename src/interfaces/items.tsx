@@ -21,7 +21,7 @@ export interface TextStyle {
     color: string;
     hAlign: Align;
     vAlign: Align;
-    italics?: boolean;
+    italic?: boolean;
     bold?: boolean;
     skipRendering?: boolean;
 }

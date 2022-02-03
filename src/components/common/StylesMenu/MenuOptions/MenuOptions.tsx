@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from '../../../../hooks';
-import { AlignmentSelector, ColorSelector, FontSizeSelector, LineSelector } from '../';
+import { AlignmentSelector, ColorSelector, FontSizeSelector, LineSelector, TextStyleSelector } from '../';
 import { Align, BoardItem } from '../../../../interfaces';
 import { addUserItem } from '../../../../store/slices/itemsSlice';
 import './MenuOptions.scss';
@@ -20,7 +20,7 @@ const MenuOptions = ({ item }: MenuOptions): React.ReactElement => {
         }
     };
 
-    const handleNestedChange = (value: string | Align | number, key: string) => {
+    const handleNestedChange = (value: string | Align | number | boolean, key: string) => {
         if (key in textStyle) {
             const text = item.text || { ...textStyle, content: '' };
             const newItem = { ...item, text: { ...text, [key]: value } };
@@ -41,6 +41,13 @@ const MenuOptions = ({ item }: MenuOptions): React.ReactElement => {
                     <AlignmentSelector onChange={handleNestedChange} styleKey="hAlign" />
                     <ColorSelector onChange={handleNestedChange} styleKey="color" />
                     <FontSizeSelector onChange={handleNestedChange} styleKey="fontSize" value={item.text.fontSize} />
+                    <TextStyleSelector
+                        onChange={handleNestedChange}
+                        isBold={item.text.bold}
+                        isItalic={item.text.italic}
+                        boldKey="bold"
+                        italicKey="italic"
+                    />
                 </>
             )}
         </div>

@@ -47,9 +47,9 @@ const TextEditor = (): React.ReactElement => {
     // css style vars for texteditor
     const [color, font, textAlign, verticalAlign]: [string, string, Align, string] = useMemo(() => {
         const source = selectedItem?.text || textStyle;
-        const { color, fontSize, fontFamily, hAlign, vAlign, bold } = source;
+        const { color, fontSize, fontFamily, hAlign, vAlign, bold, italic } = source;
         const verticalAlign = vAlign == 'start' ? ' top' : vAlign == 'end' ? 'bottom' : 'middle';
-        const font = `${bold ? 'bold' : 'normal'} ${fontSize}px ${fontFamily}`;
+        const font = `${italic ? 'italic' : 'normal'} ${bold ? 'bold' : 'normal'} ${fontSize}px ${fontFamily}`;
         return [color, font, hAlign, verticalAlign];
     }, [selectedItem, textStyle]);
 

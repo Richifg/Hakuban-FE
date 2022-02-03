@@ -62,10 +62,10 @@ class CanvasManager {
     }
 
     drawText(text: TextData, coordinates: Coordinates): void {
-        const { content, color, fontFamily, fontSize, vAlign, hAlign, bold } = text;
+        const { content, color, fontFamily, fontSize, vAlign, hAlign, bold, italic } = text;
         const { x0, y0, x2, y2 } = coordinates;
         // initial settings
-        this.ctx.font = `${bold ? 'bold' : ''} ${fontSize}px ${fontFamily}`;
+        this.ctx.font = `${italic ? 'italic' : 'normal'} ${bold ? 'bold' : 'normal'} ${fontSize}px ${fontFamily}`;
         this.ctx.fillStyle = color;
         this.ctx.textAlign = hAlign;
         this.ctx.textBaseline = 'top';

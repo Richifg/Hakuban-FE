@@ -23,6 +23,8 @@ const initialState: ToolsState = {
         color: 'black',
         hAlign: 'center',
         vAlign: 'center',
+        bold: false,
+        italic: false,
     },
 };
 

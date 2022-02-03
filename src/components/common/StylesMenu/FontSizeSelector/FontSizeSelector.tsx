@@ -11,6 +11,7 @@ interface FontSizeSelector {
 const FontSizeSelector = ({ onChange, value }: FontSizeSelector): React.ReactElement => {
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.currentTarget.value);
+        if (value < 1) return;
         onChange(value, 'fontSize');
     };
 
