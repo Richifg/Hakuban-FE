@@ -131,7 +131,7 @@ const BoardStateMachine = {
         const { canvasTransform, currentAction } = getState().board;
         if (currentAction === 'IDLE') dispatch(setCurrentAction('IDLE'));
         // calculate new scale
-        const delta = -Math.round(e.deltaY) * 0.001;
+        const delta = -Math.round(e.deltaY) * 0.0005;
         const scale = canvasTransform.scale + delta;
         // translate canvas so cursor remains in the same relative position
         const [x, y] = [e.clientX, e.clientY];

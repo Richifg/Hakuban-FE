@@ -1,0 +1,18 @@
+.alignment-selector {
+    background-color: pink;
+
+    .options-container {
+        position: absolute;
+        visibility: hidden;
+    }
+
+    &:hover {
+        .options-container {
+            visibility: visible;
+        }
+    }
+
+    .alignment-button {
+        color: red;
+    }
+}

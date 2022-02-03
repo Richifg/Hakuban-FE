@@ -1,6 +1,7 @@
 import React, { useMemo, useRef } from 'react';
 import { useSelector } from '../../../hooks';
 import { getItemPositionCSSVars } from '../../../utils';
+import MenuOptions from './MenuOptions/MenuOptions';
 import './StylesMenu.scss';
 
 const ITEM_OFFSET = 20; //px
@@ -30,7 +31,11 @@ const StylesMenu = (): React.ReactElement => {
         return [menuTop, menuLeft];
     }, [selectedItem, canvasTransform, canvasSize, currentAction]);
 
-    return <div ref={menuRef} className="styles-menu" style={{ left, top }}></div>;
+    return (
+        <div ref={menuRef} className="styles-menu" style={{ left, top }}>
+            {selectedItem && <MenuOptions item={selectedItem} />}
+        </div>
+    );
 };
 
 export default StylesMenu;
