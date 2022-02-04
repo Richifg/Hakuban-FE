@@ -1,5 +1,6 @@
 import getDebouncedFunction from './getDebouncedFunction';
 import getDetransformedCoordinates from './getDetransformedCoordinates';
+import getItemPositionCSSVars from './getItemPositionCSSVars';
 import getItemResizePoints from './getItemResizePoints';
 import getItemTransformedPoints from './getItemTransformedPoints';
 import getItemTranslatePoints from './getItemTranslatePoints';
@@ -12,6 +13,7 @@ import isPointInsideItem from './isPointInsideItem';
 export {
     getDebouncedFunction,
     getDetransformedCoordinates,
+    getItemPositionCSSVars,
     getItemResizePoints,
     getItemTransformedPoints,
     getItemTranslatePoints,
