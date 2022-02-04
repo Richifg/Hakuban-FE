@@ -11,7 +11,7 @@ interface ToolsState {
 
 const initialState: ToolsState = {
     selectedTool: 'POINTER',
-    shapeType: 'rect',
+    shapeType: 'bubble',
     shapeStyle: {
         lineWidth: 1,
         lineColor: 'black',

@@ -48,22 +48,12 @@ export interface Text extends ItemBase, Coordinates {
     text: TextData;
 }
 
-export type ShapeType = 'rect' | 'circle';
-interface ShapeBase extends ItemBase, ShapeStyle, Coordinates {
+export type ShapeType = 'rect' | 'circle' | 'roundedRect' | 'star' | 'romboid' | 'triangle' | 'bubble';
+export interface Shape extends ItemBase, ShapeStyle, Coordinates {
     type: 'shape';
     shapeType: ShapeType;
     text?: TextData;
 }
-
-export interface Rect extends ShapeBase {
-    shapeType: 'rect';
-}
-
-export interface Circle extends ShapeBase {
-    shapeType: 'circle';
-}
-
-export type Shape = Circle | Rect;
 
 export interface ChatMessage extends ItemBase {
     type: 'chat';
