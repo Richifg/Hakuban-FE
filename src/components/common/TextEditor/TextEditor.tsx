@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { getItemPositionCSSVars } from '../../../utils';
+import { getItemPositionCSSVars, getTextAreaCoodinates } from '../../../utils';
 import { useSelector, useDispatch } from '../../../hooks';
 import { addUserItem } from '../../../store/slices/itemsSlice';
 import { Align, BoardItem } from '../../../interfaces';
@@ -54,10 +54,16 @@ const TextEditor = (): React.ReactElement => {
     }, [selectedItem, textStyle]);
 
     // css position vars for texteditor
-    const { left, top, width, height } = useMemo(
-        () => getItemPositionCSSVars(canvasTransform, selectedItem),
-        [canvasTransform, selectedItem],
-    );
+    const { left, top, width, height } = useMemo(() => {
+        if (!selectedItem) return { left: 0, top: 0, width: 0, height: 0 };
+        if (selectedItem.type === 'shape') {
+            const coordinates = getTextAreaCoodinates(selectedItem);
+            return getItemPositionCSSVars(canvasTransform, coordinates);
+        } else {
+            const { x0, y0, x2, y2 } = selectedItem;
+            return getItemPositionCSSVars(canvasTransform, { x0, y0, x2, y2 });
+        }
+    }, [canvasTransform, selectedItem]);
 
     const handleMouseDown = (e: React.MouseEvent) => e.stopPropagation();
 
@@ -76,7 +82,7 @@ const TextEditor = (): React.ReactElement => {
         >
             <div
                 ref={textBoxRef}
-                className="text"
+                className="text-box"
                 style={{ color, font, textAlign, verticalAlign, width }}
                 contentEditable
                 dangerouslySetInnerHTML={{ __html: initText }}

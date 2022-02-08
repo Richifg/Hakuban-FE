@@ -1,8 +1,8 @@
-import type { Shape, BoardItem, TextData, Coordinates } from '../interfaces/items';
+import type { BoardItem } from '../interfaces/items';
 import type { CanvasTransform, CanvasSize } from '../interfaces/board';
-import { getWrappedTextLines } from '../utils';
-
-const LINE_HEIGHT = 1.1; // em
+import drawShape from './drawShape';
+import drawText from './drawText';
+import { getTextAreaCoodinates } from '../utils';
 
 /*
     Manages the animation cycle of a canvas html element by constantly:
@@ -28,139 +28,30 @@ class CanvasManager {
 
     drawItem(item: BoardItem): void {
         this.ctx.save();
-        const { type, x0, x2, y0, y2 } = item;
+        const { type, text, x0, x2, y0, y2 } = item;
         if (type === 'shape') {
-            const { shapeType, text } = item;
-
-            this.ctx.lineWidth = item.lineWidth;
-            this.ctx.strokeStyle = item.lineColor;
+            const { shapeType } = item;
             this.ctx.fillStyle = item.fillColor;
-            this.ctx.lineJoin = 'miter';
-            this.ctx.miterLimit = 10;
+            this.ctx.strokeStyle = item.lineColor;
+            this.ctx.lineWidth = item.lineWidth;
+
+            if (shapeType === 'triangle' || shapeType === 'romboid') this.ctx.lineJoin = 'round';
+            else this.ctx.lineJoin = 'miter';
 
             this.ctx.beginPath();
-            if (shapeType === 'circle') this.drawCircle(item);
-            else if (shapeType === 'rect') this.drawRect(item);
-            else if (shapeType === 'roundedRect') this.drawRoundedRect(item);
-            else if (shapeType === 'triangle') this.drawTriangle(item);
-            else if (shapeType === 'romboid') this.drawRomboid(item);
-            else if (shapeType === 'bubble') this.drawBubble(item);
-
+            drawShape(item, this.ctx);
             this.ctx.stroke();
             this.ctx.fill();
 
-            if (text && !text.skipRendering) this.drawText(text, { x0, x2, y0, y2 });
+            if (text && !text.skipRendering) {
+                const coordinates = getTextAreaCoodinates(item);
+                drawText(text, coordinates, this.ctx);
+            }
         } else if (type === 'text' && !item.text.skipRendering) {
-            this.drawText(item.text, { x0, x2, y0, y2 });
+            drawText(item.text, { x0, x2, y0, y2 }, this.ctx);
         }
         this.ctx.restore();
     }
-
-    drawCircle(shape: Shape): void {
-        const { x0, y0, x2, y2 } = shape;
-        const [cX, cY] = [Math.floor((x0 + x2) / 2), Math.floor((y0 + y2) / 2)];
-        const [rX, rY] = [Math.abs(x2 - cX), Math.abs(y2 - cY)];
-        this.ctx.ellipse(cX, cY, rX, rY, 0, 0, Math.PI * 2);
-    }
-
-    drawRect(shape: Shape): void {
-        const { x0, y0, x2, y2 } = shape;
-        this.ctx.rect(x0, y0, x2 - x0, y2 - y0);
-    }
-
-    drawRoundedRect(shape: Shape): void {
-        const { x0, y0, x2, y2 } = shape;
-        const [fWidth, fHeight] = [(x2 - x0) / 5, (y2 - y0) / 5];
-        const r = Math.min(Math.abs(fWidth), Math.abs(fHeight));
-        this.ctx.moveTo(x2 - fWidth, y0);
-        this.ctx.arcTo(x2, y0, x2, y0 + fHeight, r);
-        this.ctx.lineTo(x2, y2 - fHeight);
-        this.ctx.arcTo(x2, y2, x2 - fWidth, y2, r);
-        this.ctx.lineTo(x0 + fWidth, y2);
-        this.ctx.arcTo(x0, y2, x0, y2 - fHeight, r);
-        this.ctx.lineTo(x0, y0 + fHeight);
-        this.ctx.arcTo(x0, y0, x0 + fWidth, y0, r);
-        this.ctx.closePath();
-    }
-
-    drawTriangle(shape: Shape): void {
-        const { x0, y0, x2, y2 } = shape;
-        this.ctx.lineJoin = 'round';
-        const halfWidth = (x2 - x0) / 2;
-        this.ctx.moveTo(x0 + halfWidth, y0);
-        this.ctx.lineTo(x2, y2);
-        this.ctx.lineTo(x0, y2);
-        this.ctx.closePath();
-    }
-
-    drawRomboid(shape: Shape): void {
-        const { x0, y0, x2, y2 } = shape;
-        this.ctx.lineJoin = 'round';
-        const halfWidth = (x2 - x0) / 2;
-        const halfHeight = (y2 - y0) / 2;
-        this.ctx.moveTo(x0 + halfWidth, y0);
-        this.ctx.lineTo(x2, y0 + halfHeight);
-        this.ctx.lineTo(x0 + halfWidth, y2);
-        this.ctx.lineTo(x0, y0 + halfHeight);
-        this.ctx.closePath();
-    }
-
-    drawBubble(shape: Shape): void {
-        const { x0, y0, x2, y2 } = shape;
-        const [fWidth, fHeight] = [(x2 - x0) / 5, (y2 - y0) / 5];
-        const r = Math.min(Math.abs(fWidth), Math.abs(fHeight));
-        this.ctx.moveTo(x2 - fWidth, y0);
-        this.ctx.arcTo(x2, y0, x2, y0 + fHeight, r);
-        this.ctx.lineTo(x2, y2 - fHeight - fHeight);
-        this.ctx.arcTo(x2, y2 - fHeight, x2 - fWidth, y2 - fHeight, r);
-        this.ctx.lineTo(x0 + 2 * fWidth, y2 - fHeight);
-        this.ctx.lineTo(x0 + fWidth, y2);
-        this.ctx.lineTo(x0 + fWidth, y2 - fHeight);
-        this.ctx.arcTo(x0, y2 - fHeight, x0, y2 - fHeight - fHeight, r);
-        this.ctx.lineTo(x0, y0 + fHeight);
-        this.ctx.arcTo(x0, y0, x0 + fWidth, y0, r);
-        this.ctx.closePath();
-    }
-
-    drawText(text: TextData, coordinates: Coordinates): void {
-        const { content, color, fontFamily, fontSize, vAlign, hAlign, bold, italic } = text;
-        const { x0, y0, x2, y2 } = coordinates;
-        // initial settings
-        this.ctx.font = `${italic ? 'italic' : 'normal'} ${bold ? 'bold' : 'normal'} ${fontSize}px ${fontFamily}`;
-        this.ctx.fillStyle = color;
-        this.ctx.textAlign = hAlign;
-        this.ctx.textBaseline = 'top';
-        const [maxWidth, maxHeight] = [Math.abs(x2 - x0), Math.abs(y2 - y0)];
-        const [minX, minY] = [Math.min(x0, x2), Math.min(y0, y2)];
-
-        // cut text into wrapped lines
-        const textLines = getWrappedTextLines(content, maxWidth, this.ctx);
-        const lineHeight = fontSize * LINE_HEIGHT;
-        const fullTextHeight = lineHeight * textLines.length;
-
-        // clipping region for rendering text
-        this.ctx.rect(minX, minY, maxWidth, maxHeight);
-        this.ctx.clip();
-
-        // calculate x position for all lines of text
-        let x: number;
-        if (hAlign === 'start') x = minX;
-        else if (hAlign === 'end') x = Math.max(x0, x2);
-        else x = minX + maxWidth / 2;
-
-        // calculate y position for the first line of text
-        let y: number;
-        if (vAlign === 'start') y = minY;
-        else if (vAlign === 'end') y = Math.max(y0, y2) - fullTextHeight;
-        else y = minY + (maxHeight - fullTextHeight) / 2;
-
-        // draw each line
-        textLines.forEach((text) => {
-            this.ctx.fillText(text, x, y);
-            y += lineHeight;
-        });
-    }
-
     transformCanvas(): void {
         const { scale, dX, dY } = this.transform;
         this.ctx.setTransform(scale, 0, 0, scale, dX, dY);

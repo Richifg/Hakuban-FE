@@ -7,9 +7,10 @@
     overflow: hidden;
     user-select: none;
 
-    .text {
+    .text-box {
         height: inherit;
         display: table-cell;
         word-break: break-word;
+        border-width: 0;
     }
 }
