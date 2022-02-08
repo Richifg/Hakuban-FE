@@ -15,8 +15,8 @@ const StylesMenu = (): React.ReactElement => {
     const [top, left]: [number, number] = useMemo(() => {
         // ##TODO better way to hide this??
         if (!selectedItem || currentAction !== 'EDIT') return [-500, -500];
-
-        const { top, left, width, height } = getItemPositionCSSVars(canvasTransform, selectedItem);
+        const { x0, y0, x2, y2 } = selectedItem;
+        const { top, left, width, height } = getItemPositionCSSVars(canvasTransform, { x0, y0, x2, y2 });
         const { scale } = canvasTransform;
         const menuHeight = menuRef.current?.clientHeight || 0;
         const menuWidth = menuRef.current?.clientWidth || 0;

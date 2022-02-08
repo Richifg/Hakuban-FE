@@ -10,7 +10,7 @@ function useCanvas(
 ): void {
     const [manager, setManager] = useState<CanvasManager>();
 
-    // capture the rendering context before first render
+    // captures the rendering context before first render
     useLayoutEffect(() => {
         const renderingContext = canvasRef.current?.getContext('2d');
         if (renderingContext) {
@@ -18,13 +18,13 @@ function useCanvas(
             setManager(manager);
             manager.animate();
         }
-        // stop animation when unmounting
+        // stops animation when unmounting
         return () => {
             manager?.stop();
         };
     }, []);
 
-    // update manager variables
+    // keeps manager variables updated
     useEffect(() => {
         if (manager) {
             manager.size = canvasSize;
