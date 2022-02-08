@@ -2,7 +2,7 @@ import type { BoardItem } from '../interfaces/items';
 import type { CanvasTransform, CanvasSize } from '../interfaces/board';
 import drawShape from './drawShape';
 import drawText from './drawText';
-import { getTextAreaCoodinates } from '../utils';
+import { getTextAreaCoordinates } from '../utils';
 
 /*
     Manages the animation cycle of a canvas html element by constantly:
@@ -44,7 +44,7 @@ class CanvasManager {
             this.ctx.fill();
 
             if (text && !text.skipRendering) {
-                const coordinates = getTextAreaCoodinates(item);
+                const coordinates = getTextAreaCoordinates(item);
                 drawText(text, coordinates, this.ctx);
             }
         } else if (type === 'text' && !item.text.skipRendering) {

@@ -6,7 +6,7 @@ import getItemTransformedPoints from './getItemTransformedPoints';
 import getItemTranslatePoints from './getItemTranslatePoints';
 import getNewId from './getNewId';
 import getNewShape from './getNewShape';
-import getTextAreaCoodinates from './getTextAreaCoordinates';
+import getTextAreaCoordinates from './getTextAreaCoordinates';
 import getTransformedCoordinates from './getTransformedCoodinates';
 import getWrappedTextLines from './getWrappedTextLines';
 import isPointInsideItem from './isPointInsideItem';
@@ -20,7 +20,7 @@ export {
     getItemTranslatePoints,
     getNewId,
     getNewShape,
-    getTextAreaCoodinates,
+    getTextAreaCoordinates,
     getTransformedCoordinates,
     getWrappedTextLines,
     isPointInsideItem,

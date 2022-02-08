@@ -48,7 +48,7 @@ export interface Text extends ItemBase, Coordinates {
     text: TextData;
 }
 
-export type ShapeType = 'rect' | 'circle' | 'roundedRect' | 'star' | 'romboid' | 'triangle' | 'bubble';
+export type ShapeType = 'rect' | 'circle' | 'roundedRect' | 'romboid' | 'triangle' | 'bubble';
 export interface Shape extends ItemBase, ShapeStyle, Coordinates {
     type: 'shape';
     shapeType: ShapeType;

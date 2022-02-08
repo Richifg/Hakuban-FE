@@ -58,7 +58,7 @@ function drawRomboid(shape: Shape, ctx: CanvasRenderingContext2D): void {
 
 function drawBubble(shape: Shape, ctx: CanvasRenderingContext2D): void {
     const { x0, y0, x2, y2 } = shape;
-    const [fWidth, fHeight] = [(x2 - x0) * 0.25, (y2 - y0) * 0.25];
+    const [fWidth, fHeight] = [(x2 - x0) * 0.2, (y2 - y0) * 0.2];
     const r = Math.min(Math.abs(fWidth), Math.abs(fHeight));
     ctx.moveTo(x2 - fWidth, y0);
     ctx.arcTo(x2, y0, x2, y0 + fHeight, r);
