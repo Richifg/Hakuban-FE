@@ -1,12 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { Tool } from '../../interfaces/board';
-import type { ShapeStyle, TextStyle, ShapeType } from '../../interfaces/items';
+import type { ShapeStyle, TextStyle, ShapeType, NoteStyle } from '../../interfaces/items';
 
 interface ToolsState {
     selectedTool: Tool;
     shapeType: ShapeType;
     shapeStyle: ShapeStyle;
     textStyle: TextStyle;
+    noteStyle: NoteStyle;
 }
 
 const initialState: ToolsState = {
@@ -26,6 +27,10 @@ const initialState: ToolsState = {
         bold: false,
         italic: false,
     },
+    noteStyle: {
+        color: '#eded66',
+        size: 100,
+    },
 };
 
 export const toolsSlice = createSlice({
@@ -44,9 +49,12 @@ export const toolsSlice = createSlice({
         setTextStyle: (state, action: PayloadAction<TextStyle>) => {
             state.textStyle = action.payload;
         },
+        setNoteStyle: (state, action: PayloadAction<NoteStyle>) => {
+            state.noteStyle = action.payload;
+        },
     },
 });
 
-export const { setSelectedTool, setShapeType, setShapeStyle, setTextStyle } = toolsSlice.actions;
+export const { setSelectedTool, setShapeType, setShapeStyle, setTextStyle, setNoteStyle } = toolsSlice.actions;
 
 export default toolsSlice.reducer;

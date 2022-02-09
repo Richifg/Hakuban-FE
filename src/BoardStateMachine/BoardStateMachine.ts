@@ -13,6 +13,7 @@ import {
     getItemResizePoints,
     getItemTranslatePoints,
     isPointInsideItem,
+    getNewNote,
     getNewShape,
     getDetransformedCoordinates,
     getTransformedCoordinates,
@@ -50,13 +51,17 @@ const BoardStateMachine = {
                     } else {
                         dispatch(setCurrentAction('PAN'));
                     }
-                }
-                if (selectedTool === 'SHAPE') {
+                } else if (selectedTool === 'SHAPE') {
                     dispatch(setSelectedPoint('P2'));
                     const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
-                    const newItem = getNewShape(realX, realY, shapeType, shapeStyle);
-                    dispatch(addUserItem(newItem));
+                    const shape = getNewShape(realX, realY, shapeType, shapeStyle);
+                    dispatch(addUserItem(shape));
                     dispatch(setCurrentAction('RESIZE'));
+                } else if (selectedTool === 'NOTE') {
+                    const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
+                    const note = getNewNote(realX, realY);
+                    dispatch(addUserItem(note));
+                    dispatch(setCurrentAction('IDLE'));
                 }
                 break;
             case 'EDIT':

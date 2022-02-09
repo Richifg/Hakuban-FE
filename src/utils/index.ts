@@ -5,6 +5,7 @@ import getItemResizePoints from './getItemResizePoints';
 import getItemTransformedPoints from './getItemTransformedPoints';
 import getItemTranslatePoints from './getItemTranslatePoints';
 import getNewId from './getNewId';
+import getNewNote from './getNewNote';
 import getNewShape from './getNewShape';
 import getTextAreaCoordinates from './getTextAreaCoordinates';
 import getTransformedCoordinates from './getTransformedCoodinates';
@@ -19,6 +20,7 @@ export {
     getItemTransformedPoints,
     getItemTranslatePoints,
     getNewId,
+    getNewNote,
     getNewShape,
     getTextAreaCoordinates,
     getTransformedCoordinates,
