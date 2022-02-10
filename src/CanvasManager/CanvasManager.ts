@@ -32,15 +32,14 @@ class CanvasManager {
         const { type, text, x0, x2, y0, y2 } = item;
         if (type === 'text' && !item.text.skipRendering) {
             drawText(item.text, { x0, x2, y0, y2 }, this.ctx);
-        }
-        if (type === 'shape') {
-            drawShape(item, this.ctx);
+        } else if (type === 'shape' || type === 'note') {
+            if (type === 'shape') drawShape(item, this.ctx);
+            else drawNote(item, this.ctx);
+            // draw text for shape/note
             if (text && !text.skipRendering) {
                 const coordinates = getTextAreaCoordinates(item);
                 drawText(text, coordinates, this.ctx);
             }
-        } else if (type === 'note') {
-            drawNote(item, this.ctx);
         }
         this.ctx.restore();
     }

@@ -17,6 +17,7 @@ const TextEditor = (): React.ReactElement => {
     const textBoxRef = useRef<HTMLDivElement>(null);
     const lastSelectedItemRef = useRef<BoardItem>();
 
+    // ## TODO: important, save text on a debounced onChange (right now text is lost if style is edited after writing)
     useEffect(() => {
         // set flag so canvas stops rendering the same text as the text editor
         if (isWriting && selectedItem?.text) {
@@ -56,7 +57,8 @@ const TextEditor = (): React.ReactElement => {
     // css position vars for texteditor
     const { left, top, width, height } = useMemo(() => {
         if (!selectedItem) return { left: 0, top: 0, width: 0, height: 0 };
-        if (selectedItem.type === 'shape') {
+        const { type } = selectedItem;
+        if (type === 'shape' || type === 'note') {
             const coordinates = getTextAreaCoordinates(selectedItem);
             return getItemPositionCSSVars(canvasTransform, coordinates);
         } else {
