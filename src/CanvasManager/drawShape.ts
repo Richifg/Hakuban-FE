@@ -1,13 +1,25 @@
 import { Shape } from '../interfaces';
 
 function drawShape(shape: Shape, ctx: CanvasRenderingContext2D): void {
+    ctx.beginPath();
+
     const { shapeType } = shape;
+    ctx.fillStyle = shape.fillColor;
+    ctx.strokeStyle = shape.lineColor;
+    ctx.lineWidth = shape.lineWidth;
+
+    if (shapeType === 'triangle' || shapeType === 'romboid') ctx.lineJoin = 'round';
+    else ctx.lineJoin = 'miter';
+
     if (shapeType === 'rect') drawRect(shape, ctx);
     else if (shapeType === 'roundedRect') drawRoundedRect(shape, ctx);
     else if (shapeType === 'circle') drawCircle(shape, ctx);
     else if (shapeType === 'triangle') drawTriangle(shape, ctx);
     else if (shapeType === 'romboid') drawRomboid(shape, ctx);
     else drawBubble(shape, ctx);
+
+    ctx.stroke();
+    ctx.fill();
 }
 
 function drawRect(shape: Shape, ctx: CanvasRenderingContext2D): void {

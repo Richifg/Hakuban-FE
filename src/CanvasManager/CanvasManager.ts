@@ -2,6 +2,7 @@ import type { BoardItem } from '../interfaces/items';
 import type { CanvasTransform, CanvasSize } from '../interfaces/board';
 import drawShape from './drawShape';
 import drawText from './drawText';
+import drawNote from './drawNote';
 import { getTextAreaCoordinates } from '../utils';
 
 /*
@@ -29,26 +30,17 @@ class CanvasManager {
     drawItem(item: BoardItem): void {
         this.ctx.save();
         const { type, text, x0, x2, y0, y2 } = item;
+        if (type === 'text' && !item.text.skipRendering) {
+            drawText(item.text, { x0, x2, y0, y2 }, this.ctx);
+        }
         if (type === 'shape') {
-            const { shapeType } = item;
-            this.ctx.fillStyle = item.fillColor;
-            this.ctx.strokeStyle = item.lineColor;
-            this.ctx.lineWidth = item.lineWidth;
-
-            if (shapeType === 'triangle' || shapeType === 'romboid') this.ctx.lineJoin = 'round';
-            else this.ctx.lineJoin = 'miter';
-
-            this.ctx.beginPath();
             drawShape(item, this.ctx);
-            this.ctx.stroke();
-            this.ctx.fill();
-
             if (text && !text.skipRendering) {
                 const coordinates = getTextAreaCoordinates(item);
                 drawText(text, coordinates, this.ctx);
             }
-        } else if (type === 'text' && !item.text.skipRendering) {
-            drawText(item.text, { x0, x2, y0, y2 }, this.ctx);
+        } else if (type === 'note') {
+            drawNote(item, this.ctx);
         }
         this.ctx.restore();
     }

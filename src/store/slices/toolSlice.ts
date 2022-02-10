@@ -28,7 +28,7 @@ const initialState: ToolsState = {
         italic: false,
     },
     noteStyle: {
-        color: '#eded66',
+        color: '#fcf8bd',
         size: 100,
     },
 };
