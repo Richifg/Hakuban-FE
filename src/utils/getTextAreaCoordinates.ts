@@ -46,10 +46,12 @@ function getTextAreaCoordinates(item: Shape | Note): Coordinates {
             [xR, yB] = [maxX - widthOffset, maxY - heightOffset];
         }
     } else {
-        // item is Note
-        const padding = item.size * 0.05;
-        [xL, yT] = [x0 + padding, y0 + padding];
-        [xR, yB] = [x2 - padding, y2 - padding];
+        // Note uses 5% padding
+        const [width, height] = [x2 - x0, y2 - y0];
+        const paddingX = 0.05 * width;
+        const paddingY = 0.05 * height;
+        [xL, yT] = [x0 + paddingX, y0 + paddingY];
+        [xR, yB] = [x2 - paddingX, y2 - paddingY];
     }
     return { x0: xL, y0: yT, x2: xR, y2: yB };
 }
