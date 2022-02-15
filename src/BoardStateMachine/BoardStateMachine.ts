@@ -52,10 +52,10 @@ const BoardStateMachine = {
                         dispatch(setCurrentAction('PAN'));
                     }
                 } else if (selectedTool === 'SHAPE') {
-                    dispatch(setSelectedPoint('P2'));
                     const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
                     const shape = getNewShape(realX, realY, shapeType, shapeStyle);
                     dispatch(addUserItem(shape));
+                    dispatch(setSelectedPoint('P2'));
                     dispatch(setCurrentAction('RESIZE'));
                 } else if (selectedTool === 'NOTE') {
                     const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
@@ -107,7 +107,8 @@ const BoardStateMachine = {
             case 'RESIZE':
                 if (selectedItem && selectedPoint) {
                     dispatch(setCursorPosition([x, y]));
-                    const points = getItemResizePoints(selectedItem, selectedPoint, x, y, canvasTransform);
+                    const maintainRatio = selectedItem.type === 'note';
+                    const points = getItemResizePoints(selectedItem, selectedPoint, x, y, canvasTransform, maintainRatio);
                     dispatch(addUserItem({ ...selectedItem, ...points }));
                 }
                 break;

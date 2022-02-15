@@ -31,6 +31,10 @@ function drawNote(note: Note, ctx: CanvasRenderingContext2D): void {
     ctx.lineTo(x0, y0 + glueHeight);
     ctx.closePath();
     ctx.fill();
+
+    // remove shadows
+    // ## TODO is there other way to turn off shadows?
+    ctx.shadowColor = 'transparent';
 }
 
 export default drawNote;
