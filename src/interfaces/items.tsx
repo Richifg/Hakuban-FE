@@ -14,6 +14,11 @@ export interface ShapeStyle {
     fillColor: string;
 }
 
+export interface NoteStyle {
+    color: string;
+    size: number;
+}
+
 export type Align = 'start' | 'center' | 'end';
 export interface TextStyle {
     fontSize: number;
@@ -37,9 +42,8 @@ export interface TextData extends TextStyle {
     content: string;
 }
 
-export interface Note extends ItemBase, Coordinates {
+export interface Note extends ItemBase, Coordinates, NoteStyle {
     type: 'note';
-    color: string;
     text?: TextData;
 }
 

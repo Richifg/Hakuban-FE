@@ -2,23 +2,9 @@ import React from 'react';
 import { useDispatch, useSelector } from '../../../hooks';
 import { setSelectedTool } from '../../../store/slices/toolSlice';
 import type { Tool } from '../../../interfaces/board';
+import tools from './tools';
 
 import './ToolsMenu.scss';
-
-const tools: { name: Tool; icon: string }[] = [
-    {
-        name: 'PEN',
-        icon: '',
-    },
-    {
-        name: 'SHAPE',
-        icon: '',
-    },
-    {
-        name: 'POINTER',
-        icon: '',
-    },
-];
 
 const ToolsMenu = (): React.ReactElement => {
     const dispatch = useDispatch();

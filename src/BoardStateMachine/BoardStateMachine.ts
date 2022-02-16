@@ -13,6 +13,7 @@ import {
     getItemResizePoints,
     getItemTranslatePoints,
     isPointInsideItem,
+    getNewNote,
     getNewShape,
     getDetransformedCoordinates,
     getTransformedCoordinates,
@@ -50,13 +51,17 @@ const BoardStateMachine = {
                     } else {
                         dispatch(setCurrentAction('PAN'));
                     }
-                }
-                if (selectedTool === 'SHAPE') {
-                    dispatch(setSelectedPoint('P2'));
+                } else if (selectedTool === 'SHAPE') {
                     const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
-                    const newItem = getNewShape(realX, realY, shapeType, shapeStyle);
-                    dispatch(addUserItem(newItem));
+                    const shape = getNewShape(realX, realY, shapeType, shapeStyle);
+                    dispatch(addUserItem(shape));
+                    dispatch(setSelectedPoint('P2'));
                     dispatch(setCurrentAction('RESIZE'));
+                } else if (selectedTool === 'NOTE') {
+                    const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
+                    const note = getNewNote(realX, realY);
+                    dispatch(addUserItem(note));
+                    dispatch(setCurrentAction('IDLE'));
                 }
                 break;
             case 'EDIT':
@@ -102,7 +107,8 @@ const BoardStateMachine = {
             case 'RESIZE':
                 if (selectedItem && selectedPoint) {
                     dispatch(setCursorPosition([x, y]));
-                    const points = getItemResizePoints(selectedItem, selectedPoint, x, y, canvasTransform);
+                    const maintainRatio = selectedItem.type === 'note';
+                    const points = getItemResizePoints(selectedItem, selectedPoint, x, y, canvasTransform, maintainRatio);
                     dispatch(addUserItem({ ...selectedItem, ...points }));
                 }
                 break;
