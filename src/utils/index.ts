@@ -11,6 +11,7 @@ import getTextAreaCoordinates from './getTextAreaCoordinates';
 import getTransformedCoordinates from './getTransformedCoodinates';
 import getWrappedTextLines from './getWrappedTextLines';
 import isPointInsideItem from './isPointInsideItem';
+import isTextItem from './isTextItem';
 
 export {
     getDebouncedFunction,
@@ -26,4 +27,5 @@ export {
     getTransformedCoordinates,
     getWrappedTextLines,
     isPointInsideItem,
+    isTextItem,
 };

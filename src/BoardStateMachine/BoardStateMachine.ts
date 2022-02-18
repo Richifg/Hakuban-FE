@@ -107,7 +107,8 @@ const BoardStateMachine = {
             case 'RESIZE':
                 if (selectedItem && selectedPoint) {
                     dispatch(setCursorPosition([x, y]));
-                    const maintainRatio = selectedItem.type === 'note';
+                    const { type } = selectedItem;
+                    const maintainRatio = type === 'note' || type === 'drawing';
                     const points = getItemResizePoints(selectedItem, selectedPoint, x, y, canvasTransform, maintainRatio);
                     dispatch(addUserItem({ ...selectedItem, ...points }));
                 }
