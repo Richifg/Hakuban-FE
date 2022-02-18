@@ -2,6 +2,8 @@ import { store } from '../store/store';
 import { Note } from '../interfaces';
 import { getNewId } from './';
 
+// ##TODO remove size from Note properties but keep trakc of it when resizing Notes
+
 function getNewNote(x: number, y: number): Note {
     const { noteStyle } = store.getState().tools;
     const offset = noteStyle.size / 2;

@@ -67,6 +67,7 @@ export interface Shape extends ItemBase, ShapeStyle, Coordinates {
 export interface Drawing extends ItemBase, Coordinates, DrawingStyle {
     type: 'drawing';
     points: [number, number][];
+    inProgress?: boolean;
 }
 
 export interface ChatMessage extends ItemBase {
