@@ -52,9 +52,10 @@ export interface Text extends ItemBase, Coordinates {
     text: TextData;
 }
 
-export interface Note extends ItemBase, Coordinates, NoteStyle {
+export interface Note extends ItemBase, Coordinates {
     type: 'note';
     text?: TextData;
+    color: string;
 }
 
 export type ShapeType = 'rect' | 'circle' | 'roundedRect' | 'romboid' | 'triangle' | 'bubble';

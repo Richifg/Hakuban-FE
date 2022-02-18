@@ -9,6 +9,7 @@ import {
     setIsWriting,
 } from '../store/slices/boardSlice';
 import { addUserItem, setSelectedItem, setSelectedPoint, setDragOffset } from '../store/slices/itemsSlice';
+import { setNoteStyle } from '../store/slices/toolSlice';
 import {
     getItemResizePoints,
     getItemTranslatePoints,
@@ -134,6 +135,7 @@ const BoardStateMachine = {
     mouseUp(e: MouseEvent<HTMLDivElement>): void {
         const { currentAction } = getState().board;
         dispatch(setCursorPosition([e.clientX, e.clientY]));
+        const { selectedItem } = getState().items;
         switch (currentAction) {
             case 'PAN':
                 dispatch(setCurrentAction('SLIDE'));
@@ -143,9 +145,15 @@ const BoardStateMachine = {
                 break;
             case 'RESIZE':
                 dispatch(setCurrentAction('EDIT'));
+                // update preferred Note size
+                if (selectedItem?.type === 'note') {
+                    const { color } = selectedItem;
+                    const size = Math.abs(selectedItem.x2 - selectedItem.x0);
+                    dispatch(setNoteStyle({ color, size }));
+                }
                 break;
             case 'DRAW':
-                const { selectedItem } = getState().items;
+                // transformed in progress drawing into relative simplified drawing
                 if (selectedItem?.type === 'drawing') {
                     const finishedDrawing = getFinishedDrawing(selectedItem);
                     dispatch(addUserItem(finishedDrawing));
