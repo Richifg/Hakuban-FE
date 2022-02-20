@@ -28,6 +28,8 @@ const CanvasUI = (): React.ReactElement => {
         e.persist();
         SM.mouseUp(e);
     };
+
+    // 5ms debounced mouse move
     const handleMouseMove = useDebouncedCallback(
         (e: React.MouseEvent<HTMLDivElement>) => {
             e.persist;

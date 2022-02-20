@@ -1,10 +1,11 @@
-import { Shape, Note, Coordinates } from '../interfaces';
+import { Shape, Note, Text, Coordinates } from '../interfaces';
 
-function getTextAreaCoordinates(item: Shape | Note): Coordinates {
+function getTextAreaCoordinates(item: Shape | Note | Text): Coordinates {
     const { x0, x2, y0, y2 } = item;
     let [xL, xR, yT, yB] = [0, 0, 0, 0];
 
-    if (item.type === 'shape') {
+    const { type } = item;
+    if (type === 'shape') {
         const [maxX, maxY] = [Math.max(x0, x2), Math.max(y0, y2)];
         const [minX, minY] = [Math.min(x0, x2), Math.min(y0, y2)];
         const [width, height] = [maxX - minX, maxY - minY];
@@ -45,13 +46,15 @@ function getTextAreaCoordinates(item: Shape | Note): Coordinates {
             [xL, yT] = [minX + widthOffset, minY + heightOffset];
             [xR, yB] = [maxX - widthOffset, maxY - heightOffset];
         }
-    } else {
+    } else if (type === 'note') {
         // Note uses 5% padding
         const [width, height] = [x2 - x0, y2 - y0];
         const paddingX = 0.05 * width;
         const paddingY = 0.05 * height;
         [xL, yT] = [x0 + paddingX, y0 + paddingY];
         [xR, yB] = [x2 - paddingX, y2 - paddingY];
+    } else {
+        return { x0, x2, y0, y2 };
     }
     return { x0: xL, y0: yT, x2: xR, y2: yB };
 }

@@ -3,7 +3,8 @@ import type { CanvasTransform, CanvasSize } from '../interfaces/board';
 import drawShape from './drawShape';
 import drawText from './drawText';
 import drawNote from './drawNote';
-import { getTextAreaCoordinates } from '../utils';
+import drawDrawing from './drawDrawing';
+import { getTextAreaCoordinates, isTextItem } from '../utils';
 
 /*
     Manages the animation cycle of a canvas html element by constantly:
@@ -28,19 +29,20 @@ class CanvasManager {
     }
 
     drawItem(item: BoardItem): void {
+        // save defualt values
         this.ctx.save();
-        const { type, text, x0, x2, y0, y2 } = item;
-        if (type === 'text' && !item.text.skipRendering) {
-            drawText(item.text, { x0, x2, y0, y2 }, this.ctx);
-        } else if (type === 'shape' || type === 'note') {
-            if (type === 'shape') drawShape(item, this.ctx);
-            else drawNote(item, this.ctx);
-            // draw text for shape/note
-            if (text && !text.skipRendering) {
-                const coordinates = getTextAreaCoordinates(item);
-                drawText(text, coordinates, this.ctx);
-            }
+
+        const { type } = item;
+        if (type === 'shape') drawShape(item, this.ctx);
+        else if (type === 'note') drawNote(item, this.ctx);
+        else if (type === 'drawing') drawDrawing(item, this.ctx);
+
+        if (isTextItem(item) && item.text) {
+            const coordinates = getTextAreaCoordinates(item);
+            drawText(item.text, coordinates, this.ctx);
         }
+
+        // restore default values
         this.ctx.restore();
     }
     transformCanvas(): void {

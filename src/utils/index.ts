@@ -4,6 +4,7 @@ import getItemPositionCSSVars from './getItemPositionCSSVars';
 import getItemResizePoints from './getItemResizePoints';
 import getItemTransformedPoints from './getItemTransformedPoints';
 import getItemTranslatePoints from './getItemTranslatePoints';
+import getNewDrawing from './getNewDrawing';
 import getNewId from './getNewId';
 import getNewNote from './getNewNote';
 import getNewShape from './getNewShape';
@@ -11,6 +12,7 @@ import getTextAreaCoordinates from './getTextAreaCoordinates';
 import getTransformedCoordinates from './getTransformedCoodinates';
 import getWrappedTextLines from './getWrappedTextLines';
 import isPointInsideItem from './isPointInsideItem';
+import isTextItem from './isTextItem';
 
 export {
     getDebouncedFunction,
@@ -19,6 +21,7 @@ export {
     getItemResizePoints,
     getItemTransformedPoints,
     getItemTranslatePoints,
+    getNewDrawing,
     getNewId,
     getNewNote,
     getNewShape,
@@ -26,4 +29,5 @@ export {
     getTransformedCoordinates,
     getWrappedTextLines,
     isPointInsideItem,
+    isTextItem,
 };

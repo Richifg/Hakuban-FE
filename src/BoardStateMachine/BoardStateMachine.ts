@@ -9,15 +9,18 @@ import {
     setIsWriting,
 } from '../store/slices/boardSlice';
 import { addUserItem, setSelectedItem, setSelectedPoint, setDragOffset } from '../store/slices/itemsSlice';
+import { setNoteStyle } from '../store/slices/toolSlice';
 import {
     getItemResizePoints,
     getItemTranslatePoints,
     isPointInsideItem,
     getNewNote,
     getNewShape,
+    getNewDrawing,
     getDetransformedCoordinates,
     getTransformedCoordinates,
 } from '../utils';
+import getFinishedDrawing from '../utils/getFinishedDrawing';
 
 const { dispatch, getState } = store;
 
@@ -42,6 +45,7 @@ const BoardStateMachine = {
             case 'IDLE':
             case 'SLIDE':
                 if (selectedTool === 'POINTER') {
+                    // either select clicked item or pan board
                     const item = allItems.find((item) => isPointInsideItem(x, y, item, canvasTransform));
                     if (item) {
                         dispatch(setSelectedItem(item));
@@ -52,16 +56,24 @@ const BoardStateMachine = {
                         dispatch(setCurrentAction('PAN'));
                     }
                 } else if (selectedTool === 'SHAPE') {
+                    // create new Shape
                     const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
                     const shape = getNewShape(realX, realY, shapeType, shapeStyle);
                     dispatch(addUserItem(shape));
                     dispatch(setSelectedPoint('P2'));
                     dispatch(setCurrentAction('RESIZE'));
                 } else if (selectedTool === 'NOTE') {
+                    // create new Note
                     const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
                     const note = getNewNote(realX, realY);
                     dispatch(addUserItem(note));
                     dispatch(setCurrentAction('IDLE'));
+                } else if (selectedTool === 'PEN') {
+                    // create new Drawing
+                    const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
+                    const drawing = getNewDrawing(realX, realY);
+                    dispatch(addUserItem(drawing));
+                    dispatch(setCurrentAction('DRAW'));
                 }
                 break;
             case 'EDIT':
@@ -81,8 +93,6 @@ const BoardStateMachine = {
                     dispatch(setSelectedItem());
                     dispatch(setCurrentAction('PAN'));
                 }
-                break;
-            default:
                 break;
         }
     },
@@ -107,17 +117,26 @@ const BoardStateMachine = {
             case 'RESIZE':
                 if (selectedItem && selectedPoint) {
                     dispatch(setCursorPosition([x, y]));
-                    const maintainRatio = selectedItem.type === 'note';
+                    const { type } = selectedItem;
+                    const maintainRatio = type === 'note' || type === 'drawing';
                     const points = getItemResizePoints(selectedItem, selectedPoint, x, y, canvasTransform, maintainRatio);
                     dispatch(addUserItem({ ...selectedItem, ...points }));
                 }
                 break;
+            case 'DRAW':
+                if (selectedItem?.type === 'drawing') {
+                    dispatch(setCursorPosition([x, y]));
+                    const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
+                    const points = [...selectedItem.points, [realX, realY]] as [number, number][];
+                    dispatch(addUserItem({ ...selectedItem, points }));
+                }
         }
     },
 
     mouseUp(e: MouseEvent<HTMLDivElement>): void {
         const { currentAction } = getState().board;
         dispatch(setCursorPosition([e.clientX, e.clientY]));
+        const { selectedItem } = getState().items;
         switch (currentAction) {
             case 'PAN':
                 dispatch(setCurrentAction('SLIDE'));
@@ -127,8 +146,20 @@ const BoardStateMachine = {
                 break;
             case 'RESIZE':
                 dispatch(setCurrentAction('EDIT'));
+                // update preferred Note size
+                if (selectedItem?.type === 'note') {
+                    const { color } = selectedItem;
+                    const size = Math.abs(selectedItem.x2 - selectedItem.x0);
+                    dispatch(setNoteStyle({ color, size }));
+                }
                 break;
-            default:
+            case 'DRAW':
+                // transformed in progress drawing into relative simplified drawing
+                if (selectedItem?.type === 'drawing') {
+                    const finishedDrawing = getFinishedDrawing(selectedItem);
+                    dispatch(addUserItem(finishedDrawing));
+                }
+                dispatch(setCurrentAction('IDLE'));
                 break;
         }
     },

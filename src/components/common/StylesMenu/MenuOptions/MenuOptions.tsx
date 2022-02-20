@@ -21,7 +21,7 @@ const MenuOptions = ({ item }: MenuOptions): React.ReactElement => {
     };
 
     const handleNestedChange = (value: string | Align | number | boolean, key: string) => {
-        if (key in textStyle) {
+        if ('text' in item && key in textStyle) {
             const text = item.text || { ...textStyle, content: '' };
             const newItem = { ...item, text: { ...text, [key]: value } };
             dispatch(addUserItem(newItem));
@@ -35,16 +35,16 @@ const MenuOptions = ({ item }: MenuOptions): React.ReactElement => {
             {item.type === 'shape' && <ColorSelector onChange={handleChange} styleKey="fillColor" />}
             {item.type === 'shape' && <ColorSelector onChange={handleChange} styleKey="lineColor" />}
             {item.type === 'shape' && <LineSelector onChange={handleChange} styleKey="lineWidth" value={item.lineWidth} />}
-            {item.text && (
+            {'text' in item && (
                 <>
                     <AlignmentSelector onChange={handleNestedChange} styleKey="vAlign" />
                     <AlignmentSelector onChange={handleNestedChange} styleKey="hAlign" />
                     <ColorSelector onChange={handleNestedChange} styleKey="color" />
-                    <FontSizeSelector onChange={handleNestedChange} styleKey="fontSize" value={item.text.fontSize} />
+                    <FontSizeSelector onChange={handleNestedChange} styleKey="fontSize" value={item.text?.fontSize || 0} />
                     <TextStyleSelector
                         onChange={handleNestedChange}
-                        isBold={item.text.bold}
-                        isItalic={item.text.italic}
+                        isBold={item.text?.bold}
+                        isItalic={item.text?.italic}
                         boldKey="bold"
                         italicKey="italic"
                     />

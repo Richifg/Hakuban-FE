@@ -1,22 +1,11 @@
 export type Point = 'P0' | 'P1' | 'P2' | 'P3';
 
-type BoardItemType = 'note' | 'text' | 'shape';
+export type BoardItemType = 'text' | 'shape' | 'note' | 'drawing';
 type ItemType = BoardItemType | 'chat';
 interface ItemBase {
     type: ItemType;
     id?: string;
     creationDate?: Date;
-}
-
-export interface ShapeStyle {
-    lineWidth: number;
-    lineColor: string;
-    fillColor: string;
-}
-
-export interface NoteStyle {
-    color: string;
-    size: number;
 }
 
 export type Align = 'start' | 'center' | 'end';
@@ -31,6 +20,22 @@ export interface TextStyle {
     skipRendering?: boolean;
 }
 
+export interface ShapeStyle {
+    lineWidth: number;
+    lineColor: string;
+    fillColor: string;
+}
+
+export interface NoteStyle {
+    color: string;
+    size: number;
+}
+
+export interface DrawingStyle {
+    color: string;
+    width: number;
+}
+
 export interface Coordinates {
     x0: number;
     y0: number;
@@ -42,14 +47,15 @@ export interface TextData extends TextStyle {
     content: string;
 }
 
-export interface Note extends ItemBase, Coordinates, NoteStyle {
-    type: 'note';
-    text?: TextData;
-}
-
 export interface Text extends ItemBase, Coordinates {
     type: 'text';
     text: TextData;
+}
+
+export interface Note extends ItemBase, Coordinates {
+    type: 'note';
+    text?: TextData;
+    color: string;
 }
 
 export type ShapeType = 'rect' | 'circle' | 'roundedRect' | 'romboid' | 'triangle' | 'bubble';
@@ -59,6 +65,12 @@ export interface Shape extends ItemBase, ShapeStyle, Coordinates {
     text?: TextData;
 }
 
+export interface Drawing extends ItemBase, Coordinates, DrawingStyle {
+    type: 'drawing';
+    points: [number, number][];
+    inProgress?: boolean;
+}
+
 export interface ChatMessage extends ItemBase {
     type: 'chat';
     content: string;
@@ -66,5 +78,5 @@ export interface ChatMessage extends ItemBase {
 }
 
 // Items created by users
-export type BoardItem = Note | Text | Shape;
+export type BoardItem = Note | Text | Shape | Drawing;
 export type Item = BoardItem | ChatMessage;

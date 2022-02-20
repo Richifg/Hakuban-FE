@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { getItemPositionCSSVars, getTextAreaCoordinates } from '../../../utils';
+import { getItemPositionCSSVars, getTextAreaCoordinates, isTextItem } from '../../../utils';
 import { useSelector, useDispatch } from '../../../hooks';
 import { addUserItem } from '../../../store/slices/itemsSlice';
 import { Align, BoardItem } from '../../../interfaces';
@@ -20,17 +20,17 @@ const TextEditor = (): React.ReactElement => {
     // ## TODO: important, save text on a debounced onChange (right now text is lost if style is edited after writing)
     useEffect(() => {
         // set flag so canvas stops rendering the same text as the text editor
-        if (isWriting && selectedItem?.text) {
+        if (isWriting && isTextItem(selectedItem) && selectedItem.text) {
             dispatch(addUserItem({ ...selectedItem, text: { ...selectedItem.text, skipRendering: true } }));
         }
         // saves item's new text when no longer writing
-        if (!isWriting && lastSelectedItemRef.current) {
-            const item = lastSelectedItemRef.current;
+        const lastItem = lastSelectedItemRef.current;
+        if (!isWriting && isTextItem(lastItem)) {
             // clean html from textbox
             const content = htmlText.replace(/\<br\/?\>/g, '/n').replace(/\&nbsp;/g, ' ');
             let newItem: BoardItem;
-            if (item.text) newItem = { ...item, text: { ...item.text, content } };
-            else newItem = { ...item, text: { ...textStyle, content } };
+            if (lastItem.text) newItem = { ...lastItem, text: { ...lastItem.text, content } };
+            else newItem = { ...lastItem, text: { ...textStyle, content } };
             delete newItem.text?.skipRendering;
             dispatch(addUserItem(newItem));
         }
@@ -38,16 +38,18 @@ const TextEditor = (): React.ReactElement => {
 
     // updates initial display text when selecting a new item
     useEffect(() => {
-        const text = selectedItem?.text?.content || '';
-        const htmlText = text.replaceAll(/\/n/g, '<br/>');
-        setInitText(htmlText);
-        setHtmlText(htmlText);
-        lastSelectedItemRef.current = selectedItem;
+        if (selectedItem && 'text' in selectedItem) {
+            const text = selectedItem?.text?.content || '';
+            const htmlText = text.replaceAll(/\/n/g, '<br/>');
+            setInitText(htmlText);
+            setHtmlText(htmlText);
+            lastSelectedItemRef.current = selectedItem;
+        }
     }, [selectedItem]);
 
     // css style vars for texteditor
     const [color, font, textAlign, verticalAlign]: [string, string, Align, string] = useMemo(() => {
-        const source = selectedItem?.text || textStyle;
+        const source = (isTextItem(selectedItem) && selectedItem?.text) || textStyle;
         const { color, fontSize, fontFamily, hAlign, vAlign, bold, italic } = source;
         const verticalAlign = vAlign == 'start' ? ' top' : vAlign == 'end' ? 'bottom' : 'middle';
         const font = `${italic ? 'italic' : 'normal'} ${bold ? 'bold' : 'normal'} ${fontSize}px ${fontFamily}`;

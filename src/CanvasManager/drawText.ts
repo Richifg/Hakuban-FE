@@ -4,6 +4,8 @@ import { getWrappedTextLines } from '../utils';
 const LINE_HEIGHT = 1.1; // em
 
 function drawText(text: TextData, coordinates: Coordinates, ctx: CanvasRenderingContext2D): void {
+    if (text.skipRendering) return;
+
     const { content, color, fontFamily, fontSize, vAlign, hAlign, bold, italic } = text;
     const { x0, y0, x2, y2 } = coordinates;
     // initial settings
