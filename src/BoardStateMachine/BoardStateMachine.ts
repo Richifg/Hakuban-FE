@@ -126,7 +126,8 @@ const BoardStateMachine = {
             case 'DRAW':
                 if (selectedItem?.type === 'drawing') {
                     dispatch(setCursorPosition([x, y]));
-                    const points = [...selectedItem.points, [x, y]] as [number, number][];
+                    const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
+                    const points = [...selectedItem.points, [realX, realY]] as [number, number][];
                     dispatch(addUserItem({ ...selectedItem, points }));
                 }
         }
