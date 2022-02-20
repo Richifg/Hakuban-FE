@@ -105,7 +105,7 @@ const BoardStateMachine = {
         switch (currentAction) {
             case 'PAN':
                 dispatch(setCursorPosition([x, y]));
-                dispatch(translateCanvas([x - cursorPosition.x, y - cursorPosition.y, true]));
+                dispatch(translateCanvas([x - cursorPosition.x, y - cursorPosition.y]));
                 break;
             case 'DRAG':
                 if (selectedItem) {
@@ -167,17 +167,11 @@ const BoardStateMachine = {
 
     mouseWheel(e: WheelEvent<HTMLDivElement>): void {
         const { canvasTransform, currentAction } = getState().board;
-        if (currentAction === 'IDLE') dispatch(setCurrentAction('IDLE'));
-        // calculate new scale
-        const delta = -Math.round(e.deltaY) * 0.0005;
-        const scale = canvasTransform.scale + delta;
-        // translate canvas so cursor remains in the same relative position
-        const [x, y] = [e.clientX, e.clientY];
-        const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
-        const [newX, newY] = getTransformedCoordinates(realX, realY, { ...canvasTransform, scale });
-        const [dX, dY] = [x - newX, y - newY];
-        dispatch(scaleCanvasTo(scale));
-        dispatch(translateCanvas([dX, dY]));
+        if (currentAction !== 'IDLE') dispatch(setCurrentAction('IDLE'));
+        const { scale } = canvasTransform;
+        // calculate new scale, clamped between 4% and 400%
+        const newScale = Math.min(Math.max(scale * (1 - Math.round(e.deltaY) * 0.001), 0.04), 4);
+        dispatch(scaleCanvasTo([newScale, e.clientX, e.clientY]));
     },
 
     windowResize(): void {

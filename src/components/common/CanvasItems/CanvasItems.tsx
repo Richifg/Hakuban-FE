@@ -18,7 +18,7 @@ const CanvasItems = (): React.ReactElement => {
     useMovementFriction(
         lastTranslate,
         currentAction === 'SLIDE',
-        (x: number, y: number) => dispatch(translateCanvas([x, y, true])),
+        (x: number, y: number) => dispatch(translateCanvas([x, y])),
         () => dispatch(setCurrentAction('IDLE')),
     );
 

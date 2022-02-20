@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { Action, CanvasTransform } from '../../interfaces/board';
+import { getDetransformedCoordinates, getTransformedCoordinates } from '../../utils';
 
 interface BoardState {
     currentAction: Action;
@@ -30,9 +31,9 @@ export const boardSlice = createSlice({
             const [x, y] = action.payload;
             state.cursorPosition = { x, y };
         },
-        translateCanvas: (state, action: PayloadAction<[dX: number, dY: number, keepLast?: boolean]>) => {
-            const [dX, dY, keepLast] = action.payload;
-            if (keepLast) state.lastTranslate = { dX, dY };
+        translateCanvas: (state, action: PayloadAction<[dX: number, dY: number]>) => {
+            const [dX, dY] = action.payload;
+            state.lastTranslate = { dX, dY };
             state.canvasTransform = {
                 ...state.canvasTransform,
                 dX: Math.round(state.canvasTransform.dX + dX),
@@ -51,10 +52,21 @@ export const boardSlice = createSlice({
                 scale: canvasTransform.scale + action.payload,
             };
         },
-        scaleCanvasTo: (state, action: PayloadAction<number>) => {
+        scaleCanvasTo: (state, action: PayloadAction<[newScale: number, cursorX: number, cursorY: number]>) => {
+            const [newScale, cursorX, cursorY] = action.payload;
             const { canvasTransform } = state;
-            const scale = parseFloat(action.payload.toFixed(2));
-            state.canvasTransform = { ...canvasTransform, scale };
+            const scale = parseFloat(newScale.toFixed(2));
+            // real position of cursor
+            const [realX, realY] = getDetransformedCoordinates(cursorX, cursorY, canvasTransform);
+            // position of cursor if canvas was using new scale
+            const [newX, newY] = getTransformedCoordinates(realX, realY, { ...canvasTransform, scale });
+            // how much canvas needs to be translated to maintain cursor position
+            const [dX, dY] = [cursorX - newX, cursorY - newY];
+            state.canvasTransform = {
+                scale,
+                dX: Math.round(canvasTransform.dX + dX),
+                dY: Math.round(canvasTransform.dY + dY),
+            };
         },
         setCanvasSize: (state, action: PayloadAction<{ width: number; height: number }>) => {
             state.canvasSize = action.payload;
