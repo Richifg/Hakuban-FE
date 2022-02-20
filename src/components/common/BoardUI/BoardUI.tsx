@@ -10,6 +10,7 @@ const CanvasUI = (): React.ReactElement => {
     const { selectedTool } = useSelector((s) => s.tools);
     const { width, height } = canvasSize;
     const tool = selectedTool.toLowerCase();
+    const action = currentAction.toLowerCase();
 
     // update canvas size on every window resize
     useLayoutEffect(() => {
@@ -47,7 +48,7 @@ const CanvasUI = (): React.ReactElement => {
     return (
         <div
             role="application"
-            className={`board-ui ${tool}`}
+            className={`board-ui ${tool} ${action}`}
             style={{ width, height }}
             onMouseMove={handleMouseMove}
             onMouseDown={handleMouseDown}

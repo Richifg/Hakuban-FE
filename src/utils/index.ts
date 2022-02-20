@@ -1,5 +1,6 @@
 import getDebouncedFunction from './getDebouncedFunction';
 import getDetransformedCoordinates from './getDetransformedCoordinates';
+import getFinishedDrawing from './getFinishedDrawing';
 import getItemPositionCSSVars from './getItemPositionCSSVars';
 import getItemResizePoints from './getItemResizePoints';
 import getItemTransformedPoints from './getItemTransformedPoints';
@@ -17,6 +18,7 @@ import isTextItem from './isTextItem';
 export {
     getDebouncedFunction,
     getDetransformedCoordinates,
+    getFinishedDrawing,
     getItemPositionCSSVars,
     getItemResizePoints,
     getItemTransformedPoints,

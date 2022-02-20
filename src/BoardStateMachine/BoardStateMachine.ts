@@ -1,4 +1,5 @@
 import { MouseEvent, WheelEvent } from 'react';
+import { MouseButton } from '../interfaces';
 import { store } from '../store/store';
 import {
     setCurrentAction,
@@ -19,8 +20,8 @@ import {
     getNewDrawing,
     getDetransformedCoordinates,
     getTransformedCoordinates,
+    getFinishedDrawing,
 } from '../utils';
-import getFinishedDrawing from '../utils/getFinishedDrawing';
 
 const { dispatch, getState } = store;
 
@@ -44,16 +45,16 @@ const BoardStateMachine = {
         switch (currentAction) {
             case 'IDLE':
             case 'SLIDE':
-                if (selectedTool === 'POINTER') {
-                    // either select clicked item or pan board
+                if (e.button === MouseButton.Middle) {
+                    dispatch(setCurrentAction('PAN'));
+                } else if (selectedTool === 'POINTER') {
+                    // select item
                     const item = allItems.find((item) => isPointInsideItem(x, y, item, canvasTransform));
                     if (item) {
                         dispatch(setSelectedItem(item));
                         const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
                         dispatch(setDragOffset([realX - item.x0, realY - item.y0]));
                         dispatch(setCurrentAction('DRAG'));
-                    } else {
-                        dispatch(setCurrentAction('PAN'));
                     }
                 } else if (selectedTool === 'SHAPE') {
                     // create new Shape
