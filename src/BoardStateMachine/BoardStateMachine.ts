@@ -105,7 +105,7 @@ const BoardStateMachine = {
         switch (currentAction) {
             case 'PAN':
                 dispatch(setCursorPosition([x, y]));
-                dispatch(translateCanvas([x - cursorPosition.x, y - cursorPosition.y]));
+                dispatch(translateCanvas([x - cursorPosition.x, y - cursorPosition.y, true]));
                 break;
             case 'DRAG':
                 if (selectedItem) {

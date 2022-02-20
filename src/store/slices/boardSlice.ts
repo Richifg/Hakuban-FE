@@ -30,9 +30,9 @@ export const boardSlice = createSlice({
             const [x, y] = action.payload;
             state.cursorPosition = { x, y };
         },
-        translateCanvas: (state, action: PayloadAction<[dX: number, dY: number]>) => {
-            const [dX, dY] = action.payload;
-            state.lastTranslate = { dX, dY };
+        translateCanvas: (state, action: PayloadAction<[dX: number, dY: number, keepLast?: boolean]>) => {
+            const [dX, dY, keepLast] = action.payload;
+            if (keepLast) state.lastTranslate = { dX, dY };
             state.canvasTransform = {
                 ...state.canvasTransform,
                 dX: Math.round(state.canvasTransform.dX + dX),
