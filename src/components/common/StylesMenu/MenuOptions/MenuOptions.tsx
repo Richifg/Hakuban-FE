@@ -34,7 +34,9 @@ const MenuOptions = ({ item }: MenuOptions): React.ReactElement => {
         <div className="menu-options" onMouseDown={stopMouseDown}>
             {item.type === 'shape' && <ColorSelector onChange={handleChange} styleKey="fillColor" />}
             {item.type === 'shape' && <ColorSelector onChange={handleChange} styleKey="lineColor" />}
+            {(item.type === 'note' || item.type === 'drawing') && <ColorSelector onChange={handleChange} styleKey="color" />}
             {item.type === 'shape' && <LineSelector onChange={handleChange} styleKey="lineWidth" value={item.lineWidth} />}
+            {item.type === 'drawing' && <LineSelector onChange={handleChange} styleKey="width" value={item.width} />}
             {'text' in item && (
                 <>
                     <AlignmentSelector onChange={handleNestedChange} styleKey="vAlign" />
