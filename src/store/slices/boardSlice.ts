@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { Action, CanvasTransform, BoardItem } from '../../interfaces';
-import { getDetransformedCoordinates, getItemMaxCoordinates, getTransformedCoordinates } from '../../utils';
+import { getBoardCoordinates, getItemMaxCoordinates, getCanvasCoordinates } from '../../utils';
 
 const BOARD_PADDING = 200; //px
 
@@ -50,9 +50,9 @@ export const boardSlice = createSlice({
             const { canvasTransform } = state;
             const scale = parseFloat(newScale.toFixed(2));
             // get canvas coordinates
-            const [absX, absY] = getDetransformedCoordinates(screenX, screenY, canvasTransform);
+            const [boardX, boardY] = getBoardCoordinates(screenX, screenY, canvasTransform);
             // position coordinates using the new scale
-            const [newX, newY] = getTransformedCoordinates(absX, absY, { ...canvasTransform, scale });
+            const [newX, newY] = getCanvasCoordinates(boardX, boardY, { ...canvasTransform, scale });
             // translate keeping relative coordinates in the same position on the screen
             const [dX, dY] = [screenX - newX, screenY - newY];
             state.canvasTransform = {

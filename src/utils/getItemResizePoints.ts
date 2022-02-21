@@ -1,6 +1,6 @@
 import type { BoardItem, Point, Coordinates } from '../interfaces/items';
 import type { CanvasTransform } from '../interfaces/board';
-import { getDetransformedCoordinates } from '.';
+import { getBoardCoordinates } from '.';
 
 // return new points for item based on cursor position and selectedPoint
 // if resizeOffset is provided, resize will mantain aspect ratio
@@ -16,10 +16,9 @@ function getItemResizePoints(
     let newX: number;
     let newY: number;
     const { x0, y0, x2, y2 } = item;
-    // detransforms cursor coordinates to get the real canvas coordinates
-    const [realCursorX, realCursorY] = getDetransformedCoordinates(cursorX, cursorY, transform);
+    const [boardX, boardY] = getBoardCoordinates(cursorX, cursorY, transform);
     if (!maintainRatio) {
-        [newX, newY] = [realCursorX, realCursorY];
+        [newX, newY] = [boardX, boardY];
     } else {
         // gets the resize anchor point
         let staticX: number;
@@ -30,15 +29,14 @@ function getItemResizePoints(
         else [staticX, staticY] = [x2, y0];
 
         // checks on which axis the resize point grew more
-        const deltaX = realCursorX - staticX;
-        const deltaY = realCursorY - staticY;
+        const deltaX = boardX - staticX;
+        const deltaY = boardY - staticY;
         const deltaDirection = Math.sign(deltaX | 1) * Math.sign(deltaY | 1); // avoid Math.sign(0) as it returns 0
 
         // calculates the other axis maintaining the item size ratio
         const ratio = Math.abs((x2 - x0) / (y2 - y0));
-        if (Math.abs(deltaX) > Math.abs(deltaY * ratio))
-            [newX, newY] = [realCursorX, staticY + (deltaX / ratio) * deltaDirection];
-        else [newX, newY] = [staticX + deltaY * ratio * deltaDirection, realCursorY];
+        if (Math.abs(deltaX) > Math.abs(deltaY * ratio)) [newX, newY] = [boardX, staticY + (deltaX / ratio) * deltaDirection];
+        else [newX, newY] = [staticX + deltaY * ratio * deltaDirection, boardY];
     }
 
     if (selectedPoint === 'P0') return { x0: newX, y0: newY, x2, y2 };
