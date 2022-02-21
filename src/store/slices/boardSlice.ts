@@ -34,23 +34,12 @@ export const boardSlice = createSlice({
         translateCanvas: (state, action: PayloadAction<[dX: number, dY: number]>) => {
             const [dX, dY] = action.payload;
             state.lastTranslate = { dX, dY };
-            state.canvasTransform = {
-                ...state.canvasTransform,
-                dX: Math.round(state.canvasTransform.dX + dX),
-                dY: Math.round(state.canvasTransform.dY + dY),
-            };
-        },
-        translateCanvasTo: (state, action: PayloadAction<[dX: number, dY: number]>) => {
-            const [dX, dY] = action.payload;
-            state.lastTranslate = state.canvasTransform;
-            state.canvasTransform = { ...state.canvasTransform, dX, dY };
+            state.canvasTransform.dX = Math.round(state.canvasTransform.dX + dX);
+            state.canvasTransform.dY = Math.round(state.canvasTransform.dY + dY);
         },
         scaleCanvas: (state, action: PayloadAction<number>) => {
-            const { canvasTransform } = state;
-            state.canvasTransform = {
-                ...canvasTransform,
-                scale: canvasTransform.scale + action.payload,
-            };
+            const { scale } = state.canvasTransform;
+            state.canvasTransform.scale = scale + action.payload;
         },
         scaleCanvasTo: (state, action: PayloadAction<[newScale: number, cursorX: number, cursorY: number]>) => {
             const [newScale, cursorX, cursorY] = action.payload;
@@ -77,15 +66,7 @@ export const boardSlice = createSlice({
     },
 });
 
-export const {
-    setCurrentAction,
-    setCursorPosition,
-    translateCanvas,
-    translateCanvasTo,
-    scaleCanvas,
-    scaleCanvasTo,
-    setCanvasSize,
-    setIsWriting,
-} = boardSlice.actions;
+export const { setCurrentAction, setCursorPosition, translateCanvas, scaleCanvas, scaleCanvasTo, setCanvasSize, setIsWriting } =
+    boardSlice.actions;
 
 export default boardSlice.reducer;
