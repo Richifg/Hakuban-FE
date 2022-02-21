@@ -6,7 +6,7 @@ import {
     setCursorPosition,
     setCanvasSize,
     translateCanvas,
-    scaleCanvasToScreenPoint,
+    setCanvasScale,
     setIsWriting,
     updateBoardLimits,
 } from '../store/slices/boardSlice';
@@ -20,6 +20,7 @@ import {
     getNewShape,
     getNewDrawing,
     getBoardCoordinates,
+    getCanvasCoordinates,
     getFinishedDrawing,
 } from '../utils';
 
@@ -175,10 +176,16 @@ const BoardStateMachine = {
     mouseWheel(e: WheelEvent<HTMLDivElement>): void {
         const { canvasTransform, currentAction } = getState().board;
         if (currentAction !== 'IDLE') dispatch(setCurrentAction('IDLE'));
-        const { scale } = canvasTransform;
         // calculate new scale, clamped between 4% and 400%
-        const newScale = Math.min(Math.max(scale * (1 - Math.round(e.deltaY) * 0.001), 0.04), 4);
-        dispatch(scaleCanvasToScreenPoint([newScale, e.clientX, e.clientY]));
+        const scale = Math.min(Math.max(canvasTransform.scale * (1 - Math.round(e.deltaY) * 0.001), 0.04), 4);
+        dispatch(setCanvasScale(scale));
+        // get cursor board coordinates
+        const [cursorX, cursorY] = [e.clientX, e.clientY];
+        const [boardX, boardY] = getBoardCoordinates(cursorX, cursorY, canvasTransform);
+        // position coordinates on canvas using the new scale
+        const [newX, newY] = getCanvasCoordinates(boardX, boardY, { ...canvasTransform, scale });
+        // translate so the cursor stays on same position on screen
+        dispatch(translateCanvas([cursorX - newX, cursorY - newY]));
     },
 
     windowResize(): void {

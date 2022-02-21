@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { Action, CanvasTransform, BoardItem } from '../../interfaces';
-import { getBoardCoordinates, getItemMaxCoordinates, getCanvasCoordinates } from '../../utils';
+import { getItemMaxCoordinates } from '../../utils';
 
 const BOARD_PADDING = 200; //px
 
@@ -20,7 +20,7 @@ const initialState: BoardState = {
     canvasTransform: { dX: 0, dY: 0, scale: 1 },
     lastTranslate: { dX: 0, dY: 0 },
     canvasSize: { width: 0, height: 0 },
-    boardLimits: { top: 0, right: 0, bottom: 0, left: 0 },
+    boardLimits: { top: Infinity, right: -Infinity, bottom: -Infinity, left: Infinity },
     isWriting: false,
 };
 
@@ -41,25 +41,17 @@ export const boardSlice = createSlice({
             state.canvasTransform.dX = Math.round(state.canvasTransform.dX + dX);
             state.canvasTransform.dY = Math.round(state.canvasTransform.dY + dY);
         },
-        scaleCanvas: (state, action: PayloadAction<number>) => {
-            const { scale } = state.canvasTransform;
-            state.canvasTransform.scale = scale + action.payload;
+        setCanvasScale: (state, action: PayloadAction<number>) => {
+            const scale = parseFloat(action.payload.toFixed(2));
+            state.canvasTransform.scale = scale;
         },
-        scaleCanvasToScreenPoint: (state, action: PayloadAction<[newScale: number, screenX: number, screenY: number]>) => {
-            const [newScale, screenX, screenY] = action.payload;
-            const { canvasTransform } = state;
+        scaleCanvasAndCenter: (state, action: PayloadAction<[newScale: number, x: number, y: number]>) => {
+            const [newScale, boardX, boardY] = action.payload;
+            const { canvasSize } = state;
             const scale = parseFloat(newScale.toFixed(2));
-            // get canvas coordinates
-            const [boardX, boardY] = getBoardCoordinates(screenX, screenY, canvasTransform);
-            // position coordinates using the new scale
-            const [newX, newY] = getCanvasCoordinates(boardX, boardY, { ...canvasTransform, scale });
-            // translate keeping relative coordinates in the same position on the screen
-            const [dX, dY] = [screenX - newX, screenY - newY];
-            state.canvasTransform = {
-                scale,
-                dX: Math.round(canvasTransform.dX + dX),
-                dY: Math.round(canvasTransform.dY + dY),
-            };
+            const dX = Math.round(canvasSize.width * 0.5 - boardX * scale);
+            const dY = Math.round(canvasSize.height * 0.5 - boardY * scale);
+            state.canvasTransform = { scale, dX, dY };
         },
         setCanvasSize: (state, action: PayloadAction<{ width: number; height: number }>) => {
             state.canvasSize = action.payload;
@@ -82,8 +74,8 @@ export const {
     setCurrentAction,
     setCursorPosition,
     translateCanvas,
-    scaleCanvas,
-    scaleCanvasToScreenPoint,
+    setCanvasScale,
+    scaleCanvasAndCenter,
     setCanvasSize,
     updateBoardLimits,
     setIsWriting,
