@@ -4,6 +4,7 @@ import { setId, setError } from '../store/slices/connectionSlice';
 import { setMessages, addMessage } from '../store/slices/chatSlice';
 import { WSMessage } from '../interfaces/webSocket';
 import { ChatMessage, BoardItem } from '../interfaces/items';
+import { updateBoardLimits } from '../store/slices/boardSlice';
 
 const url = process.env.REACT_APP_SERVER_URL;
 
@@ -39,14 +40,19 @@ class WebSocketService {
                         break;
                     case 'item':
                         if (message.content.type === 'chat') store.dispatch(addMessage(message.content));
-                        else store.dispatch(addItem(message.content));
+                        else {
+                            const item = message.content;
+                            store.dispatch(addItem(item));
+                            store.dispatch(updateBoardLimits(item));
+                        }
                         break;
                     case 'collection':
                         // TODO: check TypeScript Handbook to see alternative to importing and asserting the type here
                         const chatMessages = message.content.filter((item) => item.type === 'chat') as ChatMessage[];
-                        const otherItems = message.content.filter((item) => item.type !== 'chat') as BoardItem[];
-                        store.dispatch(setItems(otherItems));
+                        const boardItems = message.content.filter((item) => item.type !== 'chat') as BoardItem[];
+                        store.dispatch(setItems(boardItems));
                         store.dispatch(setMessages(chatMessages));
+                        boardItems.forEach((item) => store.dispatch(updateBoardLimits(item)));
                         break;
                     case 'id':
                         store.dispatch(setId(message.content));

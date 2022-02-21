@@ -5,6 +5,7 @@ import getItemPositionCSSVars from './getItemPositionCSSVars';
 import getItemResizePoints from './getItemResizePoints';
 import getItemTransformedPoints from './getItemTransformedPoints';
 import getItemTranslatePoints from './getItemTranslatePoints';
+import getItemMaxCoordinates from './getItemMaxCoordinates';
 import getNewDrawing from './getNewDrawing';
 import getNewId from './getNewId';
 import getNewNote from './getNewNote';
@@ -23,6 +24,7 @@ export {
     getItemResizePoints,
     getItemTransformedPoints,
     getItemTranslatePoints,
+    getItemMaxCoordinates,
     getNewDrawing,
     getNewId,
     getNewNote,

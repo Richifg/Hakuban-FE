@@ -1,6 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { Action, CanvasTransform } from '../../interfaces/board';
-import { getDetransformedCoordinates, getTransformedCoordinates } from '../../utils';
+import type { Action, CanvasTransform, BoardItem } from '../../interfaces';
+import { getDetransformedCoordinates, getItemMaxCoordinates, getTransformedCoordinates } from '../../utils';
+
+const BOARD_PADDING = 200; //px
 
 interface BoardState {
     currentAction: Action;
@@ -8,6 +10,7 @@ interface BoardState {
     canvasTransform: CanvasTransform;
     lastTranslate: { dX: number; dY: number };
     canvasSize: { width: number; height: number };
+    boardLimits: { top: number; right: number; bottom: number; left: number };
     isWriting: boolean;
 }
 
@@ -17,6 +20,7 @@ const initialState: BoardState = {
     canvasTransform: { dX: 0, dY: 0, scale: 1 },
     lastTranslate: { dX: 0, dY: 0 },
     canvasSize: { width: 0, height: 0 },
+    boardLimits: { top: 0, right: 0, bottom: 0, left: 0 },
     isWriting: false,
 };
 
@@ -41,16 +45,16 @@ export const boardSlice = createSlice({
             const { scale } = state.canvasTransform;
             state.canvasTransform.scale = scale + action.payload;
         },
-        scaleCanvasTo: (state, action: PayloadAction<[newScale: number, cursorX: number, cursorY: number]>) => {
-            const [newScale, cursorX, cursorY] = action.payload;
+        scaleCanvasToScreenPoint: (state, action: PayloadAction<[newScale: number, screenX: number, screenY: number]>) => {
+            const [newScale, screenX, screenY] = action.payload;
             const { canvasTransform } = state;
             const scale = parseFloat(newScale.toFixed(2));
-            // real position of cursor
-            const [realX, realY] = getDetransformedCoordinates(cursorX, cursorY, canvasTransform);
-            // position of cursor if canvas was using new scale
-            const [newX, newY] = getTransformedCoordinates(realX, realY, { ...canvasTransform, scale });
-            // how much canvas needs to be translated to maintain cursor position
-            const [dX, dY] = [cursorX - newX, cursorY - newY];
+            // get canvas coordinates
+            const [absX, absY] = getDetransformedCoordinates(screenX, screenY, canvasTransform);
+            // position coordinates using the new scale
+            const [newX, newY] = getTransformedCoordinates(absX, absY, { ...canvasTransform, scale });
+            // translate keeping relative coordinates in the same position on the screen
+            const [dX, dY] = [screenX - newX, screenY - newY];
             state.canvasTransform = {
                 scale,
                 dX: Math.round(canvasTransform.dX + dX),
@@ -60,13 +64,29 @@ export const boardSlice = createSlice({
         setCanvasSize: (state, action: PayloadAction<{ width: number; height: number }>) => {
             state.canvasSize = action.payload;
         },
+        updateBoardLimits: (state, action: PayloadAction<BoardItem>) => {
+            const { maxX, maxY, minX, minY } = getItemMaxCoordinates(action.payload);
+            const { top, right, bottom, left } = state.boardLimits;
+            if (maxY > bottom - BOARD_PADDING) state.boardLimits.bottom = maxY + BOARD_PADDING;
+            if (maxX > right - BOARD_PADDING) state.boardLimits.right = maxX + BOARD_PADDING;
+            if (minY < top + BOARD_PADDING) state.boardLimits.top = minY - BOARD_PADDING;
+            if (minX < left + BOARD_PADDING) state.boardLimits.left = minX - BOARD_PADDING;
+        },
         setIsWriting: (state, action: PayloadAction<boolean>) => {
             state.isWriting = action.payload;
         },
     },
 });
 
-export const { setCurrentAction, setCursorPosition, translateCanvas, scaleCanvas, scaleCanvasTo, setCanvasSize, setIsWriting } =
-    boardSlice.actions;
+export const {
+    setCurrentAction,
+    setCursorPosition,
+    translateCanvas,
+    scaleCanvas,
+    scaleCanvasToScreenPoint,
+    setCanvasSize,
+    updateBoardLimits,
+    setIsWriting,
+} = boardSlice.actions;
 
 export default boardSlice.reducer;
