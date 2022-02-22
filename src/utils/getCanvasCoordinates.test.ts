@@ -1,5 +1,5 @@
 import { CanvasTransform } from '../interfaces/board';
-import { getCanvasCoordinates } from './';
+import { getCanvasCoordinates } from '.';
 
 test('returns correct transformed points', () => {
     const transform: CanvasTransform = { dX: 30, dY: -48, scale: 0.5 };

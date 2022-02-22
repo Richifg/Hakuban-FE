@@ -1,8 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { Action, CanvasTransform, BoardItem } from '../../interfaces';
-import { getItemMaxCoordinates } from '../../utils';
-
-const BOARD_PADDING = 200; //px
+import type { Action, CanvasTransform, BoardLimits } from '../../interfaces';
 
 interface BoardState {
     currentAction: Action;
@@ -10,7 +7,7 @@ interface BoardState {
     canvasTransform: CanvasTransform;
     lastTranslate: { dX: number; dY: number };
     canvasSize: { width: number; height: number };
-    boardLimits: { top: number; right: number; bottom: number; left: number };
+    boardLimits: BoardLimits;
     isWriting: boolean;
 }
 
@@ -20,7 +17,12 @@ const initialState: BoardState = {
     canvasTransform: { dX: 0, dY: 0, scale: 1 },
     lastTranslate: { dX: 0, dY: 0 },
     canvasSize: { width: 0, height: 0 },
-    boardLimits: { top: Infinity, right: -Infinity, bottom: -Infinity, left: Infinity },
+    boardLimits: {
+        top: { extent: Infinity },
+        right: { extent: -Infinity },
+        bottom: { extent: -Infinity },
+        left: { extent: Infinity },
+    },
     isWriting: false,
 };
 
@@ -54,13 +56,8 @@ export const boardSlice = createSlice({
         setCanvasSize: (state, action: PayloadAction<{ width: number; height: number }>) => {
             state.canvasSize = action.payload;
         },
-        updateBoardLimits: (state, action: PayloadAction<BoardItem>) => {
-            const { maxX, maxY, minX, minY } = getItemMaxCoordinates(action.payload);
-            const { top, right, bottom, left } = state.boardLimits;
-            if (maxY > bottom - BOARD_PADDING) state.boardLimits.bottom = maxY + BOARD_PADDING;
-            if (maxX > right - BOARD_PADDING) state.boardLimits.right = maxX + BOARD_PADDING;
-            if (minY < top + BOARD_PADDING) state.boardLimits.top = minY - BOARD_PADDING;
-            if (minX < left + BOARD_PADDING) state.boardLimits.left = minX - BOARD_PADDING;
+        setBoardLimits: (state, action: PayloadAction<BoardLimits>) => {
+            state.boardLimits = action.payload;
         },
         setIsWriting: (state, action: PayloadAction<boolean>) => {
             state.isWriting = action.payload;
@@ -75,7 +72,7 @@ export const {
     setCanvasScale,
     centerCanvasAt,
     setCanvasSize,
-    updateBoardLimits,
+    setBoardLimits,
     setIsWriting,
 } = boardSlice.actions;
 

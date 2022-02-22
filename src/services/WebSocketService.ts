@@ -4,7 +4,8 @@ import { setId, setError } from '../store/slices/connectionSlice';
 import { setMessages, addMessage } from '../store/slices/chatSlice';
 import { WSMessage } from '../interfaces/webSocket';
 import { ChatMessage, BoardItem } from '../interfaces/items';
-import { updateBoardLimits } from '../store/slices/boardSlice';
+import { setBoardLimits } from '../store/slices/boardSlice';
+import { getUpdatedBoardLimits } from '../utils';
 
 const url = process.env.REACT_APP_SERVER_URL;
 
@@ -43,7 +44,7 @@ class WebSocketService {
                         else {
                             const item = message.content;
                             store.dispatch(addItem(item));
-                            store.dispatch(updateBoardLimits(item));
+                            store.dispatch(setBoardLimits(getUpdatedBoardLimits(item)));
                         }
                         break;
                     case 'collection':
@@ -52,7 +53,7 @@ class WebSocketService {
                         const boardItems = message.content.filter((item) => item.type !== 'chat') as BoardItem[];
                         store.dispatch(setItems(boardItems));
                         store.dispatch(setMessages(chatMessages));
-                        boardItems.forEach((item) => store.dispatch(updateBoardLimits(item)));
+                        store.dispatch(setBoardLimits(getUpdatedBoardLimits(undefined, Object.values(boardItems))));
                         break;
                     case 'id':
                         store.dispatch(setId(message.content));

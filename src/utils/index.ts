@@ -12,6 +12,7 @@ import getNewId from './getNewId';
 import getNewNote from './getNewNote';
 import getNewShape from './getNewShape';
 import getTextAreaCoordinates from './getTextAreaCoordinates';
+import getUpdatedBoardLimits from './getUpdatedBoardLimits';
 import getWrappedTextLines from './getWrappedTextLines';
 import isPointInsideItem from './isPointInsideItem';
 import isTextItem from './isTextItem';
@@ -31,6 +32,7 @@ export {
     getNewNote,
     getNewShape,
     getTextAreaCoordinates,
+    getUpdatedBoardLimits,
     getWrappedTextLines,
     isPointInsideItem,
     isTextItem,

@@ -27,7 +27,7 @@ const ZoomControls = (): React.ReactElement => {
             currentY += yStep;
             dispatch(setCanvasScale(currentScale));
             dispatch(centerCanvasAt([currentX, currentY]));
-            if (stepIndex < STEPS) requestAnimationFrame(() => animateStep(stepIndex + 1));
+            if (stepIndex < STEPS - 1) requestAnimationFrame(() => animateStep(stepIndex + 1));
         };
         animateStep(0);
     };
@@ -36,10 +36,10 @@ const ZoomControls = (): React.ReactElement => {
         const { width, height } = canvasSize;
         const { top, left, bottom, right } = boardLimits;
         // scale canvas so that everything is visible
-        const scale = width > height ? height / (bottom - top) : width / (right - left);
+        const scale = width > height ? height / (bottom.extent - top.extent) : width / (right.extent - left.extent);
         // center canvas at the middle of the board limits
-        const x = (right + left) * 0.5;
-        const y = (bottom + top) * 0.5;
+        const x = (right.extent + left.extent) * 0.5;
+        const y = (bottom.extent + top.extent) * 0.5;
         smoothScaleAndCenter(scale, x, y);
     };
 

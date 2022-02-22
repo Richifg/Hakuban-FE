@@ -8,7 +8,7 @@ import {
     translateCanvas,
     setCanvasScale,
     setIsWriting,
-    updateBoardLimits,
+    setBoardLimits,
 } from '../store/slices/boardSlice';
 import { addItem, setSelectedItem, setSelectedPoint, setDragOffset } from '../store/slices/itemsSlice';
 import { setNoteStyle } from '../store/slices/toolSlice';
@@ -22,6 +22,7 @@ import {
     getBoardCoordinates,
     getCanvasCoordinates,
     getFinishedDrawing,
+    getUpdatedBoardLimits,
 } from '../utils';
 
 const { dispatch, getState } = store;
@@ -37,7 +38,7 @@ const { dispatch, getState } = store;
 
 const BoardStateMachine = {
     mouseDown(e: MouseEvent<HTMLDivElement>): void {
-        const { currentAction, canvasTransform } = getState().board;
+        const { currentAction, canvasTransform, isWriting } = getState().board;
         const { selectedItem, items } = getState().items;
         const { selectedTool } = getState().tools;
         const itemsArray = Object.values(items);
@@ -77,7 +78,7 @@ const BoardStateMachine = {
                     }
                     if (newItem) {
                         dispatch(addItem(newItem));
-                        dispatch(updateBoardLimits(newItem));
+                        dispatch(setBoardLimits(getUpdatedBoardLimits(newItem)));
                     }
                 }
                 break;
@@ -88,12 +89,12 @@ const BoardStateMachine = {
                 if (item && selectedTool === 'POINTER') {
                     if (item.id !== selectedItem?.id) {
                         dispatch(setSelectedItem(item));
-                        dispatch(setIsWriting(false));
+                        isWriting && dispatch(setIsWriting(false));
                     } else dispatch(setIsWriting(true));
                     dispatch(setDragOffset([boardX - item.x0, boardY - item.y0]));
                     dispatch(setCurrentAction('DRAG'));
                 } else {
-                    dispatch(setIsWriting(false));
+                    isWriting && dispatch(setIsWriting(false));
                     dispatch(setSelectedItem());
                     dispatch(setCurrentAction('PAN'));
                 }
@@ -102,7 +103,7 @@ const BoardStateMachine = {
     },
 
     mouseMove(e: MouseEvent<HTMLDivElement>): void {
-        const { currentAction, cursorPosition, canvasTransform } = getState().board;
+        const { currentAction, cursorPosition, canvasTransform, isWriting } = getState().board;
         const { selectedItem, selectedPoint, dragOffset } = getState().items;
         const [x, y] = [e.clientX, e.clientY];
         switch (currentAction) {
@@ -116,8 +117,8 @@ const BoardStateMachine = {
                     const points = getItemTranslatePoints(selectedItem, dragOffset, x, y, canvasTransform);
                     const updatedItem = { ...selectedItem, ...points };
                     dispatch(addItem(updatedItem));
-                    dispatch(updateBoardLimits(updatedItem));
-                    dispatch(setIsWriting(false));
+                    dispatch(setBoardLimits(getUpdatedBoardLimits(updatedItem)));
+                    isWriting && dispatch(setIsWriting(false));
                 }
                 break;
             case 'RESIZE':
@@ -128,7 +129,7 @@ const BoardStateMachine = {
                     const points = getItemResizePoints(selectedItem, selectedPoint, x, y, canvasTransform, maintainRatio);
                     const updatedItem = { ...selectedItem, ...points };
                     dispatch(addItem(updatedItem));
-                    dispatch(updateBoardLimits(updatedItem));
+                    dispatch(setBoardLimits(getUpdatedBoardLimits(updatedItem)));
                 }
                 break;
             case 'DRAW':
@@ -166,7 +167,7 @@ const BoardStateMachine = {
                 if (selectedItem?.type === 'drawing') {
                     const finishedDrawing = getFinishedDrawing(selectedItem);
                     dispatch(addItem(finishedDrawing));
-                    dispatch(updateBoardLimits(finishedDrawing));
+                    dispatch(setBoardLimits(getUpdatedBoardLimits(finishedDrawing)));
                 }
                 dispatch(setCurrentAction('IDLE'));
                 break;
