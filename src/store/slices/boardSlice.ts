@@ -45,13 +45,11 @@ export const boardSlice = createSlice({
             const scale = parseFloat(action.payload.toFixed(2));
             state.canvasTransform.scale = scale;
         },
-        scaleCanvasAndCenter: (state, action: PayloadAction<[newScale: number, x: number, y: number]>) => {
-            const [newScale, boardX, boardY] = action.payload;
-            const { canvasSize } = state;
-            const scale = parseFloat(newScale.toFixed(2));
-            const dX = Math.round(canvasSize.width * 0.5 - boardX * scale);
-            const dY = Math.round(canvasSize.height * 0.5 - boardY * scale);
-            state.canvasTransform = { scale, dX, dY };
+        centerCanvasAt: (state, action: PayloadAction<[boardX: number, boardY: number]>) => {
+            const [boardX, boardY] = action.payload;
+            const { canvasSize, canvasTransform } = state;
+            state.canvasTransform.dX = Math.round(canvasSize.width * 0.5 - boardX * canvasTransform.scale);
+            state.canvasTransform.dY = Math.round(canvasSize.height * 0.5 - boardY * canvasTransform.scale);
         },
         setCanvasSize: (state, action: PayloadAction<{ width: number; height: number }>) => {
             state.canvasSize = action.payload;
@@ -75,7 +73,7 @@ export const {
     setCursorPosition,
     translateCanvas,
     setCanvasScale,
-    scaleCanvasAndCenter,
+    centerCanvasAt,
     setCanvasSize,
     updateBoardLimits,
     setIsWriting,
