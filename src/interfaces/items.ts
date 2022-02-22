@@ -4,7 +4,7 @@ export type BoardItemType = 'text' | 'shape' | 'note' | 'drawing';
 type ItemType = BoardItemType | 'chat';
 interface ItemBase {
     type: ItemType;
-    id?: string;
+    id: string;
     creationDate?: Date;
 }
 

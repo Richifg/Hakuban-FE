@@ -10,7 +10,7 @@ import {
     setIsWriting,
     updateBoardLimits,
 } from '../store/slices/boardSlice';
-import { addUserItem, setSelectedItem, setSelectedPoint, setDragOffset } from '../store/slices/itemsSlice';
+import { addItem, setSelectedItem, setSelectedPoint, setDragOffset } from '../store/slices/itemsSlice';
 import { setNoteStyle } from '../store/slices/toolSlice';
 import {
     getItemResizePoints,
@@ -38,9 +38,9 @@ const { dispatch, getState } = store;
 const BoardStateMachine = {
     mouseDown(e: MouseEvent<HTMLDivElement>): void {
         const { currentAction, canvasTransform } = getState().board;
-        const { selectedItem, items, userItems } = getState().items;
+        const { selectedItem, items } = getState().items;
         const { selectedTool } = getState().tools;
-        const allItems = [...items, ...userItems];
+        const itemsArray = Object.values(items);
         const [screenX, screenY] = [e.clientX, e.clientY];
         dispatch(setCursorPosition([screenX, screenY]));
         const [boardX, boardY] = getBoardCoordinates(screenX, screenY, canvasTransform);
@@ -51,7 +51,7 @@ const BoardStateMachine = {
                 if (e.button === MouseButton.Middle) {
                     dispatch(setCurrentAction('PAN'));
                 } else if (selectedTool === 'POINTER') {
-                    const item = allItems.find((item) => isPointInsideItem(screenX, screenY, item, canvasTransform));
+                    const item = itemsArray.find((item) => isPointInsideItem(screenX, screenY, item, canvasTransform));
                     if (item) {
                         // select clicked item
                         dispatch(setSelectedItem(item));
@@ -76,7 +76,7 @@ const BoardStateMachine = {
                         dispatch(setCurrentAction('DRAW'));
                     }
                     if (newItem) {
-                        dispatch(addUserItem(newItem));
+                        dispatch(addItem(newItem));
                         dispatch(updateBoardLimits(newItem));
                     }
                 }
@@ -84,7 +84,7 @@ const BoardStateMachine = {
             case 'EDIT':
                 // ##TODO how to determine if a click was inside an element quickly?
                 // also how about staking order of elementes
-                const item = allItems.find((item) => isPointInsideItem(screenX, screenY, item, canvasTransform));
+                const item = itemsArray.find((item) => isPointInsideItem(screenX, screenY, item, canvasTransform));
                 if (item && selectedTool === 'POINTER') {
                     if (item.id !== selectedItem?.id) {
                         dispatch(setSelectedItem(item));
@@ -115,7 +115,7 @@ const BoardStateMachine = {
                     dispatch(setCursorPosition([x, y]));
                     const points = getItemTranslatePoints(selectedItem, dragOffset, x, y, canvasTransform);
                     const updatedItem = { ...selectedItem, ...points };
-                    dispatch(addUserItem(updatedItem));
+                    dispatch(addItem(updatedItem));
                     dispatch(updateBoardLimits(updatedItem));
                     dispatch(setIsWriting(false));
                 }
@@ -127,7 +127,7 @@ const BoardStateMachine = {
                     const maintainRatio = type === 'note' || type === 'drawing';
                     const points = getItemResizePoints(selectedItem, selectedPoint, x, y, canvasTransform, maintainRatio);
                     const updatedItem = { ...selectedItem, ...points };
-                    dispatch(addUserItem(updatedItem));
+                    dispatch(addItem(updatedItem));
                     dispatch(updateBoardLimits(updatedItem));
                 }
                 break;
@@ -136,7 +136,7 @@ const BoardStateMachine = {
                     dispatch(setCursorPosition([x, y]));
                     const [boardX, boardY] = getBoardCoordinates(x, y, canvasTransform);
                     const points = [...selectedItem.points, [boardX, boardY]] as [number, number][];
-                    dispatch(addUserItem({ ...selectedItem, points }));
+                    dispatch(addItem({ ...selectedItem, points }));
                 }
         }
     },
@@ -165,7 +165,7 @@ const BoardStateMachine = {
                 // transformed in progress drawing into relative coordinates drawing
                 if (selectedItem?.type === 'drawing') {
                     const finishedDrawing = getFinishedDrawing(selectedItem);
-                    dispatch(addUserItem(finishedDrawing));
+                    dispatch(addItem(finishedDrawing));
                     dispatch(updateBoardLimits(finishedDrawing));
                 }
                 dispatch(setCurrentAction('IDLE'));

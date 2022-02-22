@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { getItemPositionCSSVars, getTextAreaCoordinates, isTextItem } from '../../../utils';
 import { useSelector, useDispatch } from '../../../hooks';
-import { addUserItem } from '../../../store/slices/itemsSlice';
+import { addItem } from '../../../store/slices/itemsSlice';
 import { Align, BoardItem } from '../../../interfaces';
 
 import './TextEditor.scss';
@@ -21,7 +21,7 @@ const TextEditor = (): React.ReactElement => {
     useEffect(() => {
         // set flag so canvas stops rendering the same text as the text editor
         if (isWriting && isTextItem(selectedItem) && selectedItem.text) {
-            dispatch(addUserItem({ ...selectedItem, text: { ...selectedItem.text, skipRendering: true } }));
+            dispatch(addItem({ ...selectedItem, text: { ...selectedItem.text, skipRendering: true } }));
         }
         // saves item's new text when no longer writing
         const lastItem = lastSelectedItemRef.current;
@@ -32,7 +32,7 @@ const TextEditor = (): React.ReactElement => {
             if (lastItem.text) newItem = { ...lastItem, text: { ...lastItem.text, content } };
             else newItem = { ...lastItem, text: { ...textStyle, content } };
             delete newItem.text?.skipRendering;
-            dispatch(addUserItem(newItem));
+            dispatch(addItem(newItem));
         }
     }, [isWriting]);
 

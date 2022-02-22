@@ -72,6 +72,7 @@ class WebSocketService {
         const message: WSMessage = {
             type: 'item',
             content: {
+                id: 'TEMP', // #TODO decide if ids where generated
                 type: 'chat',
                 content: text,
                 from: this.id,

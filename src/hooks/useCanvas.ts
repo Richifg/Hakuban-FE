@@ -6,7 +6,7 @@ function useCanvas(
     canvasRef: React.RefObject<HTMLCanvasElement>,
     canvasSize: CanvasSize,
     canvasTransform: CanvasTransform,
-    items: BoardItem[],
+    items: { [key: string]: BoardItem },
 ): void {
     const [manager, setManager] = useState<CanvasManager>();
 
