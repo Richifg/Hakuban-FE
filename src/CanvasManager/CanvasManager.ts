@@ -4,6 +4,7 @@ import drawShape from './drawShape';
 import drawText from './drawText';
 import drawNote from './drawNote';
 import drawDrawing from './drawDrawing';
+import drawGrid from './drawGrid';
 import { getTextAreaCoordinates, isTextItem } from '../utils';
 
 /*
@@ -19,22 +20,29 @@ class CanvasManager {
     size: CanvasSize;
     transform: CanvasTransform;
     items: { [key: string]: BoardItem };
+    showGrid: boolean;
     animationId?: number;
 
-    constructor(
-        ctx: CanvasRenderingContext2D,
-        size: CanvasSize,
-        transform: CanvasTransform,
-        items: { [key: string]: BoardItem },
-    ) {
+    constructor(ctx: CanvasRenderingContext2D) {
         this.ctx = ctx;
-        this.size = size;
-        this.transform = transform;
-        this.items = items;
+        this.size = { width: 0, height: 0 };
+        this.transform = { scale: 1, dX: 0, dY: 0 };
+        this.items = {};
+        this.showGrid = true;
+    }
+
+    clear(): void {
+        const { width, height } = this.size;
+        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+        this.ctx.clearRect(0, 0, width, height);
+    }
+
+    transformCanvas(): void {
+        const { scale, dX, dY } = this.transform;
+        this.ctx.setTransform(scale, 0, 0, scale, dX, dY);
     }
 
     drawItem(item: BoardItem): void {
-        // save defualt values
         this.ctx.save();
 
         const { type } = item;
@@ -47,25 +55,13 @@ class CanvasManager {
             drawText(item.text, coordinates, this.ctx);
         }
 
-        // restore default values
-        this.ctx.restore();
-    }
-    transformCanvas(): void {
-        const { scale, dX, dY } = this.transform;
-        this.ctx.setTransform(scale, 0, 0, scale, dX, dY);
-    }
-
-    clear(): void {
-        const { width, height } = this.size;
-        this.ctx.save();
-        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
-        this.ctx.clearRect(0, 0, width, height);
         this.ctx.restore();
     }
 
     animate(): void {
         this.clear();
         this.transformCanvas();
+        this.showGrid && drawGrid(this.transform, this.size, this.ctx);
         Object.values(this.items).forEach((item) => this.drawItem(item));
         this.animationId = requestAnimationFrame(this.animate.bind(this));
     }

@@ -6,6 +6,7 @@ function useCanvas(
     canvasRef: React.RefObject<HTMLCanvasElement>,
     canvasSize: CanvasSize,
     canvasTransform: CanvasTransform,
+    showGrid: boolean,
     items: { [key: string]: BoardItem },
 ): void {
     const [manager, setManager] = useState<CanvasManager>();
@@ -14,7 +15,7 @@ function useCanvas(
     useLayoutEffect(() => {
         const renderingContext = canvasRef.current?.getContext('2d');
         if (renderingContext) {
-            const manager = new CanvasManager(renderingContext, canvasSize, canvasTransform, items);
+            const manager = new CanvasManager(renderingContext);
             setManager(manager);
             manager.animate();
         }
@@ -30,8 +31,9 @@ function useCanvas(
             manager.size = canvasSize;
             manager.transform = canvasTransform;
             manager.items = items;
+            manager.showGrid = showGrid;
         }
-    }, [canvasSize, canvasTransform, items]);
+    }, [canvasSize, canvasTransform, showGrid, items]);
 }
 
 export default useCanvas;

@@ -8,6 +8,7 @@ interface BoardState {
     lastTranslate: { dX: number; dY: number };
     canvasSize: { width: number; height: number };
     boardLimits: BoardLimits;
+    showGrid: boolean;
     isWriting: boolean;
 }
 
@@ -23,6 +24,7 @@ const initialState: BoardState = {
         bottom: { extent: -Infinity },
         left: { extent: Infinity },
     },
+    showGrid: true,
     isWriting: false,
 };
 
@@ -59,6 +61,9 @@ export const boardSlice = createSlice({
         setBoardLimits: (state, action: PayloadAction<BoardLimits>) => {
             state.boardLimits = action.payload;
         },
+        toggleGrid: (state) => {
+            state.showGrid = !state.showGrid;
+        },
         setIsWriting: (state, action: PayloadAction<boolean>) => {
             state.isWriting = action.payload;
         },
@@ -73,6 +78,7 @@ export const {
     centerCanvasAt,
     setCanvasSize,
     setBoardLimits,
+    toggleGrid,
     setIsWriting,
 } = boardSlice.actions;
 

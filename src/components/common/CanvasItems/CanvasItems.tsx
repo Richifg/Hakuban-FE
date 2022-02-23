@@ -7,11 +7,11 @@ const CanvasItems = (): React.ReactElement => {
     const dispatch = useDispatch();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const { items } = useSelector((s) => s.items);
-    const { canvasSize, canvasTransform, lastTranslate, currentAction } = useSelector((s) => s.board);
+    const { canvasSize, canvasTransform, lastTranslate, currentAction, showGrid } = useSelector((s) => s.board);
     const { width, height } = canvasSize;
 
     // renders items on every update
-    useCanvas(canvasRef, canvasSize, canvasTransform, items);
+    useCanvas(canvasRef, canvasSize, canvasTransform, showGrid, items);
 
     // controls camera slide after user pans the camera
     // ##TODO maybe this shouldn't be in Canvas, or even in a component??
