@@ -1,4 +1,5 @@
 import { Shape, Note, Text, Coordinates } from '../interfaces';
+import { getItemMaxCoordinates } from '../utils';
 
 function getTextAreaCoordinates(item: Shape | Note | Text): Coordinates {
     const { x0, x2, y0, y2 } = item;
@@ -6,8 +7,7 @@ function getTextAreaCoordinates(item: Shape | Note | Text): Coordinates {
 
     const { type } = item;
     if (type === 'shape') {
-        const [maxX, maxY] = [Math.max(x0, x2), Math.max(y0, y2)];
-        const [minX, minY] = [Math.min(x0, x2), Math.min(y0, y2)];
+        const { maxX, maxY, minX, minY } = getItemMaxCoordinates(item);
         const [width, height] = [maxX - minX, maxY - minY];
         const { shapeType } = item;
         if (shapeType === 'rect') {

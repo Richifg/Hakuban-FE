@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { Action, CanvasTransform } from '../../interfaces/board';
+import type { Action, CanvasTransform, BoardLimits } from '../../interfaces';
 
 interface BoardState {
     currentAction: Action;
@@ -7,6 +7,7 @@ interface BoardState {
     canvasTransform: CanvasTransform;
     lastTranslate: { dX: number; dY: number };
     canvasSize: { width: number; height: number };
+    boardLimits: BoardLimits;
     isWriting: boolean;
 }
 
@@ -16,6 +17,12 @@ const initialState: BoardState = {
     canvasTransform: { dX: 0, dY: 0, scale: 1 },
     lastTranslate: { dX: 0, dY: 0 },
     canvasSize: { width: 0, height: 0 },
+    boardLimits: {
+        top: { extent: Infinity },
+        right: { extent: -Infinity },
+        bottom: { extent: -Infinity },
+        left: { extent: Infinity },
+    },
     isWriting: false,
 };
 
@@ -33,31 +40,24 @@ export const boardSlice = createSlice({
         translateCanvas: (state, action: PayloadAction<[dX: number, dY: number]>) => {
             const [dX, dY] = action.payload;
             state.lastTranslate = { dX, dY };
-            state.canvasTransform = {
-                ...state.canvasTransform,
-                dX: Math.round(state.canvasTransform.dX + dX),
-                dY: Math.round(state.canvasTransform.dY + dY),
-            };
+            state.canvasTransform.dX = Math.round(state.canvasTransform.dX + dX);
+            state.canvasTransform.dY = Math.round(state.canvasTransform.dY + dY);
         },
-        translateCanvasTo: (state, action: PayloadAction<[dX: number, dY: number]>) => {
-            const [dX, dY] = action.payload;
-            state.lastTranslate = state.canvasTransform;
-            state.canvasTransform = { ...state.canvasTransform, dX, dY };
-        },
-        scaleCanvas: (state, action: PayloadAction<number>) => {
-            const { canvasTransform } = state;
-            state.canvasTransform = {
-                ...canvasTransform,
-                scale: canvasTransform.scale + action.payload,
-            };
-        },
-        scaleCanvasTo: (state, action: PayloadAction<number>) => {
-            const { canvasTransform } = state;
+        setCanvasScale: (state, action: PayloadAction<number>) => {
             const scale = parseFloat(action.payload.toFixed(2));
-            state.canvasTransform = { ...canvasTransform, scale };
+            state.canvasTransform.scale = scale;
+        },
+        centerCanvasAt: (state, action: PayloadAction<[boardX: number, boardY: number]>) => {
+            const [boardX, boardY] = action.payload;
+            const { canvasSize, canvasTransform } = state;
+            state.canvasTransform.dX = Math.round(canvasSize.width * 0.5 - boardX * canvasTransform.scale);
+            state.canvasTransform.dY = Math.round(canvasSize.height * 0.5 - boardY * canvasTransform.scale);
         },
         setCanvasSize: (state, action: PayloadAction<{ width: number; height: number }>) => {
             state.canvasSize = action.payload;
+        },
+        setBoardLimits: (state, action: PayloadAction<BoardLimits>) => {
+            state.boardLimits = action.payload;
         },
         setIsWriting: (state, action: PayloadAction<boolean>) => {
             state.isWriting = action.payload;
@@ -69,10 +69,10 @@ export const {
     setCurrentAction,
     setCursorPosition,
     translateCanvas,
-    translateCanvasTo,
-    scaleCanvas,
-    scaleCanvasTo,
+    setCanvasScale,
+    centerCanvasAt,
     setCanvasSize,
+    setBoardLimits,
     setIsWriting,
 } = boardSlice.actions;
 

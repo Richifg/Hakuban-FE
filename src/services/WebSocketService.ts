@@ -4,6 +4,8 @@ import { setId, setError } from '../store/slices/connectionSlice';
 import { setMessages, addMessage } from '../store/slices/chatSlice';
 import { WSMessage } from '../interfaces/webSocket';
 import { ChatMessage, BoardItem } from '../interfaces/items';
+import { setBoardLimits } from '../store/slices/boardSlice';
+import { getUpdatedBoardLimits } from '../utils';
 
 const url = process.env.REACT_APP_SERVER_URL;
 
@@ -39,14 +41,19 @@ class WebSocketService {
                         break;
                     case 'item':
                         if (message.content.type === 'chat') store.dispatch(addMessage(message.content));
-                        else store.dispatch(addItem(message.content));
+                        else {
+                            const item = message.content;
+                            store.dispatch(addItem(item));
+                            store.dispatch(setBoardLimits(getUpdatedBoardLimits(item)));
+                        }
                         break;
                     case 'collection':
                         // TODO: check TypeScript Handbook to see alternative to importing and asserting the type here
                         const chatMessages = message.content.filter((item) => item.type === 'chat') as ChatMessage[];
-                        const otherItems = message.content.filter((item) => item.type !== 'chat') as BoardItem[];
-                        store.dispatch(setItems(otherItems));
+                        const boardItems = message.content.filter((item) => item.type !== 'chat') as BoardItem[];
+                        store.dispatch(setItems(boardItems));
                         store.dispatch(setMessages(chatMessages));
+                        store.dispatch(setBoardLimits(getUpdatedBoardLimits(undefined, Object.values(boardItems))));
                         break;
                     case 'id':
                         store.dispatch(setId(message.content));
@@ -66,6 +73,7 @@ class WebSocketService {
         const message: WSMessage = {
             type: 'item',
             content: {
+                id: 'TEMP', // #TODO decide if ids where generated
                 type: 'chat',
                 content: text,
                 from: this.id,

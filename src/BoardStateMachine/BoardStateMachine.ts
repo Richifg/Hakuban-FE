@@ -1,14 +1,16 @@
 import { MouseEvent, WheelEvent } from 'react';
+import { BoardItem, MouseButton } from '../interfaces';
 import { store } from '../store/store';
 import {
     setCurrentAction,
     setCursorPosition,
     setCanvasSize,
     translateCanvas,
-    scaleCanvasTo,
+    setCanvasScale,
     setIsWriting,
+    setBoardLimits,
 } from '../store/slices/boardSlice';
-import { addUserItem, setSelectedItem, setSelectedPoint, setDragOffset } from '../store/slices/itemsSlice';
+import { addItem, setSelectedItem, setSelectedPoint, setDragOffset } from '../store/slices/itemsSlice';
 import { setNoteStyle } from '../store/slices/toolSlice';
 import {
     getItemResizePoints,
@@ -17,10 +19,11 @@ import {
     getNewNote,
     getNewShape,
     getNewDrawing,
-    getDetransformedCoordinates,
-    getTransformedCoordinates,
+    getBoardCoordinates,
+    getCanvasCoordinates,
+    getFinishedDrawing,
+    getUpdatedBoardLimits,
 } from '../utils';
-import getFinishedDrawing from '../utils/getFinishedDrawing';
 
 const { dispatch, getState } = store;
 
@@ -35,61 +38,63 @@ const { dispatch, getState } = store;
 
 const BoardStateMachine = {
     mouseDown(e: MouseEvent<HTMLDivElement>): void {
-        const { currentAction, canvasTransform } = getState().board;
-        const { selectedItem, items, userItems } = getState().items;
-        const { selectedTool, shapeStyle, shapeType } = getState().tools;
-        const allItems = [...items, ...userItems];
-        const [x, y] = [e.clientX, e.clientY];
-        dispatch(setCursorPosition([x, y]));
+        const { currentAction, canvasTransform, isWriting } = getState().board;
+        const { selectedItem, items } = getState().items;
+        const { selectedTool } = getState().tools;
+        const itemsArray = Object.values(items);
+        const [screenX, screenY] = [e.clientX, e.clientY];
+        dispatch(setCursorPosition([screenX, screenY]));
+        const [boardX, boardY] = getBoardCoordinates(screenX, screenY, canvasTransform);
         switch (currentAction) {
             case 'IDLE':
             case 'SLIDE':
-                if (selectedTool === 'POINTER') {
-                    // either select clicked item or pan board
-                    const item = allItems.find((item) => isPointInsideItem(x, y, item, canvasTransform));
+                // middle mouse always takes priority
+                if (e.button === MouseButton.Middle) {
+                    dispatch(setCurrentAction('PAN'));
+                } else if (selectedTool === 'POINTER') {
+                    const item = itemsArray.find((item) => isPointInsideItem(screenX, screenY, item, canvasTransform));
                     if (item) {
+                        // select clicked item
                         dispatch(setSelectedItem(item));
-                        const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
-                        dispatch(setDragOffset([realX - item.x0, realY - item.y0]));
+                        dispatch(setDragOffset([boardX - item.x0, boardY - item.y0]));
                         dispatch(setCurrentAction('DRAG'));
-                    } else {
-                        dispatch(setCurrentAction('PAN'));
+                        // pan because nothing was clicked
+                    } else dispatch(setCurrentAction('PAN'));
+                } else {
+                    let newItem: BoardItem | undefined = undefined;
+                    if (selectedTool === 'SHAPE') {
+                        // create new Shape
+                        newItem = getNewShape(boardX, boardY);
+                        dispatch(setSelectedPoint('P2'));
+                        dispatch(setCurrentAction('RESIZE'));
+                    } else if (selectedTool === 'NOTE') {
+                        // create new Note
+                        newItem = getNewNote(boardX, boardY);
+                        dispatch(setCurrentAction('IDLE'));
+                    } else if (selectedTool === 'PEN') {
+                        // create new Drawing
+                        newItem = getNewDrawing(boardX, boardY);
+                        dispatch(setCurrentAction('DRAW'));
                     }
-                } else if (selectedTool === 'SHAPE') {
-                    // create new Shape
-                    const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
-                    const shape = getNewShape(realX, realY, shapeType, shapeStyle);
-                    dispatch(addUserItem(shape));
-                    dispatch(setSelectedPoint('P2'));
-                    dispatch(setCurrentAction('RESIZE'));
-                } else if (selectedTool === 'NOTE') {
-                    // create new Note
-                    const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
-                    const note = getNewNote(realX, realY);
-                    dispatch(addUserItem(note));
-                    dispatch(setCurrentAction('IDLE'));
-                } else if (selectedTool === 'PEN') {
-                    // create new Drawing
-                    const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
-                    const drawing = getNewDrawing(realX, realY);
-                    dispatch(addUserItem(drawing));
-                    dispatch(setCurrentAction('DRAW'));
+                    if (newItem) {
+                        dispatch(addItem(newItem));
+                        dispatch(setBoardLimits(getUpdatedBoardLimits(newItem)));
+                    }
                 }
                 break;
             case 'EDIT':
                 // ##TODO how to determine if a click was inside an element quickly?
                 // also how about staking order of elementes
-                const item = allItems.find((item) => isPointInsideItem(x, y, item, canvasTransform));
+                const item = itemsArray.find((item) => isPointInsideItem(screenX, screenY, item, canvasTransform));
                 if (item && selectedTool === 'POINTER') {
                     if (item.id !== selectedItem?.id) {
                         dispatch(setSelectedItem(item));
-                        dispatch(setIsWriting(false));
+                        isWriting && dispatch(setIsWriting(false));
                     } else dispatch(setIsWriting(true));
-                    const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
-                    dispatch(setDragOffset([realX - item.x0, realY - item.y0]));
+                    dispatch(setDragOffset([boardX - item.x0, boardY - item.y0]));
                     dispatch(setCurrentAction('DRAG'));
                 } else {
-                    dispatch(setIsWriting(false));
+                    isWriting && dispatch(setIsWriting(false));
                     dispatch(setSelectedItem());
                     dispatch(setCurrentAction('PAN'));
                 }
@@ -98,7 +103,7 @@ const BoardStateMachine = {
     },
 
     mouseMove(e: MouseEvent<HTMLDivElement>): void {
-        const { currentAction, cursorPosition, canvasTransform } = getState().board;
+        const { currentAction, cursorPosition, canvasTransform, isWriting } = getState().board;
         const { selectedItem, selectedPoint, dragOffset } = getState().items;
         const [x, y] = [e.clientX, e.clientY];
         switch (currentAction) {
@@ -110,8 +115,10 @@ const BoardStateMachine = {
                 if (selectedItem) {
                     dispatch(setCursorPosition([x, y]));
                     const points = getItemTranslatePoints(selectedItem, dragOffset, x, y, canvasTransform);
-                    dispatch(addUserItem({ ...selectedItem, ...points }));
-                    dispatch(setIsWriting(false));
+                    const updatedItem = { ...selectedItem, ...points };
+                    dispatch(addItem(updatedItem));
+                    dispatch(setBoardLimits(getUpdatedBoardLimits(updatedItem)));
+                    isWriting && dispatch(setIsWriting(false));
                 }
                 break;
             case 'RESIZE':
@@ -120,15 +127,17 @@ const BoardStateMachine = {
                     const { type } = selectedItem;
                     const maintainRatio = type === 'note' || type === 'drawing';
                     const points = getItemResizePoints(selectedItem, selectedPoint, x, y, canvasTransform, maintainRatio);
-                    dispatch(addUserItem({ ...selectedItem, ...points }));
+                    const updatedItem = { ...selectedItem, ...points };
+                    dispatch(addItem(updatedItem));
+                    dispatch(setBoardLimits(getUpdatedBoardLimits(updatedItem)));
                 }
                 break;
             case 'DRAW':
                 if (selectedItem?.type === 'drawing') {
                     dispatch(setCursorPosition([x, y]));
-                    const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
-                    const points = [...selectedItem.points, [realX, realY]] as [number, number][];
-                    dispatch(addUserItem({ ...selectedItem, points }));
+                    const [boardX, boardY] = getBoardCoordinates(x, y, canvasTransform);
+                    const points = [...selectedItem.points, [boardX, boardY]] as [number, number][];
+                    dispatch(addItem({ ...selectedItem, points }));
                 }
         }
     },
@@ -154,10 +163,11 @@ const BoardStateMachine = {
                 }
                 break;
             case 'DRAW':
-                // transformed in progress drawing into relative simplified drawing
+                // transformed in progress drawing into relative coordinates drawing
                 if (selectedItem?.type === 'drawing') {
                     const finishedDrawing = getFinishedDrawing(selectedItem);
-                    dispatch(addUserItem(finishedDrawing));
+                    dispatch(addItem(finishedDrawing));
+                    dispatch(setBoardLimits(getUpdatedBoardLimits(finishedDrawing)));
                 }
                 dispatch(setCurrentAction('IDLE'));
                 break;
@@ -166,17 +176,17 @@ const BoardStateMachine = {
 
     mouseWheel(e: WheelEvent<HTMLDivElement>): void {
         const { canvasTransform, currentAction } = getState().board;
-        if (currentAction === 'IDLE') dispatch(setCurrentAction('IDLE'));
-        // calculate new scale
-        const delta = -Math.round(e.deltaY) * 0.0005;
-        const scale = canvasTransform.scale + delta;
-        // translate canvas so cursor remains in the same relative position
-        const [x, y] = [e.clientX, e.clientY];
-        const [realX, realY] = getDetransformedCoordinates(x, y, canvasTransform);
-        const [newX, newY] = getTransformedCoordinates(realX, realY, { ...canvasTransform, scale });
-        const [dX, dY] = [x - newX, y - newY];
-        dispatch(scaleCanvasTo(scale));
-        dispatch(translateCanvas([dX, dY]));
+        if (currentAction !== 'IDLE') dispatch(setCurrentAction('IDLE'));
+        // calculate new scale, clamped between 4% and 400%
+        const scale = Math.min(Math.max(canvasTransform.scale * (1 - Math.round(e.deltaY) * 0.001), 0.04), 4);
+        dispatch(setCanvasScale(scale));
+        // get cursor board coordinates
+        const [cursorX, cursorY] = [e.clientX, e.clientY];
+        const [boardX, boardY] = getBoardCoordinates(cursorX, cursorY, canvasTransform);
+        // position coordinates on canvas using the new scale
+        const [newX, newY] = getCanvasCoordinates(boardX, boardY, { ...canvasTransform, scale });
+        // translate so the cursor stays on same position on screen
+        dispatch(translateCanvas([cursorX - newX, cursorY - newY]));
     },
 
     windowResize(): void {

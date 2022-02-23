@@ -2,16 +2,14 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { BoardItem, Point } from '../../interfaces/items';
 
 interface ItemsState {
-    items: BoardItem[];
-    userItems: BoardItem[];
+    items: { [id: string]: BoardItem };
     dragOffset: { x: number; y: number };
     selectedItem?: BoardItem;
     selectedPoint?: Point;
 }
 
 const initialState: ItemsState = {
-    items: [],
-    userItems: [],
+    items: {},
     dragOffset: { x: 0, y: 0 },
 };
 
@@ -20,36 +18,16 @@ const itemsSlice = createSlice({
     initialState,
     reducers: {
         setItems: (state, action: PayloadAction<BoardItem[]>) => {
-            state.items = action.payload;
-        },
-        setUserItems: (state, action: PayloadAction<BoardItem[]>) => {
-            state.userItems = action.payload;
+            action.payload.forEach((item) => (state.items[item.id] = item));
         },
         addItem: (state, action: PayloadAction<BoardItem>) => {
             const newItem = action.payload;
             // check for duplicates before adding
-            const index = state.items.findIndex((item) => item.id === newItem.id);
-            if (index !== -1) state.items[index] = newItem;
-            else state.items.push(newItem);
-            // also delete duplicates on userItems
-            const userIndex = state.userItems.findIndex((item) => item.id === newItem.id);
-            if (userIndex !== -1) state.userItems.splice(userIndex, 1);
-        },
-        addUserItem(state, action: PayloadAction<BoardItem>) {
-            // check for duplicates before adding
-            const newItem = action.payload;
-            const index = state.userItems.findIndex((item) => item.id === newItem.id);
-            if (index !== -1) state.userItems[index] = newItem;
-            else state.userItems.push(newItem);
-            // also delete duplicates on regular items
-            const regularIndex = state.items.findIndex((item) => item.id === newItem.id);
-            if (regularIndex !== -1) state.items.splice(regularIndex, 1);
-            // updated selected item
+            state.items[newItem.id] = newItem;
             state.selectedItem = newItem;
         },
         deleteItem: (state, action: PayloadAction<string>) => {
-            state.items = state.items.filter((item) => item.id !== action.payload);
-            state.userItems = state.items.filter((item) => item.id !== action.payload);
+            delete state.items[action.payload];
         },
         setDragOffset: (state, action: PayloadAction<[x: number, y: number]>) => {
             const [x, y] = action.payload;
@@ -64,7 +42,6 @@ const itemsSlice = createSlice({
     },
 });
 
-export const { setItems, addItem, addUserItem, deleteItem, setDragOffset, setSelectedItem, setSelectedPoint } =
-    itemsSlice.actions;
+export const { setItems, addItem, deleteItem, setDragOffset, setSelectedItem, setSelectedPoint } = itemsSlice.actions;
 
 export default itemsSlice.reducer;

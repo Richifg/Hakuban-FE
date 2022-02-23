@@ -1,11 +1,11 @@
 import React from 'react';
-import { ShapeStyle } from '../../../../interfaces';
+import { ShapeStyle, DrawingStyle } from '../../../../interfaces';
 import './LineSelector.scss';
 
 interface LineSelector {
     value: number;
     onChange(value: number, styleKey: string): void;
-    styleKey: keyof ShapeStyle;
+    styleKey: keyof ShapeStyle | keyof DrawingStyle;
 }
 
 const LineSelector = ({ onChange, value, styleKey }: LineSelector): React.ReactElement => {

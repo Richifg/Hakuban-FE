@@ -18,10 +18,15 @@ class CanvasManager {
     private ctx: CanvasRenderingContext2D;
     size: CanvasSize;
     transform: CanvasTransform;
-    items: BoardItem[];
+    items: { [key: string]: BoardItem };
     animationId?: number;
 
-    constructor(ctx: CanvasRenderingContext2D, size: CanvasSize, transform: CanvasTransform, items: BoardItem[]) {
+    constructor(
+        ctx: CanvasRenderingContext2D,
+        size: CanvasSize,
+        transform: CanvasTransform,
+        items: { [key: string]: BoardItem },
+    ) {
         this.ctx = ctx;
         this.size = size;
         this.transform = transform;
@@ -61,7 +66,7 @@ class CanvasManager {
     animate(): void {
         this.clear();
         this.transformCanvas();
-        this.items.forEach((item) => this.drawItem(item));
+        Object.values(this.items).forEach((item) => this.drawItem(item));
         this.animationId = requestAnimationFrame(this.animate.bind(this));
     }
 

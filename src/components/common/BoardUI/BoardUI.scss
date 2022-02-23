@@ -3,9 +3,10 @@
     left: 0;
     top: 0;
 
-    &.pen { cursor: default; }
+    &.pen { cursor: alias; }
     &.pointer { cursor: pointer; }
     &.shape { cursor: crosshair; }
+    &.pan, &.drag { cursor: grabbing !important; } 
 
     .temp {
         opacity: 0.2;

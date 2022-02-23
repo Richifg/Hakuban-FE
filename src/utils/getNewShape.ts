@@ -1,7 +1,9 @@
-import type { Shape, ShapeStyle, ShapeType } from '../interfaces/items';
+import { store } from '../store/store';
+import type { Shape } from '../interfaces/items';
 import { getNewId } from '.';
 
-function getNewShape(x: number, y: number, shapeType: ShapeType, style: ShapeStyle): Shape {
+function getNewShape(x: number, y: number): Shape {
+    const { shapeStyle, shapeType } = store.getState().tools;
     const id = getNewId();
     const newItem = {
         id,
@@ -11,7 +13,7 @@ function getNewShape(x: number, y: number, shapeType: ShapeType, style: ShapeSty
         x2: x,
         y2: y,
         shapeType,
-        ...style,
+        ...shapeStyle,
     } as const;
     return newItem;
 }

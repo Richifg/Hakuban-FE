@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from '../../../../hooks';
 import { AlignmentSelector, ColorSelector, FontSizeSelector, LineSelector, TextStyleSelector } from '../';
 import { Align, BoardItem } from '../../../../interfaces';
-import { addUserItem } from '../../../../store/slices/itemsSlice';
+import { addItem } from '../../../../store/slices/itemsSlice';
 import './MenuOptions.scss';
 
 interface MenuOptions {
@@ -16,7 +16,7 @@ const MenuOptions = ({ item }: MenuOptions): React.ReactElement => {
     const handleChange = (value: string | number, key: string) => {
         if (key in item) {
             const newItem = { ...item, [key]: value };
-            dispatch(addUserItem(newItem));
+            dispatch(addItem(newItem));
         }
     };
 
@@ -24,7 +24,7 @@ const MenuOptions = ({ item }: MenuOptions): React.ReactElement => {
         if ('text' in item && key in textStyle) {
             const text = item.text || { ...textStyle, content: '' };
             const newItem = { ...item, text: { ...text, [key]: value } };
-            dispatch(addUserItem(newItem));
+            dispatch(addItem(newItem));
         }
     };
 
@@ -34,7 +34,9 @@ const MenuOptions = ({ item }: MenuOptions): React.ReactElement => {
         <div className="menu-options" onMouseDown={stopMouseDown}>
             {item.type === 'shape' && <ColorSelector onChange={handleChange} styleKey="fillColor" />}
             {item.type === 'shape' && <ColorSelector onChange={handleChange} styleKey="lineColor" />}
+            {(item.type === 'note' || item.type === 'drawing') && <ColorSelector onChange={handleChange} styleKey="color" />}
             {item.type === 'shape' && <LineSelector onChange={handleChange} styleKey="lineWidth" value={item.lineWidth} />}
+            {item.type === 'drawing' && <LineSelector onChange={handleChange} styleKey="width" value={item.width} />}
             {'text' in item && (
                 <>
                     <AlignmentSelector onChange={handleNestedChange} styleKey="vAlign" />
