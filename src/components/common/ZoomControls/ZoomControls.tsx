@@ -33,10 +33,11 @@ const ZoomControls = (): React.ReactElement => {
     };
 
     const handleFitScreen = () => {
-        const { width, height } = canvasSize;
+        const { width: canvasWidth, height: canvasHeight } = canvasSize;
         const { top, left, bottom, right } = boardLimits;
+        const [limitWidth, limitHeight] = [right.extent - left.extent, bottom.extent - top.extent];
         // scale canvas so that everything is visible
-        const scale = width > height ? height / (bottom.extent - top.extent) : width / (right.extent - left.extent);
+        const scale = limitWidth < limitHeight ? canvasHeight / limitHeight : canvasWidth / limitWidth;
         // center canvas at the middle of the board limits
         const x = (right.extent + left.extent) * 0.5;
         const y = (bottom.extent + top.extent) * 0.5;
