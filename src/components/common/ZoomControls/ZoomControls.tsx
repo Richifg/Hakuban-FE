@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector, useDispatch } from '../../../hooks';
 import { getBoardCoordinates } from '../../../utils';
-import { setCanvasScale, centerCanvasAt } from '../../../store/slices/boardSlice';
+import { setCanvasScale, centerCanvasAt, toggleGrid } from '../../../store/slices/boardSlice';
 
 import './ZoomControls.scss';
 
@@ -57,6 +57,7 @@ const ZoomControls = (): React.ReactElement => {
 
     return (
         <div className="zoom-controls">
+            <button onClick={() => dispatch(toggleGrid())}>GRID</button>
             <button className="fit-button" onClick={handleFitScreen}>
                 fit
             </button>
