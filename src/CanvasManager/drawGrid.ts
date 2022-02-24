@@ -1,40 +1,47 @@
 import { CanvasTransform, CanvasSize } from '../interfaces';
 
-const INIT_GRID_SIZE = 100; //px
-const MIN_GRID_RENDER_SIZE = 25; //px
+const INIT_GRID_SIZE = 20; //px
+const MIN_GRID_RENDER_SIZE = 20; //px
+const MAX_GRID_RENDER_SIZE = 300; //px
 
 function drawGrid(transform: CanvasTransform, size: CanvasSize, ctx: CanvasRenderingContext2D): void {
     const { width, height } = size;
     const { scale, dX, dY } = transform;
 
+    // calculate initial small gridSize so that it isn't too small on current scale
     let smallGridSize = INIT_GRID_SIZE;
     while (smallGridSize * scale < MIN_GRID_RENDER_SIZE) {
         smallGridSize *= 5;
     }
-
-    const [translateToScaleX, translateToScaleY] = [dX / scale, dY / scale];
-    const [widthToScale, heightToScale] = [(width - dX) / scale, (height - dY) / scale];
+    // big gridSize is always 5 times as big as smaller one
+    const bigGridSize = 5 * smallGridSize;
 
     ctx.save();
-    ctx.beginPath();
-    ctx.strokeStyle = '#f0f0f0';
 
-    // draw grid lines for small and big grid
-    [smallGridSize, smallGridSize * 5].forEach((gridSize) => {
-        const [offsetX, offsetY] = [translateToScaleX % gridSize, translateToScaleY % gridSize];
-        const [initX, initY] = [offsetX - translateToScaleX - gridSize, offsetY - translateToScaleY - gridSize];
-        const [endX, endY] = [widthToScale + gridSize, heightToScale + gridSize];
+    const [initX, initY] = [0, 0];
+    const [endX, endY] = [width, height];
+    [smallGridSize, bigGridSize].forEach((size) => {
+        // do not draw grid if divisions are too big
+        const scaledGridSize = size * scale;
+        if (scaledGridSize < MAX_GRID_RENDER_SIZE) {
+            const [offsetX, offsetY] = [dX % scaledGridSize, dY % scaledGridSize];
 
-        for (let x = initX; x < endX; x += gridSize) {
-            ctx.moveTo(x, initY);
-            ctx.lineTo(x, endY);
-        }
-        for (let y = initY; y < endY; y += gridSize) {
-            ctx.moveTo(initX, y);
-            ctx.lineTo(endX, y);
+            // black with darkest ligthness at 85%
+            const lightness = 85 + 15 * (MIN_GRID_RENDER_SIZE / scaledGridSize);
+            ctx.strokeStyle = `hsl(0, 0%, ${lightness}%)`;
+
+            ctx.beginPath();
+            for (let x = initX + offsetX; x < endX; x += scaledGridSize) {
+                ctx.moveTo(x, initY);
+                ctx.lineTo(x, endY);
+            }
+            for (let y = initY + offsetY; y < endY; y += scaledGridSize) {
+                ctx.moveTo(initX, y);
+                ctx.lineTo(endX, y);
+            }
+            ctx.stroke();
         }
     });
-    ctx.stroke();
     ctx.restore();
 }
 
