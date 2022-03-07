@@ -31,14 +31,10 @@ const CanvasUI = (): React.ReactElement => {
     };
 
     // 5ms debounced mouse move
-    const handleMouseMove = useDebouncedCallback(
-        (e: React.MouseEvent<HTMLDivElement>) => {
-            e.persist;
-            SM.mouseMove(e);
-        },
-        5,
-        [],
-    );
+    const handleMouseMove = useDebouncedCallback((e: React.MouseEvent<HTMLDivElement>) => {
+        e.persist;
+        SM.mouseMove(e);
+    }, 5);
 
     const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
         e.persist();

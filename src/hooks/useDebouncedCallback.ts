@@ -5,8 +5,9 @@ import { getDebouncedFunction } from '../utils';
 function useDebouncedCallback<F extends (...args: any[]) => void>(
     cb: F,
     delay: number,
-    deps: any[],
+    dependencies?: any[],
 ): (...args: Parameters<F>) => void {
+    const deps = dependencies || [];
     const debouncedCallback = useCallback(getDebouncedFunction(cb, delay), deps);
     return debouncedCallback;
 }

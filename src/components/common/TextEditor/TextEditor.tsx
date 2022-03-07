@@ -1,38 +1,50 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { getItemPositionCSSVars, getTextAreaCoordinates, isTextItem } from '../../../utils';
-import { useSelector, useDispatch } from '../../../hooks';
+import { useSelector, useDispatch, useDebouncedCallback } from '../../../hooks';
 import { addItem } from '../../../store/slices/itemsSlice';
 import { Align, BoardItem } from '../../../interfaces';
 
 import './TextEditor.scss';
 
-// ##TODO maybe should return earlier when no item is selected to avoid all position calculations when moving canvas around
 const TextEditor = (): React.ReactElement => {
     const dispatch = useDispatch();
     const { canvasTransform, isWriting } = useSelector((s) => s.board);
     const { textStyle } = useSelector((s) => s.tools);
     const { selectedItem } = useSelector((s) => s.items);
     const [initText, setInitText] = useState('');
-    const [htmlText, setHtmlText] = useState('');
     const textBoxRef = useRef<HTMLDivElement>(null);
+
+    // problem with last selected, continue here
+
+    // keep last selected item on ref so it can be used inside debounce callback below
     const lastSelectedItemRef = useRef<BoardItem>();
 
-    // ## TODO: important, save text on a debounced onChange (right now text is lost if style is edited after writing)
+    // handles update of item's text
+    const handleTextChange = useDebouncedCallback((e: React.ChangeEvent<HTMLDivElement>) => {
+        const text = e.target.innerHTML;
+        const lastItem = lastSelectedItemRef.current;
+        console.log('firing!', lastItem);
+        if (!isWriting && isTextItem(lastItem)) {
+            // clean html from textbox
+            const content = text.replace(/\<br\/?\>/g, '/n').replace(/\&nbsp;/g, ' ');
+            let newItem: BoardItem;
+            // add new text content to item
+            const skipRendering = true;
+            if (lastItem.text) newItem = { ...lastItem, text: { ...lastItem.text, content, skipRendering } };
+            else newItem = { ...lastItem, text: { ...textStyle, content, skipRendering } };
+            dispatch(addItem(newItem));
+        }
+    }, 150);
+
+    // update skip rendering so canvas doenst double render text of edited item
     useEffect(() => {
-        // set flag so canvas stops rendering the same text as the text editor
+        // if selected item had text, it needs to be skipped
         if (isWriting && isTextItem(selectedItem) && selectedItem.text) {
             dispatch(addItem({ ...selectedItem, text: { ...selectedItem.text, skipRendering: true } }));
         }
-        // saves item's new text when no longer writing
         const lastItem = lastSelectedItemRef.current;
-        if (!isWriting && isTextItem(lastItem)) {
-            // clean html from textbox
-            const content = htmlText.replace(/\<br\/?\>/g, '/n').replace(/\&nbsp;/g, ' ');
-            let newItem: BoardItem;
-            if (lastItem.text) newItem = { ...lastItem, text: { ...lastItem.text, content } };
-            else newItem = { ...lastItem, text: { ...textStyle, content } };
-            delete newItem.text?.skipRendering;
-            dispatch(addItem(newItem));
+        if (!isWriting && isTextItem(lastItem) && lastItem.text) {
+            dispatch(addItem({ ...lastItem, text: { ...lastItem.text, skipRendering: false } }));
         }
     }, [isWriting]);
 
@@ -42,10 +54,8 @@ const TextEditor = (): React.ReactElement => {
             const text = selectedItem?.text?.content || '';
             const htmlText = text.replaceAll(/\/n/g, '<br/>');
             setInitText(htmlText);
-            setHtmlText(htmlText);
-            lastSelectedItemRef.current = selectedItem;
         }
-    }, [selectedItem]);
+    }, [selectedItem?.id]);
 
     // css style vars for texteditor
     const [color, font, textAlign, verticalAlign]: [string, string, Align, string] = useMemo(() => {
@@ -69,11 +79,8 @@ const TextEditor = (): React.ReactElement => {
         }
     }, [canvasTransform, selectedItem]);
 
+    // ##TODO what the nani kore?
     const handleMouseDown = (e: React.MouseEvent) => e.stopPropagation();
-
-    const handleChange = (e: React.ChangeEvent<HTMLDivElement>) => {
-        setHtmlText(e.currentTarget.innerHTML);
-    };
 
     if (!isWriting || !selectedItem) return <></>;
 
@@ -90,7 +97,7 @@ const TextEditor = (): React.ReactElement => {
                 style={{ color, font, textAlign, verticalAlign, width }}
                 contentEditable
                 dangerouslySetInnerHTML={{ __html: initText }}
-                onInput={handleChange}
+                onInput={handleTextChange}
             />
         </div>
     );
