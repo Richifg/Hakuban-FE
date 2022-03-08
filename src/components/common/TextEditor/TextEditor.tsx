@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useEffect, useLayoutEffect, useRef } from 'react';
 import { getItemPositionCSSVars, getTextAreaCoordinates, isTextItem } from '../../../utils';
 import { useSelector, useDispatch, useDebouncedCallback } from '../../../hooks';
 import { addItem } from '../../../store/slices/itemsSlice';
@@ -14,27 +14,19 @@ const TextEditor = (): React.ReactElement => {
     const [initText, setInitText] = useState('');
     const textBoxRef = useRef<HTMLDivElement>(null);
 
-    // problem with last selected, continue here
-
     // keep last selected item on ref so it can be used inside debounce callback below
     const lastSelectedItemRef = useRef<BoardItem>();
 
-    // handles update of item's text
-    const handleTextChange = useDebouncedCallback((e: React.ChangeEvent<HTMLDivElement>) => {
-        const text = e.target.innerHTML;
-        const lastItem = lastSelectedItemRef.current;
-        console.log('firing!', lastItem);
-        if (!isWriting && isTextItem(lastItem)) {
-            // clean html from textbox
-            const content = text.replace(/\<br\/?\>/g, '/n').replace(/\&nbsp;/g, ' ');
-            let newItem: BoardItem;
-            // add new text content to item
-            const skipRendering = true;
-            if (lastItem.text) newItem = { ...lastItem, text: { ...lastItem.text, content, skipRendering } };
-            else newItem = { ...lastItem, text: { ...textStyle, content, skipRendering } };
-            dispatch(addItem(newItem));
+    // updates initial display text when selected item id changes
+    useLayoutEffect(() => {
+        if (selectedItem && 'text' in selectedItem) {
+            const text = selectedItem?.text?.content || '';
+            const htmlText = text.replaceAll(/\/n/g, '<br/>');
+            setInitText(htmlText);
+        } else {
+            setInitText('');
         }
-    }, 150);
+    }, [selectedItem?.id]);
 
     // update skip rendering so canvas doenst double render text of edited item
     useEffect(() => {
@@ -48,14 +40,26 @@ const TextEditor = (): React.ReactElement => {
         }
     }, [isWriting]);
 
-    // updates initial display text when selecting a new item
+    // keeps track of last selectedItem with every change of item
     useEffect(() => {
-        if (selectedItem && 'text' in selectedItem) {
-            const text = selectedItem?.text?.content || '';
-            const htmlText = text.replaceAll(/\/n/g, '<br/>');
-            setInitText(htmlText);
+        lastSelectedItemRef.current = selectedItem;
+    }, [selectedItem]);
+
+    // handles update of item's text
+    const handleTextChange = useDebouncedCallback((e: React.ChangeEvent<HTMLDivElement>) => {
+        const text = e.target.innerHTML;
+        const lastItem = lastSelectedItemRef.current;
+        if (!isWriting && isTextItem(lastItem)) {
+            // clean html from textbox
+            const content = text.replace(/\<br\/?\>/g, '/n').replace(/\&nbsp;/g, ' ');
+            let newItem: BoardItem;
+            // add new text content to item
+            const skipRendering = true;
+            if (lastItem.text) newItem = { ...lastItem, text: { ...lastItem.text, content, skipRendering } };
+            else newItem = { ...lastItem, text: { ...textStyle, content, skipRendering } };
+            dispatch(addItem(newItem));
         }
-    }, [selectedItem?.id]);
+    }, 150);
 
     // css style vars for texteditor
     const [color, font, textAlign, verticalAlign]: [string, string, Align, string] = useMemo(() => {
@@ -79,7 +83,7 @@ const TextEditor = (): React.ReactElement => {
         }
     }, [canvasTransform, selectedItem]);
 
-    // ##TODO what the nani kore?
+    // ##TODO is it really needed?
     const handleMouseDown = (e: React.MouseEvent) => e.stopPropagation();
 
     if (!isWriting || !selectedItem) return <></>;
