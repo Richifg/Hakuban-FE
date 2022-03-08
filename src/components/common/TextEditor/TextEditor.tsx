@@ -36,7 +36,10 @@ const TextEditor = (): React.ReactElement => {
         }
         const lastItem = lastSelectedItemRef.current;
         if (!isWriting && isTextItem(lastItem) && lastItem.text) {
-            dispatch(addItem({ ...lastItem, text: { ...lastItem.text, skipRendering: false } }));
+            // cleans unerasable final enter when writing into content editable html
+            let content = lastItem.text.content;
+            if (content.slice(-2) === '/n') content = content.substring(0, content.length - 2);
+            dispatch(addItem({ ...lastItem, text: { ...lastItem.text, content, skipRendering: false } }));
         }
     }, [isWriting]);
 
@@ -47,19 +50,17 @@ const TextEditor = (): React.ReactElement => {
 
     // handles update of item's text
     const handleTextChange = useDebouncedCallback((e: React.ChangeEvent<HTMLDivElement>) => {
-        const text = e.target.innerHTML;
         const lastItem = lastSelectedItemRef.current;
         if (!isWriting && isTextItem(lastItem)) {
             // clean html from textbox
-            const content = text.replace(/\<br\/?\>/g, '/n').replace(/\&nbsp;/g, ' ');
+            const content = e.target.innerHTML.replace(/\<br\/?\>/g, '/n').replace(/\&nbsp;/g, ' ');
             let newItem: BoardItem;
             // add new text content to item
-            const skipRendering = true;
-            if (lastItem.text) newItem = { ...lastItem, text: { ...lastItem.text, content, skipRendering } };
-            else newItem = { ...lastItem, text: { ...textStyle, content, skipRendering } };
+            if (lastItem.text) newItem = { ...lastItem, text: { ...lastItem.text, content } };
+            else newItem = { ...lastItem, text: { ...textStyle, content } };
             dispatch(addItem(newItem));
         }
-    }, 150);
+    }, 100);
 
     // css style vars for texteditor
     const [color, font, textAlign, verticalAlign]: [string, string, Align, string] = useMemo(() => {
