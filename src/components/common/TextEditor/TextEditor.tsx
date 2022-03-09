@@ -84,7 +84,7 @@ const TextEditor = (): React.ReactElement => {
         }
     }, [canvasTransform, selectedItem]);
 
-    // ##TODO is it really needed?
+    // avoid dragging element when text editor is opened (text editor covers element)
     const handleMouseDown = (e: React.MouseEvent) => e.stopPropagation();
 
     if (!isWriting || !selectedItem) return <></>;

@@ -1,9 +1,9 @@
 import React, { useRef } from 'react';
 import { setCurrentAction, translateCanvas } from '../../../store/slices/boardSlice';
 import { useCanvas, useDispatch, useSelector, useMovementFriction } from '../../../hooks';
-import './CanvasItems.scss';
+import './BoardCanvas.scss';
 
-const CanvasItems = (): React.ReactElement => {
+const BoardCanvas = (): React.ReactElement => {
     const dispatch = useDispatch();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const { items } = useSelector((s) => s.items);
@@ -37,4 +37,4 @@ const CanvasItems = (): React.ReactElement => {
     );
 };
 
-export default CanvasItems;
+export default BoardCanvas;

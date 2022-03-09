@@ -1,7 +1,7 @@
 import React, { useLayoutEffect } from 'react';
 import { useSelector, useDebouncedCallback } from '../../../hooks';
-import SM from '../../../BoardStateMachine/BoardStateMachine';
 import { EditPoints, TextEditor, StylesMenu } from '../../common';
+import SM from '../../../BoardStateMachine/BoardStateMachine';
 
 import './BoardUI.scss';
 
@@ -41,6 +41,8 @@ const CanvasUI = (): React.ReactElement => {
         SM.mouseWheel(e);
     };
 
+    // ##TODO move EditPoints TextEditor and StylesMenu out of here
+    // make a UI ELEMENTS component with everything in it
     return (
         <div
             role="application"
