@@ -90,7 +90,9 @@ const BoardStateMachine = {
                     if (item.id !== selectedItem?.id) {
                         dispatch(setSelectedItem(item));
                         isWriting && dispatch(setIsWriting(false));
-                    } else dispatch(setIsWriting(true));
+                    } else {
+                        !isWriting && dispatch(setIsWriting(true));
+                    }
                     dispatch(setDragOffset([boardX - item.x0, boardY - item.y0]));
                     dispatch(setCurrentAction('DRAG'));
                 } else {

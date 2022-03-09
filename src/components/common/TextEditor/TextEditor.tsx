@@ -1,51 +1,66 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useEffect, useLayoutEffect, useRef } from 'react';
 import { getItemPositionCSSVars, getTextAreaCoordinates, isTextItem } from '../../../utils';
-import { useSelector, useDispatch } from '../../../hooks';
+import { useSelector, useDispatch, useDebouncedCallback } from '../../../hooks';
 import { addItem } from '../../../store/slices/itemsSlice';
 import { Align, BoardItem } from '../../../interfaces';
 
 import './TextEditor.scss';
 
-// ##TODO maybe should return earlier when no item is selected to avoid all position calculations when moving canvas around
 const TextEditor = (): React.ReactElement => {
     const dispatch = useDispatch();
     const { canvasTransform, isWriting } = useSelector((s) => s.board);
     const { textStyle } = useSelector((s) => s.tools);
     const { selectedItem } = useSelector((s) => s.items);
     const [initText, setInitText] = useState('');
-    const [htmlText, setHtmlText] = useState('');
     const textBoxRef = useRef<HTMLDivElement>(null);
+
+    // keep last selected item on ref so it can be used inside debounce callback below
     const lastSelectedItemRef = useRef<BoardItem>();
 
-    // ## TODO: important, save text on a debounced onChange (right now text is lost if style is edited after writing)
-    useEffect(() => {
-        // set flag so canvas stops rendering the same text as the text editor
-        if (isWriting && isTextItem(selectedItem) && selectedItem.text) {
-            dispatch(addItem({ ...selectedItem, text: { ...selectedItem.text, skipRendering: true } }));
-        }
-        // saves item's new text when no longer writing
-        const lastItem = lastSelectedItemRef.current;
-        if (!isWriting && isTextItem(lastItem)) {
-            // clean html from textbox
-            const content = htmlText.replace(/\<br\/?\>/g, '/n').replace(/\&nbsp;/g, ' ');
-            let newItem: BoardItem;
-            if (lastItem.text) newItem = { ...lastItem, text: { ...lastItem.text, content } };
-            else newItem = { ...lastItem, text: { ...textStyle, content } };
-            delete newItem.text?.skipRendering;
-            dispatch(addItem(newItem));
-        }
-    }, [isWriting]);
-
-    // updates initial display text when selecting a new item
-    useEffect(() => {
+    // updates initial display text when selected item id changes
+    useLayoutEffect(() => {
         if (selectedItem && 'text' in selectedItem) {
             const text = selectedItem?.text?.content || '';
             const htmlText = text.replaceAll(/\/n/g, '<br/>');
             setInitText(htmlText);
-            setHtmlText(htmlText);
-            lastSelectedItemRef.current = selectedItem;
+        } else {
+            setInitText('');
         }
+    }, [selectedItem?.id]);
+
+    // update skip rendering so canvas doenst double render text of edited item
+    useEffect(() => {
+        // if selected item had text, it needs to be skipped
+        if (isWriting && isTextItem(selectedItem) && selectedItem.text) {
+            dispatch(addItem({ ...selectedItem, text: { ...selectedItem.text, skipRendering: true } }));
+        }
+        const lastItem = lastSelectedItemRef.current;
+        if (!isWriting && isTextItem(lastItem) && lastItem.text) {
+            // cleans unerasable final enter when writing into content editable html
+            let content = lastItem.text.content;
+            if (content.slice(-2) === '/n') content = content.substring(0, content.length - 2);
+            dispatch(addItem({ ...lastItem, text: { ...lastItem.text, content, skipRendering: false } }));
+        }
+    }, [isWriting]);
+
+    // keeps track of last selectedItem with every change of item
+    useEffect(() => {
+        lastSelectedItemRef.current = selectedItem;
     }, [selectedItem]);
+
+    // handles update of item's text
+    const handleTextChange = useDebouncedCallback((e: React.ChangeEvent<HTMLDivElement>) => {
+        const lastItem = lastSelectedItemRef.current;
+        if (!isWriting && isTextItem(lastItem)) {
+            // clean html from textbox
+            const content = e.target.innerHTML.replace(/\<br\/?\>/g, '/n').replace(/\&nbsp;/g, ' ');
+            let newItem: BoardItem;
+            // add new text content to item
+            if (lastItem.text) newItem = { ...lastItem, text: { ...lastItem.text, content } };
+            else newItem = { ...lastItem, text: { ...textStyle, content } };
+            dispatch(addItem(newItem));
+        }
+    }, 100);
 
     // css style vars for texteditor
     const [color, font, textAlign, verticalAlign]: [string, string, Align, string] = useMemo(() => {
@@ -69,11 +84,8 @@ const TextEditor = (): React.ReactElement => {
         }
     }, [canvasTransform, selectedItem]);
 
+    // avoid dragging element when text editor is opened (text editor covers element)
     const handleMouseDown = (e: React.MouseEvent) => e.stopPropagation();
-
-    const handleChange = (e: React.ChangeEvent<HTMLDivElement>) => {
-        setHtmlText(e.currentTarget.innerHTML);
-    };
 
     if (!isWriting || !selectedItem) return <></>;
 
@@ -90,7 +102,7 @@ const TextEditor = (): React.ReactElement => {
                 style={{ color, font, textAlign, verticalAlign, width }}
                 contentEditable
                 dangerouslySetInnerHTML={{ __html: initText }}
-                onInput={handleChange}
+                onInput={handleTextChange}
             />
         </div>
     );
