@@ -1,4 +1,4 @@
-export type Tool = 'POINTER' | 'SHAPE' | 'PEN' | 'TEXT' | 'NOTE';
+export type Tool = 'POINTER' | 'SHAPE' | 'PEN' | 'TEXT' | 'NOTE' | 'LINE';
 
 export type Action = 'IDLE' | 'DRAW' | 'DRAG' | 'EDIT' | 'PAN' | 'SLIDE' | 'RESIZE';
 

@@ -97,7 +97,7 @@ export interface ChatMessage extends ItemBase {
 }
 
 // items drawn on the board with coordinates
-export type BoardItem = Note | Text | Shape | Drawing;
+export type BoardItem = Note | Text | Shape | Drawing | Line;
 
 // general Item type for any item that users can create
 export type Item = BoardItem | ChatMessage;

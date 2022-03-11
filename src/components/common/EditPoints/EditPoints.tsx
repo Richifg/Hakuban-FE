@@ -1,12 +1,11 @@
 import React, { useMemo } from 'react';
 import { Point, Action } from '../../../interfaces';
-import { getItemTransformedPoints } from '../../../utils';
+import { getEditPoints } from '../../../utils';
 import { useSelector, useDispatch } from '../../../hooks';
 import { setSelectedPoint } from '../../../store/slices/itemsSlice';
 import { setCurrentAction } from '../../../store/slices/boardSlice';
 import './EditPoints.scss';
 
-type Points = { [key in Point]: { x: number; y: number } };
 const EditPointsActions: Action[] = ['EDIT', 'RESIZE'];
 
 const EditPoints = (): React.ReactElement => {
@@ -21,16 +20,15 @@ const EditPoints = (): React.ReactElement => {
         dispatch(setCurrentAction('RESIZE'));
     };
 
-    const points: Points | undefined = useMemo(
-        () => (selectedItem ? getItemTransformedPoints(selectedItem, canvasTransform) : undefined),
+    const points = useMemo(
+        () => (selectedItem ? getEditPoints(selectedItem, canvasTransform) : []),
         [canvasTransform, selectedItem],
     );
 
     return (
         <div className="edit-points-container">
-            {points &&
-                EditPointsActions.includes(currentAction) &&
-                Object.entries(points).map(([point, { x, y }]) => (
+            {EditPointsActions.includes(currentAction) &&
+                points.map(([point, x, y]) => (
                     <div
                         key={point}
                         id={point}

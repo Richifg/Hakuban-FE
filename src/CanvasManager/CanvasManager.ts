@@ -5,6 +5,7 @@ import drawText from './drawText';
 import drawNote from './drawNote';
 import drawDrawing from './drawDrawing';
 import drawGrid from './drawGrid';
+import drawLine from './drawLine';
 import { getTextAreaCoordinates, isTextItem } from '../utils';
 
 /*
@@ -49,6 +50,7 @@ class CanvasManager {
         if (type === 'shape') drawShape(item, this.ctx);
         else if (type === 'note') drawNote(item, this.ctx);
         else if (type === 'drawing') drawDrawing(item, this.ctx);
+        else if (type === 'line') drawLine(item, this.ctx);
 
         if (isTextItem(item) && item.text) {
             const coordinates = getTextAreaCoordinates(item);
