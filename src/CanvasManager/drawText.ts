@@ -6,11 +6,11 @@ const LINE_HEIGHT = 1.1; // em
 function drawText(text: TextData, coordinates: Coordinates, ctx: CanvasRenderingContext2D): void {
     if (text.skipRendering) return;
 
-    const { content, color, fontFamily, fontSize, vAlign, hAlign, bold, italic } = text;
+    const { content, textColor, fontFamily, fontSize, vAlign, hAlign, bold, italic } = text;
     const { x0, y0, x2, y2 } = coordinates;
     // initial settings
     ctx.font = `${italic ? 'italic' : 'normal'} ${bold ? 'bold' : 'normal'} ${fontSize}px ${fontFamily}`;
-    ctx.fillStyle = color;
+    ctx.fillStyle = textColor;
     ctx.textAlign = hAlign;
     ctx.textBaseline = 'top';
     const [maxWidth, maxHeight] = [Math.abs(x2 - x0), Math.abs(y2 - y0)];

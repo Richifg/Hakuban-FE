@@ -32,16 +32,14 @@ const MenuOptions = ({ item }: MenuOptions): React.ReactElement => {
 
     return (
         <div className="menu-options" onMouseDown={stopMouseDown}>
-            {item.type === 'shape' && <ColorSelector onChange={handleChange} styleKey="fillColor" />}
-            {item.type === 'shape' && <ColorSelector onChange={handleChange} styleKey="lineColor" />}
-            {(item.type === 'note' || item.type === 'drawing') && <ColorSelector onChange={handleChange} styleKey="color" />}
-            {item.type === 'shape' && <LineSelector onChange={handleChange} styleKey="lineWidth" value={item.lineWidth} />}
-            {item.type === 'drawing' && <LineSelector onChange={handleChange} styleKey="width" value={item.width} />}
+            {'fillColor' in item && <ColorSelector onChange={handleChange} styleKey="fillColor" />}
+            {'lineColor' in item && <ColorSelector onChange={handleChange} styleKey="lineColor" />}
+            {'lineWidth' in item && <LineSelector onChange={handleChange} styleKey="lineWidth" value={item.lineWidth} />}
             {'text' in item && (
                 <>
                     <AlignmentSelector onChange={handleNestedChange} styleKey="vAlign" />
                     <AlignmentSelector onChange={handleNestedChange} styleKey="hAlign" />
-                    <ColorSelector onChange={handleNestedChange} styleKey="color" />
+                    <ColorSelector onChange={handleNestedChange} styleKey="textColor" />
                     <FontSizeSelector onChange={handleNestedChange} styleKey="fontSize" value={item.text?.fontSize || 0} />
                     <TextStyleSelector
                         onChange={handleNestedChange}

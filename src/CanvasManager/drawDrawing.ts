@@ -5,8 +5,8 @@ function drawDrawing(drawing: Drawing, ctx: CanvasRenderingContext2D): void {
 
     const { points, x0, y0, x2, y2 } = drawing;
     if (points.length > 1) {
-        ctx.strokeStyle = drawing.color;
-        ctx.lineWidth = drawing.width;
+        ctx.strokeStyle = drawing.lineColor;
+        ctx.lineWidth = drawing.lineWidth;
 
         if (drawing.inProgress) {
             ctx.moveTo(points[0][0], points[0][1]);

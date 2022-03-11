@@ -159,9 +159,9 @@ const BoardStateMachine = {
                 dispatch(setCurrentAction('EDIT'));
                 // update preferred Note size
                 if (selectedItem?.type === 'note') {
-                    const { color } = selectedItem;
+                    const { fillColor } = selectedItem;
                     const size = Math.abs(selectedItem.x2 - selectedItem.x0);
-                    dispatch(setNoteStyle({ color, size }));
+                    dispatch(setNoteStyle({ fillColor, size }));
                 }
                 break;
             case 'DRAW':

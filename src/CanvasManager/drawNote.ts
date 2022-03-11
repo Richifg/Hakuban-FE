@@ -1,7 +1,7 @@
 import { Note } from '../interfaces';
 
 function drawNote(note: Note, ctx: CanvasRenderingContext2D): void {
-    const { x0, y0, x2, y2, color } = note;
+    const { x0, y0, x2, y2, fillColor } = note;
     const size = Math.abs(x2 - x0);
 
     // note body shadow
@@ -11,7 +11,7 @@ function drawNote(note: Note, ctx: CanvasRenderingContext2D): void {
 
     // sticky note
     ctx.beginPath();
-    ctx.fillStyle = color;
+    ctx.fillStyle = fillColor;
     ctx.moveTo(x0, y0);
     ctx.lineTo(x2, y0);
     ctx.lineTo(x2, y2);

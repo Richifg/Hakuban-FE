@@ -24,7 +24,7 @@ export type Align = 'start' | 'center' | 'end';
 export interface TextStyle {
     fontSize: number;
     fontFamily: string;
-    color: string;
+    textColor: string;
     hAlign: Align;
     vAlign: Align;
     italic?: boolean;
@@ -56,7 +56,7 @@ export interface Shape extends ItemBase, ShapeStyle, Coordinates {
 
 // --NOTE
 export interface NoteStyle {
-    color: string;
+    fillColor: string;
     size: number;
 }
 export interface Note extends ItemBase, Coordinates, NoteStyle {
@@ -67,8 +67,8 @@ export interface Note extends ItemBase, Coordinates, NoteStyle {
 
 // --DRAWING
 export interface DrawingStyle {
-    color: string;
-    width: number;
+    lineColor: string;
+    lineWidth: number;
 }
 export interface Drawing extends ItemBase, Coordinates, DrawingStyle {
     type: 'drawing';
@@ -80,8 +80,8 @@ export interface Drawing extends ItemBase, Coordinates, DrawingStyle {
 // --LINE
 export type ArrowStyle = 'none' | 'simple' | 'narrow' | 'filledTriangle' | 'emptyTriangle';
 export interface LineStyle {
-    color: string;
-    width: number;
+    lineColor: string;
+    lineWidth: number;
     arrow0Style: ArrowStyle;
     arrow2Style: ArrowStyle;
 }

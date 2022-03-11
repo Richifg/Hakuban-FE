@@ -21,14 +21,14 @@ const initialState: ToolsState = {
     textStyle: {
         fontSize: 20,
         fontFamily: 'serif',
-        color: 'black',
+        textColor: 'black',
         hAlign: 'center',
         vAlign: 'center',
         bold: false,
         italic: false,
     },
     noteStyle: {
-        color: '#fcf8bd',
+        fillColor: '#fcf8bd',
         size: 100,
     },
 };
