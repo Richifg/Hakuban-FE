@@ -1,4 +1,4 @@
-import MenuOptions from './MenuOptions/MenuOptions';
+import MenuOptions from './MenuOptions';
 
 import AlignmentSelector from './AlignmentSelector/AlignmentSelector';
 import ColorSelector from './ColorSelector/ColorSelector';

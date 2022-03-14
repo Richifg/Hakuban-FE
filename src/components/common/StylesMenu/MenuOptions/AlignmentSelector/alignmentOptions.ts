@@ -1,4 +1,4 @@
-import { Align } from '../../../../interfaces';
+import { Align } from '../../../../../interfaces';
 
 const aligmentOptions: { value: Align; hAlign: string; vAlign: string }[] = [
     { value: 'start', hAlign: 'a', vAlign: 'b' },

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Align, TextStyle } from '../../../../interfaces';
+import { Align, TextStyle } from '../../../../../interfaces';
 import alignmentOptions from './alignmentOptions';
 import './AlignmentSelector.scss';
 

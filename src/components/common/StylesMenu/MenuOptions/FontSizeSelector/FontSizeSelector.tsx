@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from 'react';
-import { TextStyle } from '../../../../interfaces';
+import { TextStyle } from '../../../../../interfaces';
 import './FontSizeSelector.scss';
 
 interface FontSizeSelector {

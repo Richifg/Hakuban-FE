@@ -82,8 +82,7 @@ export type ArrowStyle = 'none' | 'simple' | 'triangle' | 'circle';
 export interface LineStyle {
     lineColor: string;
     lineWidth: number;
-    arrow0Style: ArrowStyle;
-    arrow2Style: ArrowStyle;
+    arrowStyle: [ArrowStyle, ArrowStyle];
 }
 export interface Line extends ItemBase, Coordinates, LineStyle {
     type: 'line';

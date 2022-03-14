@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from '../../../../hooks';
-import { AlignmentSelector, ColorSelector, FontSizeSelector, LineSelector, TextStyleSelector } from '../';
+import { AlignmentSelector, ColorSelector, FontSizeSelector, LineSelector, TextStyleSelector } from '.';
 import { Align, BoardItem } from '../../../../interfaces';
 import { addItem } from '../../../../store/slices/itemsSlice';
 import './MenuOptions.scss';

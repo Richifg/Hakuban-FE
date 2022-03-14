@@ -9,6 +9,7 @@ import getItemTranslatePoints from './getItemTranslatePoints';
 import getItemMaxCoordinates from './getItemMaxCoordinates';
 import getNewDrawing from './getNewDrawing';
 import getNewId from './getNewId';
+import getNewLine from './getNewLine';
 import getNewNote from './getNewNote';
 import getNewShape from './getNewShape';
 import getTextAreaCoordinates from './getTextAreaCoordinates';
@@ -29,6 +30,7 @@ export {
     getItemMaxCoordinates,
     getNewDrawing,
     getNewId,
+    getNewLine,
     getNewNote,
     getNewShape,
     getTextAreaCoordinates,

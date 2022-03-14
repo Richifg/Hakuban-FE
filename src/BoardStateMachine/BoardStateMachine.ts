@@ -19,6 +19,7 @@ import {
     getNewNote,
     getNewShape,
     getNewDrawing,
+    getNewLine,
     getBoardCoordinates,
     getCanvasCoordinates,
     getFinishedDrawing,
@@ -75,6 +76,10 @@ const BoardStateMachine = {
                         // create new Drawing
                         newItem = getNewDrawing(boardX, boardY);
                         dispatch(setCurrentAction('DRAW'));
+                    } else if (selectedTool === 'LINE') {
+                        newItem = getNewLine(boardX, boardY);
+                        dispatch(setSelectedPoint('P2'));
+                        dispatch(setCurrentAction('RESIZE'));
                     }
                     if (newItem) {
                         dispatch(addItem(newItem));

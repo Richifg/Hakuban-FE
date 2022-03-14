@@ -3,7 +3,7 @@ import { Line, ArrowStyle } from '../interfaces';
 const ARROW_SIZE = 4;
 
 function drawLine(line: Line, ctx: CanvasRenderingContext2D): void {
-    const { x0, y0, x2, y2, lineColor, lineWidth, arrow0Style, arrow2Style } = line;
+    const { x0, y0, x2, y2, lineColor, lineWidth, arrowStyle } = line;
 
     // line
     ctx.strokeStyle = lineColor;
@@ -19,8 +19,8 @@ function drawLine(line: Line, ctx: CanvasRenderingContext2D): void {
     const arrowHeight = ARROW_SIZE + (lineWidth - 1);
 
     const flipArrow = x2 < x0;
-    drawArrow(arrow0Style, x0, y0, angle, arrowHeight, ctx, flipArrow);
-    drawArrow(arrow2Style, x2, y2, angle, arrowHeight, ctx, !flipArrow);
+    drawArrow(arrowStyle[0], x0, y0, angle, arrowHeight, ctx, flipArrow);
+    drawArrow(arrowStyle[1], x2, y2, angle, arrowHeight, ctx, !flipArrow);
 }
 
 function drawArrow(

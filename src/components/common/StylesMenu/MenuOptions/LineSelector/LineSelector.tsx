@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShapeStyle, DrawingStyle } from '../../../../interfaces';
+import { ShapeStyle, DrawingStyle } from '../../../../../interfaces';
 import './LineSelector.scss';
 
 interface LineSelector {
