@@ -1,4 +1,4 @@
-import { Line } from '../interfaces';
+import { Line, ArrowStyle } from '../interfaces';
 
 const ARROW_SIZE = 4;
 
@@ -7,6 +7,7 @@ function drawLine(line: Line, ctx: CanvasRenderingContext2D): void {
 
     // line
     ctx.strokeStyle = lineColor;
+    ctx.fillStyle = lineColor;
     ctx.lineWidth = lineWidth;
     ctx.beginPath();
     ctx.moveTo(x0, y0);
@@ -14,35 +15,50 @@ function drawLine(line: Line, ctx: CanvasRenderingContext2D): void {
     ctx.stroke();
 
     // arrow calculations
-    const height = y2 - y0;
-    const width = x2 - x0;
-    const angle = Math.atan(height / width);
-    const arrowHalfBase = ARROW_SIZE * 0.5 + (lineWidth - 1) * 0.5;
+    const angle = Math.atan((y2 - y0) / (x2 - x0));
     const arrowHeight = ARROW_SIZE + (lineWidth - 1);
 
+    const flipArrow = x2 < x0;
+    drawArrow(arrow0Style, x0, y0, angle, arrowHeight, ctx, flipArrow);
+    drawArrow(arrow2Style, x2, y2, angle, arrowHeight, ctx, !flipArrow);
+}
+
+function drawArrow(
+    arrowStyle: ArrowStyle,
+    x: number,
+    y: number,
+    angle: number,
+    arrowHeight: number,
+    ctx: CanvasRenderingContext2D,
+    flip = false,
+) {
     // arrows are drawn as if line is horizontal to avoid calculating proyections
     // canvas is rotated to make arrow point where it should
-    if (arrow0Style !== 'none') {
+    const height = flip ? -arrowHeight : arrowHeight;
+
+    if (arrowStyle !== 'none') {
         ctx.save();
         ctx.beginPath();
-        ctx.translate(x0, y0);
+        ctx.translate(x, y);
         ctx.rotate(angle);
         ctx.moveTo(0, 0);
-        ctx.lineTo(arrowHeight, arrowHalfBase);
-        ctx.lineTo(arrowHeight, -arrowHalfBase);
-        ctx.closePath();
+        if (arrowStyle === 'simple') {
+            ctx.moveTo(height, height);
+            ctx.lineTo(0, 0);
+            ctx.lineTo(height, -height);
+            ctx.lineTo(0, 0);
+        } else if (arrowStyle === 'triangle') {
+            const base = height * 0.5;
+            ctx.lineTo(height, base);
+            ctx.lineTo(height, -base);
+            ctx.closePath();
+        } else if (arrowStyle === 'circle') {
+            const base = arrowHeight * 0.5;
+            ctx.ellipse(0, 0, base, base, 0, 0, Math.PI * 2);
+        }
         ctx.stroke();
+        ctx.fill();
         ctx.restore();
-    }
-    if (arrow2Style !== 'none') {
-        ctx.beginPath();
-        ctx.translate(x2, y2);
-        ctx.rotate(angle);
-        ctx.moveTo(0, 0);
-        ctx.lineTo(-arrowHeight, arrowHalfBase);
-        ctx.lineTo(-arrowHeight, -arrowHalfBase);
-        ctx.closePath();
-        ctx.stroke();
     }
 }
 
