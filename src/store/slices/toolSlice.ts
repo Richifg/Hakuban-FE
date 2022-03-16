@@ -35,7 +35,8 @@ const initialState: ToolsState = {
     lineStyle: {
         lineWidth: 1,
         lineColor: 'black',
-        arrowStyle: ['none', 'simple'],
+        arrow0Type: 'none',
+        arrow2Type: 'simple',
     },
 };
 

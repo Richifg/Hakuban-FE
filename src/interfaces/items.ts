@@ -78,11 +78,12 @@ export interface Drawing extends ItemBase, Coordinates, DrawingStyle {
 }
 
 // --LINE
-export type ArrowStyle = 'none' | 'simple' | 'triangle' | 'circle';
+export type ArrowType = 'none' | 'simple' | 'triangle' | 'circle';
 export interface LineStyle {
     lineColor: string;
     lineWidth: number;
-    arrowStyle: [ArrowStyle, ArrowStyle];
+    arrow0Type: ArrowType;
+    arrow2Type: ArrowType;
 }
 export interface Line extends ItemBase, Coordinates, LineStyle {
     type: 'line';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from '../../../../hooks';
-import { AlignmentSelector, ColorSelector, FontSizeSelector, LineSelector, TextStyleSelector } from '.';
+import { AlignmentSelector, ColorSelector, FontSizeSelector, LineSelector, TextStyleSelector, ArrowSelector } from '.';
 import { Align, BoardItem } from '../../../../interfaces';
 import { addItem } from '../../../../store/slices/itemsSlice';
 import './MenuOptions.scss';
@@ -35,6 +35,15 @@ const MenuOptions = ({ item }: MenuOptions): React.ReactElement => {
             {'fillColor' in item && <ColorSelector onChange={handleChange} styleKey="fillColor" />}
             {'lineColor' in item && <ColorSelector onChange={handleChange} styleKey="lineColor" />}
             {'lineWidth' in item && <LineSelector onChange={handleChange} styleKey="lineWidth" value={item.lineWidth} />}
+            {item.type === 'line' && (
+                <ArrowSelector
+                    onChange={handleChange}
+                    arrow0={item.arrow0Type}
+                    arrow2={item.arrow2Type}
+                    arrow0Key="arrow0Type"
+                    arrow2Key="arrow2Type"
+                />
+            )}
             {'text' in item && (
                 <>
                     <AlignmentSelector onChange={handleNestedChange} styleKey="vAlign" />
