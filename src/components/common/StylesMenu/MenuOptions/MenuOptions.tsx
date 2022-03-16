@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from '../../../../hooks';
 import { AlignmentSelector, ColorSelector, FontSizeSelector, LineSelector, TextStyleSelector, ArrowSelector } from '.';
 import { Align, BoardItem } from '../../../../interfaces';
-import { addItem } from '../../../../store/slices/itemsSlice';
+import { updateItem, addItem } from '../../../../store/slices/itemsSlice';
 import './MenuOptions.scss';
 
 interface MenuOptions {
@@ -15,8 +15,8 @@ const MenuOptions = ({ item }: MenuOptions): React.ReactElement => {
 
     const handleChange = (value: string | number, key: string) => {
         if (key in item) {
-            const newItem = { ...item, [key]: value };
-            dispatch(addItem(newItem));
+            const { id } = item;
+            dispatch(updateItem({ id, key, value }));
         }
     };
 

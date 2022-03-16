@@ -27,8 +27,8 @@ export interface TextStyle {
     textColor: string;
     hAlign: Align;
     vAlign: Align;
-    italic?: boolean;
-    bold?: boolean;
+    italic: boolean;
+    bold: boolean;
     skipRendering?: boolean;
 }
 export interface TextData extends TextStyle {

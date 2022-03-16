@@ -22,9 +22,13 @@ const itemsSlice = createSlice({
         },
         addItem: (state, action: PayloadAction<BoardItem>) => {
             const newItem = action.payload;
-            // check for duplicates before adding
             state.items[newItem.id] = newItem;
             state.selectedItem = newItem;
+        },
+        updateItem: (state, action: PayloadAction<{ id: string; value: string | number | boolean; key: string }>) => {
+            const { id, value, key } = action.payload;
+            const oldItem = state.items[id];
+            if (key in oldItem) state.items[id] = { ...oldItem, [key]: value };
         },
         deleteItem: (state, action: PayloadAction<string>) => {
             delete state.items[action.payload];
@@ -42,6 +46,6 @@ const itemsSlice = createSlice({
     },
 });
 
-export const { setItems, addItem, deleteItem, setDragOffset, setSelectedItem, setSelectedPoint } = itemsSlice.actions;
+export const { setItems, addItem, updateItem, deleteItem, setDragOffset, setSelectedItem, setSelectedPoint } = itemsSlice.actions;
 
 export default itemsSlice.reducer;
