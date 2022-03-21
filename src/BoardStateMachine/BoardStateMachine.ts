@@ -83,6 +83,7 @@ const BoardStateMachine = {
                     }
                     if (newItem) {
                         dispatch(addItem(newItem));
+                        dispatch(setSelectedItem(newItem));
                         dispatch(setBoardLimits(getUpdatedBoardLimits(newItem)));
                     }
                 }

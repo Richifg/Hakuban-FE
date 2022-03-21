@@ -23,12 +23,16 @@ const itemsSlice = createSlice({
         addItem: (state, action: PayloadAction<BoardItem>) => {
             const newItem = action.payload;
             state.items[newItem.id] = newItem;
-            state.selectedItem = newItem;
+            if (state.selectedItem?.id === newItem.id) state.selectedItem = newItem;
         },
         updateItem: (state, action: PayloadAction<{ id: string; value: string | number | boolean; key: string }>) => {
             const { id, value, key } = action.payload;
             const oldItem = state.items[id];
-            if (key in oldItem) state.items[id] = { ...oldItem, [key]: value };
+            if (key in oldItem) {
+                const newItem = { ...oldItem, [key]: value };
+                state.items[id] = { ...oldItem, [key]: value };
+                if (state.selectedItem?.id === newItem.id) state.selectedItem = newItem;
+            }
         },
         deleteItem: (state, action: PayloadAction<string>) => {
             delete state.items[action.payload];
