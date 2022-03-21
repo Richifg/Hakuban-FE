@@ -25,6 +25,7 @@ import {
     getFinishedDrawing,
     getUpdatedBoardLimits,
 } from '../utils';
+import updateLineConnections from './updateLineConnections';
 
 const { dispatch, getState } = store;
 
@@ -34,7 +35,7 @@ const { dispatch, getState } = store;
         - receives user inputs like mouse, wheel and window resize events
         - reads current state in addition to other variables from various store slices (e.g. selectedTool)
         - updates the new state
-        - and also dispatches some actions like updating mouse position from events
+        - and also dispatches some actions like updating/creating items
 */
 
 const BoardStateMachine = {
@@ -102,6 +103,7 @@ const BoardStateMachine = {
                     dispatch(setDragOffset([boardX - item.x0, boardY - item.y0]));
                     dispatch(setCurrentAction('DRAG'));
                 } else {
+                    // nothing was selected
                     isWriting && dispatch(setIsWriting(false));
                     dispatch(setSelectedItem());
                     dispatch(setCurrentAction('PAN'));
@@ -126,6 +128,7 @@ const BoardStateMachine = {
                     const updatedItem = { ...selectedItem, ...points };
                     dispatch(addItem(updatedItem));
                     dispatch(setBoardLimits(getUpdatedBoardLimits(updatedItem)));
+                    updateLineConnections(updatedItem);
                     isWriting && dispatch(setIsWriting(false));
                 }
                 break;
@@ -138,6 +141,7 @@ const BoardStateMachine = {
                     const updatedItem = { ...selectedItem, ...points };
                     dispatch(addItem(updatedItem));
                     dispatch(setBoardLimits(getUpdatedBoardLimits(updatedItem)));
+                    updateLineConnections(updatedItem);
                 }
                 break;
             case 'DRAW':

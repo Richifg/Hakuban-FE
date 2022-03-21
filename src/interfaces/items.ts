@@ -1,6 +1,6 @@
 export type Point = 'P0' | 'P1' | 'P2' | 'P3';
 
-export type LineConnections = [point: 'P0' | 'P2', x: number, y: number][];
+export type LineConnections = [lineId: string, point: 'P0' | 'P2', x: number, y: number][];
 
 export type BoardItemType = 'text' | 'shape' | 'note' | 'drawing' | 'line';
 
