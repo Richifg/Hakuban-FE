@@ -9,9 +9,11 @@ function connectItem(itemToConnect: BoardItem, line: Line, point: MainPoint, boa
     if (isConnectableItem(itemToConnect)) {
         const connectedItem = { ...itemToConnect };
         if (!connectedItem.connections) connectedItem.connections = [];
-        const minX = Math.min(connectedItem.x0, connectedItem.x2);
-        const minY = Math.min(connectedItem.y0, connectedItem.y2);
-        connectedItem.connections = [...connectedItem.connections, [line.id, point, boardX - minX, boardY - minY]];
+        const { x0, y0, x2, y2 } = connectedItem;
+        const [minX, minY] = [Math.min(x0, x2), Math.min(y0, y2)];
+        const [width, height] = [Math.abs(x2 - x0), Math.abs(y2 - y0)];
+        const [x, y] = [parseFloat(((boardX - minX) / width).toFixed(2)), parseFloat(((boardY - minY) / height).toFixed(2))];
+        connectedItem.connections = [...connectedItem.connections, [line.id, point, x, y]];
         store.dispatch(addItem(connectedItem));
         store.dispatch(addLineConnection([line.id, point, connectedItem.id]));
     }

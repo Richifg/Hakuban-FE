@@ -27,7 +27,7 @@ function drawGrid(transform: CanvasTransform, size: CanvasSize, ctx: CanvasRende
             const [offsetX, offsetY] = [dX % scaledGridSize, dY % scaledGridSize];
 
             // black with darkest ligthness at 85%
-            const lightness = 85 + 15 * (MIN_GRID_RENDER_SIZE / scaledGridSize);
+            const lightness = 90 + 10 * (MIN_GRID_RENDER_SIZE / scaledGridSize);
             ctx.strokeStyle = `hsl(0, 0%, ${lightness}%)`;
 
             ctx.beginPath();

@@ -7,13 +7,14 @@ import { addItem } from '../store/slices/itemsSlice';
 function updateLineConnections(item: BoardItem): void {
     if ('connections' in item) {
         const { items } = store.getState().items;
-        item.connections?.forEach(([id, point, dX, dY]) => {
+        item.connections?.forEach(([id, point, pX, pY]) => {
             const { x0, x2, y0, y2 } = item;
+            const [width, height] = [Math.abs(x2 - x0), Math.abs(y2 - y0)];
             const line = items[id];
             if (line.type === 'line') {
                 const updatedLine = { ...line };
-                const x = dX + Math.min(x0, x2);
-                const y = dY + Math.min(y0, y2);
+                const x = Math.min(x0, x2) + width * pX;
+                const y = Math.min(y0, y2) + height * pY;
                 if (point === 'P0') {
                     updatedLine.x0 = x;
                     updatedLine.y0 = y;
