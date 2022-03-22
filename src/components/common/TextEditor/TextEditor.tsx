@@ -87,7 +87,7 @@ const TextEditor = (): React.ReactElement => {
     // avoid dragging element when text editor is opened (text editor covers element)
     const handleMouseDown = (e: React.MouseEvent) => e.stopPropagation();
 
-    if (!isWriting || !selectedItem) return <></>;
+    if (!isWriting || !isTextItem(selectedItem)) return <></>;
 
     const { scale } = canvasTransform;
     return (
