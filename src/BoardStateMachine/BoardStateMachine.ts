@@ -41,7 +41,7 @@ const { dispatch, getState } = store;
 const BoardStateMachine = {
     mouseDown(e: MouseEvent<HTMLDivElement>): void {
         const { currentAction, canvasTransform, isWriting } = getState().board;
-        const { selectedItem, items } = getState().items;
+        const { selectedItem, items, lineConnectionCount } = getState().items;
         const { selectedTool } = getState().tools;
         const itemsArray = Object.values(items);
         const [screenX, screenY] = [e.clientX, e.clientY];
@@ -57,24 +57,26 @@ const BoardStateMachine = {
                     const item = itemsArray.find((item) => isPointInsideItem(screenX, screenY, item, canvasTransform));
                     if (item) {
                         // select clicked item
-                        dispatch(setSelectedItem(item));
-                        dispatch(setDragOffset([boardX - item.x0, boardY - item.y0]));
-                        dispatch(setCurrentAction('DRAG'));
-                        // pan because nothing was clicked
+                        selectedItem?.id !== item.id && dispatch(setSelectedItem(item));
+                        // drag item only if it isnt a connected line
+                        if (item.type !== 'line' || !lineConnectionCount[item.id]) {
+                            dispatch(setDragOffset([boardX - item.x0, boardY - item.y0]));
+                            dispatch(setCurrentAction('DRAG'));
+                        } else {
+                            dispatch(setCurrentAction('EDIT'));
+                        }
+                        // pan screen because nothing was clicked
                     } else dispatch(setCurrentAction('PAN'));
                 } else {
                     let newItem: BoardItem | undefined = undefined;
                     if (selectedTool === 'SHAPE') {
-                        // create new Shape
                         newItem = getNewShape(boardX, boardY);
                         dispatch(setSelectedPoint('P2'));
                         dispatch(setCurrentAction('RESIZE'));
                     } else if (selectedTool === 'NOTE') {
-                        // create new Note
                         newItem = getNewNote(boardX, boardY);
                         dispatch(setCurrentAction('IDLE'));
                     } else if (selectedTool === 'PEN') {
-                        // create new Drawing
                         newItem = getNewDrawing(boardX, boardY);
                         dispatch(setCurrentAction('DRAW'));
                     } else if (selectedTool === 'LINE') {
@@ -83,6 +85,7 @@ const BoardStateMachine = {
                         dispatch(setCurrentAction('RESIZE'));
                     }
                     if (newItem) {
+                        // add new item and update board limits
                         dispatch(addItem(newItem));
                         dispatch(setSelectedItem(newItem));
                         dispatch(setBoardLimits(getUpdatedBoardLimits(newItem)));
@@ -100,12 +103,14 @@ const BoardStateMachine = {
                     } else {
                         !isWriting && dispatch(setIsWriting(true));
                     }
-                    dispatch(setDragOffset([boardX - item.x0, boardY - item.y0]));
-                    dispatch(setCurrentAction('DRAG'));
+                    if (item.type !== 'line' || !lineConnectionCount[item.id]) {
+                        dispatch(setDragOffset([boardX - item.x0, boardY - item.y0]));
+                        dispatch(setCurrentAction('DRAG'));
+                    }
                 } else {
                     // nothing was selected
                     isWriting && dispatch(setIsWriting(false));
-                    dispatch(setSelectedItem());
+                    selectedItem && dispatch(setSelectedItem());
                     dispatch(setCurrentAction('PAN'));
                 }
                 break;

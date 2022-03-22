@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
 import { Point, Action } from '../../../interfaces';
-import { getEditPoints } from '../../../utils';
 import { useSelector, useDispatch } from '../../../hooks';
 import { setSelectedPoint } from '../../../store/slices/itemsSlice';
 import { setCurrentAction } from '../../../store/slices/boardSlice';
+import getEditPoints from './getEditPoints';
 import './EditPoints.scss';
 
 const EditPointsActions: Action[] = ['EDIT', 'RESIZE'];

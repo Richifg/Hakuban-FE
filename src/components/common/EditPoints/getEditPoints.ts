@@ -1,6 +1,6 @@
-import type { BoardItem, Point } from '../interfaces/items';
-import type { CanvasTransform } from '../interfaces/board';
-import { getCanvasCoordinates } from '.';
+import { BoardItem, Point } from '../../../interfaces/items';
+import { CanvasTransform } from '../../../interfaces/board';
+import { getCanvasCoordinates } from '../../../utils';
 
 function getEditPoints(item: BoardItem, transform: CanvasTransform): [point: Point, x: number, y: number][] {
     const { x0, y0, x2, y2 } = item;

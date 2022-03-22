@@ -6,11 +6,13 @@ interface ItemsState {
     dragOffset: { x: number; y: number };
     selectedItem?: BoardItem;
     selectedPoint?: Point;
+    lineConnectionCount: { [id: string]: number };
 }
 
 const initialState: ItemsState = {
     items: {},
     dragOffset: { x: 0, y: 0 },
+    lineConnectionCount: {},
 };
 
 const itemsSlice = createSlice({
@@ -47,9 +49,33 @@ const itemsSlice = createSlice({
         setSelectedPoint: (state, action: PayloadAction<Point>) => {
             state.selectedPoint = action.payload;
         },
+        setLineConnections: (state, action: PayloadAction<{ [id: string]: number }>) => {
+            state.lineConnectionCount = action.payload;
+        },
+        increaseLineConnections: (state, action: PayloadAction<string>) => {
+            const id = action.payload;
+            if (state.lineConnectionCount[id] === undefined) state.lineConnectionCount[id] = 1;
+            else state.lineConnectionCount[id] += 1;
+        },
+        decreaseLineConnections: (state, action: PayloadAction<string>) => {
+            const id = action.payload;
+            if (state.lineConnectionCount[id] === undefined) state.lineConnectionCount[id] = 0;
+            else state.lineConnectionCount[id] -= 1;
+        },
     },
 });
 
-export const { setItems, addItem, updateItem, deleteItem, setDragOffset, setSelectedItem, setSelectedPoint } = itemsSlice.actions;
+export const {
+    setItems,
+    addItem,
+    updateItem,
+    deleteItem,
+    setDragOffset,
+    setSelectedItem,
+    setSelectedPoint,
+    setLineConnections,
+    increaseLineConnections,
+    decreaseLineConnections,
+} = itemsSlice.actions;
 
 export default itemsSlice.reducer;

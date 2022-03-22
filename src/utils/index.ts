@@ -4,7 +4,6 @@ import getDebouncedFunction from './getDebouncedFunction';
 import getFinishedDrawing from './getFinishedDrawing';
 import getItemPositionCSSVars from './getItemPositionCSSVars';
 import getItemResizePoints from './getItemResizePoints';
-import getEditPoints from './getEditPoints';
 import getItemTranslatePoints from './getItemTranslatePoints';
 import getItemMaxCoordinates from './getItemMaxCoordinates';
 import getNewDrawing from './getNewDrawing';
@@ -25,7 +24,6 @@ export {
     getFinishedDrawing,
     getItemPositionCSSVars,
     getItemResizePoints,
-    getEditPoints,
     getItemTranslatePoints,
     getItemMaxCoordinates,
     getNewDrawing,

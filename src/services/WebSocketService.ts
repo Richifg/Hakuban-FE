@@ -1,5 +1,5 @@
 import { store } from '../store/store';
-import { setItems, addItem } from '../store/slices/itemsSlice';
+import { setItems, addItem, setLineConnections, increaseLineConnections } from '../store/slices/itemsSlice';
 import { setId, setError } from '../store/slices/connectionSlice';
 import { setMessages, addMessage } from '../store/slices/chatSlice';
 import { WSMessage } from '../interfaces/webSocket';
@@ -45,15 +45,24 @@ class WebSocketService {
                             const item = message.content;
                             store.dispatch(addItem(item));
                             store.dispatch(setBoardLimits(getUpdatedBoardLimits(item)));
+                            if ('connections' in item)
+                                item.connections?.forEach(([id]) => store.dispatch(increaseLineConnections(id)));
                         }
                         break;
                     case 'collection':
-                        // TODO: check TypeScript Handbook to see alternative to importing and asserting the type here
+                        // separate items by type
                         const chatMessages = message.content.filter((item) => item.type === 'chat') as ChatMessage[];
                         const boardItems = message.content.filter((item) => item.type !== 'chat') as BoardItem[];
                         store.dispatch(setItems(boardItems));
                         store.dispatch(setMessages(chatMessages));
                         store.dispatch(setBoardLimits(getUpdatedBoardLimits(undefined, Object.values(boardItems))));
+                        // set all line connections
+                        const lineConnections: { [id: string]: number } = {};
+                        boardItems.forEach((item) => {
+                            if ('connections' in item)
+                                item.connections?.forEach(([id]) => (lineConnections[id] = (lineConnections[id] || 0) + 1));
+                        });
+                        store.dispatch(setLineConnections(lineConnections));
                         break;
                     case 'id':
                         store.dispatch(setId(message.content));
