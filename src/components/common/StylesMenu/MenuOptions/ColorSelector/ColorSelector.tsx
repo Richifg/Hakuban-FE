@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShapeStyle, TextStyle } from '../../../../interfaces';
+import { ShapeStyle, TextStyle } from '../../../../../interfaces';
 import colorOptions from './colorOptions';
 import './ColorSelector.scss';
 

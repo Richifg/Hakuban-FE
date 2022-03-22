@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextStyle } from '../../../../interfaces';
+import { TextStyle } from '../../../../../interfaces';
 
 interface TextStyleSelector {
     onChange(value: boolean, key: string): void;

@@ -10,8 +10,8 @@ function getNewDrawing(x: number, y: number): Drawing {
         y0: 0,
         y2: 0,
         points: [[x, y]],
-        color: 'black',
-        width: 1,
+        lineColor: 'black',
+        lineWidth: 1,
         inProgress: true,
     };
 }

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { Tool } from '../../interfaces/board';
-import type { ShapeStyle, TextStyle, ShapeType, NoteStyle } from '../../interfaces/items';
+import type { ShapeStyle, TextStyle, ShapeType, NoteStyle, LineStyle } from '../../interfaces/items';
 
 interface ToolsState {
     selectedTool: Tool;
@@ -8,6 +8,7 @@ interface ToolsState {
     shapeStyle: ShapeStyle;
     textStyle: TextStyle;
     noteStyle: NoteStyle;
+    lineStyle: LineStyle;
 }
 
 const initialState: ToolsState = {
@@ -21,15 +22,21 @@ const initialState: ToolsState = {
     textStyle: {
         fontSize: 20,
         fontFamily: 'serif',
-        color: 'black',
+        textColor: 'black',
         hAlign: 'center',
         vAlign: 'center',
         bold: false,
         italic: false,
     },
     noteStyle: {
-        color: '#fcf8bd',
+        fillColor: '#fcf8bd',
         size: 100,
+    },
+    lineStyle: {
+        lineWidth: 1,
+        lineColor: 'black',
+        arrow0Type: 'none',
+        arrow2Type: 'simple',
     },
 };
 
@@ -51,6 +58,9 @@ export const toolsSlice = createSlice({
         },
         setNoteStyle: (state, action: PayloadAction<NoteStyle>) => {
             state.noteStyle = action.payload;
+        },
+        setLineStyle: (state, action: PayloadAction<LineStyle>) => {
+            state.lineStyle = action.payload;
         },
     },
 });

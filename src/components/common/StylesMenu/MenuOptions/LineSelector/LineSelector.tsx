@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShapeStyle, DrawingStyle } from '../../../../interfaces';
+import { ShapeStyle, DrawingStyle } from '../../../../../interfaces';
 import './LineSelector.scss';
 
 interface LineSelector {
@@ -11,7 +11,7 @@ interface LineSelector {
 const LineSelector = ({ onChange, value, styleKey }: LineSelector): React.ReactElement => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.currentTarget.value);
-        if (value > 10 || value < 1) return;
+        if (value > 20 || value < 1) return;
         onChange(value, styleKey);
     };
 

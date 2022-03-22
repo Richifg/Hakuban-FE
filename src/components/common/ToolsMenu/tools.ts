@@ -17,6 +17,10 @@ const tools: { name: Tool; icon: string }[] = [
         name: 'NOTE',
         icon: '',
     },
+    {
+        name: 'LINE',
+        icon: '',
+    },
 ];
 
 export default tools;

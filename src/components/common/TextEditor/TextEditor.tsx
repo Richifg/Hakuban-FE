@@ -65,10 +65,10 @@ const TextEditor = (): React.ReactElement => {
     // css style vars for texteditor
     const [color, font, textAlign, verticalAlign]: [string, string, Align, string] = useMemo(() => {
         const source = (isTextItem(selectedItem) && selectedItem?.text) || textStyle;
-        const { color, fontSize, fontFamily, hAlign, vAlign, bold, italic } = source;
+        const { textColor, fontSize, fontFamily, hAlign, vAlign, bold, italic } = source;
         const verticalAlign = vAlign == 'start' ? ' top' : vAlign == 'end' ? 'bottom' : 'middle';
         const font = `${italic ? 'italic' : 'normal'} ${bold ? 'bold' : 'normal'} ${fontSize}px ${fontFamily}`;
-        return [color, font, hAlign, verticalAlign];
+        return [textColor, font, hAlign, verticalAlign];
     }, [selectedItem, textStyle]);
 
     // css position vars for texteditor
@@ -87,7 +87,7 @@ const TextEditor = (): React.ReactElement => {
     // avoid dragging element when text editor is opened (text editor covers element)
     const handleMouseDown = (e: React.MouseEvent) => e.stopPropagation();
 
-    if (!isWriting || !selectedItem) return <></>;
+    if (!isWriting || !isTextItem(selectedItem)) return <></>;
 
     const { scale } = canvasTransform;
     return (

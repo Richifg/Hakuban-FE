@@ -16,14 +16,19 @@ import {
     getItemResizePoints,
     getItemTranslatePoints,
     isPointInsideItem,
+    isMainPoint,
     getNewNote,
     getNewShape,
     getNewDrawing,
+    getNewLine,
     getBoardCoordinates,
     getCanvasCoordinates,
     getFinishedDrawing,
     getUpdatedBoardLimits,
 } from '../utils';
+import updateLineConnections from './updateLineConnections';
+import connectItem from './connectItem';
+import disconnectItem from './disconnectItem';
 
 const { dispatch, getState } = store;
 
@@ -33,18 +38,25 @@ const { dispatch, getState } = store;
         - receives user inputs like mouse, wheel and window resize events
         - reads current state in addition to other variables from various store slices (e.g. selectedTool)
         - updates the new state
-        - and also dispatches some actions like updating mouse position from events
+        - and also dispatches some actions like updating/creating items
 */
 
 const BoardStateMachine = {
     mouseDown(e: MouseEvent<HTMLDivElement>): void {
         const { currentAction, canvasTransform, isWriting } = getState().board;
-        const { selectedItem, items } = getState().items;
+        const { selectedItem, items, lineConnections } = getState().items;
         const { selectedTool } = getState().tools;
         const itemsArray = Object.values(items);
         const [screenX, screenY] = [e.clientX, e.clientY];
         dispatch(setCursorPosition([screenX, screenY]));
         const [boardX, boardY] = getBoardCoordinates(screenX, screenY, canvasTransform);
+
+        // check if an item was clicked
+        let clickedItem: BoardItem | undefined = undefined;
+        if (selectedTool === 'LINE' || selectedTool === 'POINTER') {
+            clickedItem = itemsArray.find((item) => isPointInsideItem(screenX, screenY, item, canvasTransform));
+        }
+
         switch (currentAction) {
             case 'IDLE':
             case 'SLIDE':
@@ -52,52 +64,60 @@ const BoardStateMachine = {
                 if (e.button === MouseButton.Middle) {
                     dispatch(setCurrentAction('PAN'));
                 } else if (selectedTool === 'POINTER') {
-                    const item = itemsArray.find((item) => isPointInsideItem(screenX, screenY, item, canvasTransform));
-                    if (item) {
+                    if (clickedItem) {
                         // select clicked item
-                        dispatch(setSelectedItem(item));
-                        dispatch(setDragOffset([boardX - item.x0, boardY - item.y0]));
-                        dispatch(setCurrentAction('DRAG'));
-                        // pan because nothing was clicked
+                        selectedItem?.id !== clickedItem.id && dispatch(setSelectedItem(clickedItem));
+                        // drag item only if it isnt a connected line
+                        if (clickedItem.type !== 'line' || !lineConnections[clickedItem.id]) {
+                            dispatch(setDragOffset([boardX - clickedItem.x0, boardY - clickedItem.y0]));
+                            dispatch(setCurrentAction('DRAG'));
+                        } else {
+                            dispatch(setCurrentAction('EDIT'));
+                        }
+                        // pan screen because nothing was clicked
                     } else dispatch(setCurrentAction('PAN'));
                 } else {
                     let newItem: BoardItem | undefined = undefined;
                     if (selectedTool === 'SHAPE') {
-                        // create new Shape
                         newItem = getNewShape(boardX, boardY);
                         dispatch(setSelectedPoint('P2'));
                         dispatch(setCurrentAction('RESIZE'));
                     } else if (selectedTool === 'NOTE') {
-                        // create new Note
                         newItem = getNewNote(boardX, boardY);
                         dispatch(setCurrentAction('IDLE'));
                     } else if (selectedTool === 'PEN') {
-                        // create new Drawing
                         newItem = getNewDrawing(boardX, boardY);
                         dispatch(setCurrentAction('DRAW'));
+                    } else if (selectedTool === 'LINE') {
+                        newItem = getNewLine(boardX, boardY);
+                        dispatch(setSelectedPoint('P2'));
+                        dispatch(setCurrentAction('RESIZE'));
+                        if (clickedItem) connectItem(clickedItem, newItem, 'P0', boardX, boardY);
                     }
                     if (newItem) {
+                        // add new item and update board limits
                         dispatch(addItem(newItem));
+                        dispatch(setSelectedItem(newItem));
                         dispatch(setBoardLimits(getUpdatedBoardLimits(newItem)));
                     }
                 }
                 break;
             case 'EDIT':
-                // ##TODO how to determine if a click was inside an element quickly?
-                // also how about staking order of elementes
-                const item = itemsArray.find((item) => isPointInsideItem(screenX, screenY, item, canvasTransform));
-                if (item && selectedTool === 'POINTER') {
-                    if (item.id !== selectedItem?.id) {
-                        dispatch(setSelectedItem(item));
+                if (clickedItem) {
+                    if (clickedItem.id !== selectedItem?.id) {
+                        dispatch(setSelectedItem(clickedItem));
                         isWriting && dispatch(setIsWriting(false));
                     } else {
                         !isWriting && dispatch(setIsWriting(true));
                     }
-                    dispatch(setDragOffset([boardX - item.x0, boardY - item.y0]));
-                    dispatch(setCurrentAction('DRAG'));
+                    if (clickedItem.type !== 'line' || !lineConnections[clickedItem.id]) {
+                        dispatch(setDragOffset([boardX - clickedItem.x0, boardY - clickedItem.y0]));
+                        dispatch(setCurrentAction('DRAG'));
+                    }
                 } else {
+                    // nothing was selected
                     isWriting && dispatch(setIsWriting(false));
-                    dispatch(setSelectedItem());
+                    selectedItem && dispatch(setSelectedItem());
                     dispatch(setCurrentAction('PAN'));
                 }
                 break;
@@ -119,7 +139,7 @@ const BoardStateMachine = {
                     const points = getItemTranslatePoints(selectedItem, dragOffset, x, y, canvasTransform);
                     const updatedItem = { ...selectedItem, ...points };
                     dispatch(addItem(updatedItem));
-                    dispatch(setBoardLimits(getUpdatedBoardLimits(updatedItem)));
+                    updateLineConnections(updatedItem);
                     isWriting && dispatch(setIsWriting(false));
                 }
                 break;
@@ -131,7 +151,7 @@ const BoardStateMachine = {
                     const points = getItemResizePoints(selectedItem, selectedPoint, x, y, canvasTransform, maintainRatio);
                     const updatedItem = { ...selectedItem, ...points };
                     dispatch(addItem(updatedItem));
-                    dispatch(setBoardLimits(getUpdatedBoardLimits(updatedItem)));
+                    updateLineConnections(updatedItem);
                 }
                 break;
             case 'DRAW':
@@ -145,23 +165,39 @@ const BoardStateMachine = {
     },
 
     mouseUp(e: MouseEvent<HTMLDivElement>): void {
-        const { currentAction } = getState().board;
-        dispatch(setCursorPosition([e.clientX, e.clientY]));
-        const { selectedItem } = getState().items;
+        const { currentAction, canvasTransform } = getState().board;
+        const { selectedItem, selectedPoint, items } = getState().items;
+        const [screenX, screenY] = [e.clientX, e.clientY];
+        dispatch(setCursorPosition([screenX, screenY]));
+        let editedItem: BoardItem | undefined = undefined;
         switch (currentAction) {
             case 'PAN':
                 dispatch(setCurrentAction('SLIDE'));
                 break;
             case 'DRAG':
                 dispatch(setCurrentAction('EDIT'));
+                editedItem = selectedItem;
                 break;
             case 'RESIZE':
                 dispatch(setCurrentAction('EDIT'));
-                // update preferred Note size
+                editedItem = selectedItem;
+                // if resizing Note update preferred Note size
                 if (selectedItem?.type === 'note') {
-                    const { color } = selectedItem;
+                    const { fillColor } = selectedItem;
                     const size = Math.abs(selectedItem.x2 - selectedItem.x0);
-                    dispatch(setNoteStyle({ color, size }));
+                    dispatch(setNoteStyle({ fillColor, size }));
+                }
+                // if resizing Line connect/disconnect line
+                if (selectedItem?.type === 'line' && isMainPoint(selectedPoint)) {
+                    const clickedItem = Object.values(items).find(
+                        (item) => isPointInsideItem(screenX, screenY, item, canvasTransform) && item.id !== selectedItem.id,
+                    );
+                    if (clickedItem) {
+                        const [boardX, boardY] = getBoardCoordinates(screenX, screenY, canvasTransform);
+                        connectItem(clickedItem, selectedItem, selectedPoint, boardX, boardY);
+                    } else {
+                        disconnectItem(selectedItem, selectedPoint);
+                    }
                 }
                 break;
             case 'DRAW':
@@ -170,9 +206,13 @@ const BoardStateMachine = {
                     const finishedDrawing = getFinishedDrawing(selectedItem);
                     dispatch(addItem(finishedDrawing));
                     dispatch(setBoardLimits(getUpdatedBoardLimits(finishedDrawing)));
+                    editedItem = finishedDrawing;
                 }
                 dispatch(setCurrentAction('IDLE'));
                 break;
+        }
+        if (editedItem) {
+            dispatch(setBoardLimits(getUpdatedBoardLimits(editedItem)));
         }
     },
 
