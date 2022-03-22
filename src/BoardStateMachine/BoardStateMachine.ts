@@ -16,6 +16,7 @@ import {
     getItemResizePoints,
     getItemTranslatePoints,
     isPointInsideItem,
+    isMainPoint,
     getNewNote,
     getNewShape,
     getNewDrawing,
@@ -26,6 +27,8 @@ import {
     getUpdatedBoardLimits,
 } from '../utils';
 import updateLineConnections from './updateLineConnections';
+import connectItem from './connectItem';
+import disconnectItem from './disconnectItem';
 
 const { dispatch, getState } = store;
 
@@ -41,12 +44,19 @@ const { dispatch, getState } = store;
 const BoardStateMachine = {
     mouseDown(e: MouseEvent<HTMLDivElement>): void {
         const { currentAction, canvasTransform, isWriting } = getState().board;
-        const { selectedItem, items, lineConnectionCount } = getState().items;
+        const { selectedItem, items, lineConnections } = getState().items;
         const { selectedTool } = getState().tools;
         const itemsArray = Object.values(items);
         const [screenX, screenY] = [e.clientX, e.clientY];
         dispatch(setCursorPosition([screenX, screenY]));
         const [boardX, boardY] = getBoardCoordinates(screenX, screenY, canvasTransform);
+
+        // check if an item was clicked
+        let clickedItem: BoardItem | undefined = undefined;
+        if (selectedTool === 'LINE' || selectedTool === 'POINTER') {
+            clickedItem = itemsArray.find((item) => isPointInsideItem(screenX, screenY, item, canvasTransform));
+        }
+
         switch (currentAction) {
             case 'IDLE':
             case 'SLIDE':
@@ -54,13 +64,12 @@ const BoardStateMachine = {
                 if (e.button === MouseButton.Middle) {
                     dispatch(setCurrentAction('PAN'));
                 } else if (selectedTool === 'POINTER') {
-                    const item = itemsArray.find((item) => isPointInsideItem(screenX, screenY, item, canvasTransform));
-                    if (item) {
+                    if (clickedItem) {
                         // select clicked item
-                        selectedItem?.id !== item.id && dispatch(setSelectedItem(item));
+                        selectedItem?.id !== clickedItem.id && dispatch(setSelectedItem(clickedItem));
                         // drag item only if it isnt a connected line
-                        if (item.type !== 'line' || !lineConnectionCount[item.id]) {
-                            dispatch(setDragOffset([boardX - item.x0, boardY - item.y0]));
+                        if (clickedItem.type !== 'line' || !lineConnections[clickedItem.id]) {
+                            dispatch(setDragOffset([boardX - clickedItem.x0, boardY - clickedItem.y0]));
                             dispatch(setCurrentAction('DRAG'));
                         } else {
                             dispatch(setCurrentAction('EDIT'));
@@ -83,6 +92,7 @@ const BoardStateMachine = {
                         newItem = getNewLine(boardX, boardY);
                         dispatch(setSelectedPoint('P2'));
                         dispatch(setCurrentAction('RESIZE'));
+                        if (clickedItem) connectItem(clickedItem, newItem, 'P0', boardX, boardY);
                     }
                     if (newItem) {
                         // add new item and update board limits
@@ -93,18 +103,15 @@ const BoardStateMachine = {
                 }
                 break;
             case 'EDIT':
-                // ##TODO how to determine if a click was inside an element quickly?
-                // also how about staking order of elementes
-                const item = itemsArray.find((item) => isPointInsideItem(screenX, screenY, item, canvasTransform));
-                if (item && selectedTool === 'POINTER') {
-                    if (item.id !== selectedItem?.id) {
-                        dispatch(setSelectedItem(item));
+                if (clickedItem) {
+                    if (clickedItem.id !== selectedItem?.id) {
+                        dispatch(setSelectedItem(clickedItem));
                         isWriting && dispatch(setIsWriting(false));
                     } else {
                         !isWriting && dispatch(setIsWriting(true));
                     }
-                    if (item.type !== 'line' || !lineConnectionCount[item.id]) {
-                        dispatch(setDragOffset([boardX - item.x0, boardY - item.y0]));
+                    if (clickedItem.type !== 'line' || !lineConnections[clickedItem.id]) {
+                        dispatch(setDragOffset([boardX - clickedItem.x0, boardY - clickedItem.y0]));
                         dispatch(setCurrentAction('DRAG'));
                     }
                 } else {
@@ -160,9 +167,10 @@ const BoardStateMachine = {
     },
 
     mouseUp(e: MouseEvent<HTMLDivElement>): void {
-        const { currentAction } = getState().board;
-        dispatch(setCursorPosition([e.clientX, e.clientY]));
-        const { selectedItem } = getState().items;
+        const { currentAction, canvasTransform } = getState().board;
+        const { selectedItem, selectedPoint, items } = getState().items;
+        const [screenX, screenY] = [e.clientX, e.clientY];
+        dispatch(setCursorPosition([screenX, screenY]));
         switch (currentAction) {
             case 'PAN':
                 dispatch(setCurrentAction('SLIDE'));
@@ -172,11 +180,23 @@ const BoardStateMachine = {
                 break;
             case 'RESIZE':
                 dispatch(setCurrentAction('EDIT'));
-                // update preferred Note size
+                // if resizing Note update preferred Note size
                 if (selectedItem?.type === 'note') {
                     const { fillColor } = selectedItem;
                     const size = Math.abs(selectedItem.x2 - selectedItem.x0);
                     dispatch(setNoteStyle({ fillColor, size }));
+                }
+                // if resizing Line connect/disconnect line
+                if (selectedItem?.type === 'line' && isMainPoint(selectedPoint)) {
+                    const clickedItem = Object.values(items).find(
+                        (item) => isPointInsideItem(screenX, screenY, item, canvasTransform) && item.id !== selectedItem.id,
+                    );
+                    if (clickedItem) {
+                        const [boardX, boardY] = getBoardCoordinates(screenX, screenY, canvasTransform);
+                        connectItem(clickedItem, selectedItem, selectedPoint, boardX, boardY);
+                    } else {
+                        disconnectItem(selectedItem, selectedPoint);
+                    }
                 }
                 break;
             case 'DRAW':

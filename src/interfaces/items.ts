@@ -1,4 +1,5 @@
 export type Point = 'P0' | 'P1' | 'P2' | 'P3';
+export type MainPoint = 'P0' | 'P2';
 
 export type LineConnections = [lineId: string, point: 'P0' | 'P2', x: number, y: number][];
 

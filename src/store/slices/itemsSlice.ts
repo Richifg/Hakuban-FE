@@ -1,18 +1,18 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { BoardItem, Point } from '../../interfaces/items';
+import type { BoardItem, Point, MainPoint } from '../../interfaces/items';
 
 interface ItemsState {
     items: { [id: string]: BoardItem };
     dragOffset: { x: number; y: number };
     selectedItem?: BoardItem;
     selectedPoint?: Point;
-    lineConnectionCount: { [id: string]: number };
+    lineConnections: { [id: string]: { [point: string]: string } };
 }
 
 const initialState: ItemsState = {
     items: {},
     dragOffset: { x: 0, y: 0 },
-    lineConnectionCount: {},
+    lineConnections: {},
 };
 
 const itemsSlice = createSlice({
@@ -49,18 +49,20 @@ const itemsSlice = createSlice({
         setSelectedPoint: (state, action: PayloadAction<Point>) => {
             state.selectedPoint = action.payload;
         },
-        setLineConnections: (state, action: PayloadAction<{ [id: string]: number }>) => {
-            state.lineConnectionCount = action.payload;
+        setLineConnections: (state, action: PayloadAction<{ [id: string]: { [point: string]: string } }>) => {
+            state.lineConnections = action.payload;
         },
-        increaseLineConnections: (state, action: PayloadAction<string>) => {
-            const id = action.payload;
-            if (state.lineConnectionCount[id] === undefined) state.lineConnectionCount[id] = 1;
-            else state.lineConnectionCount[id] += 1;
+        addLineConnection: (state, action: PayloadAction<[lineId: string, point: MainPoint, itemId: string]>) => {
+            const [lineId, point, itemId] = action.payload;
+            if (state.lineConnections[lineId] === undefined) state.lineConnections[lineId] = {};
+            state.lineConnections[lineId][point] = itemId;
         },
-        decreaseLineConnections: (state, action: PayloadAction<string>) => {
-            const id = action.payload;
-            if (state.lineConnectionCount[id] === undefined) state.lineConnectionCount[id] = 0;
-            else state.lineConnectionCount[id] -= 1;
+        removeLineConnection: (state, action: PayloadAction<[lineId: string, point: MainPoint]>) => {
+            const [lineId, point] = action.payload;
+            if (state.lineConnections[lineId] !== undefined) {
+                delete state.lineConnections[lineId][point];
+                if (Object.values(state.lineConnections[lineId]).length === 0) delete state.lineConnections[lineId];
+            }
         },
     },
 });
@@ -74,8 +76,8 @@ export const {
     setSelectedItem,
     setSelectedPoint,
     setLineConnections,
-    increaseLineConnections,
-    decreaseLineConnections,
+    addLineConnection,
+    removeLineConnection,
 } = itemsSlice.actions;
 
 export default itemsSlice.reducer;

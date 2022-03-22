@@ -1,5 +1,5 @@
 import { store } from '../store/store';
-import { setItems, addItem, setLineConnections, increaseLineConnections } from '../store/slices/itemsSlice';
+import { setItems, addItem, setLineConnections, addLineConnection } from '../store/slices/itemsSlice';
 import { setId, setError } from '../store/slices/connectionSlice';
 import { setMessages, addMessage } from '../store/slices/chatSlice';
 import { WSMessage } from '../interfaces/webSocket';
@@ -46,7 +46,9 @@ class WebSocketService {
                             store.dispatch(addItem(item));
                             store.dispatch(setBoardLimits(getUpdatedBoardLimits(item)));
                             if ('connections' in item)
-                                item.connections?.forEach(([id]) => store.dispatch(increaseLineConnections(id)));
+                                item.connections?.forEach(([lineId, point]) =>
+                                    store.dispatch(addLineConnection([lineId, point, item.id])),
+                                );
                         }
                         break;
                     case 'collection':
@@ -57,10 +59,13 @@ class WebSocketService {
                         store.dispatch(setMessages(chatMessages));
                         store.dispatch(setBoardLimits(getUpdatedBoardLimits(undefined, Object.values(boardItems))));
                         // set all line connections
-                        const lineConnections: { [id: string]: number } = {};
+                        const lineConnections: { [lineId: string]: { [point: string]: string } } = {};
                         boardItems.forEach((item) => {
                             if ('connections' in item)
-                                item.connections?.forEach(([id]) => (lineConnections[id] = (lineConnections[id] || 0) + 1));
+                                item.connections?.forEach(([lineId, point]) => {
+                                    if (!lineConnections[lineId]) lineConnections[lineId] = {};
+                                    lineConnections[lineId][point] = item.id;
+                                });
                         });
                         store.dispatch(setLineConnections(lineConnections));
                         break;
