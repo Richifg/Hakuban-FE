@@ -139,7 +139,6 @@ const BoardStateMachine = {
                     const points = getItemTranslatePoints(selectedItem, dragOffset, x, y, canvasTransform);
                     const updatedItem = { ...selectedItem, ...points };
                     dispatch(addItem(updatedItem));
-                    dispatch(setBoardLimits(getUpdatedBoardLimits(updatedItem)));
                     updateLineConnections(updatedItem);
                     isWriting && dispatch(setIsWriting(false));
                 }
@@ -152,7 +151,6 @@ const BoardStateMachine = {
                     const points = getItemResizePoints(selectedItem, selectedPoint, x, y, canvasTransform, maintainRatio);
                     const updatedItem = { ...selectedItem, ...points };
                     dispatch(addItem(updatedItem));
-                    dispatch(setBoardLimits(getUpdatedBoardLimits(updatedItem)));
                     updateLineConnections(updatedItem);
                 }
                 break;
@@ -171,15 +169,18 @@ const BoardStateMachine = {
         const { selectedItem, selectedPoint, items } = getState().items;
         const [screenX, screenY] = [e.clientX, e.clientY];
         dispatch(setCursorPosition([screenX, screenY]));
+        let editedItem: BoardItem | undefined = undefined;
         switch (currentAction) {
             case 'PAN':
                 dispatch(setCurrentAction('SLIDE'));
                 break;
             case 'DRAG':
                 dispatch(setCurrentAction('EDIT'));
+                editedItem = selectedItem;
                 break;
             case 'RESIZE':
                 dispatch(setCurrentAction('EDIT'));
+                editedItem = selectedItem;
                 // if resizing Note update preferred Note size
                 if (selectedItem?.type === 'note') {
                     const { fillColor } = selectedItem;
@@ -205,9 +206,13 @@ const BoardStateMachine = {
                     const finishedDrawing = getFinishedDrawing(selectedItem);
                     dispatch(addItem(finishedDrawing));
                     dispatch(setBoardLimits(getUpdatedBoardLimits(finishedDrawing)));
+                    editedItem = finishedDrawing;
                 }
                 dispatch(setCurrentAction('IDLE'));
                 break;
+        }
+        if (editedItem) {
+            dispatch(setBoardLimits(getUpdatedBoardLimits(editedItem)));
         }
     },
 

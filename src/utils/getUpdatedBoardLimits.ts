@@ -21,13 +21,13 @@ function getUpdatedBoardLimits(item?: BoardItem, items?: BoardItem[]): BoardLimi
         else if (bottom.itemId === id) updatedLimits.bottom = findFarthestLimitFromItems('bottom', itemsArray);
 
         if (maxX > right.extent - BOARD_PADDING) updatedLimits.right = { extent: maxX + BOARD_PADDING, itemId: id };
-        else if (bottom.itemId === id) updatedLimits.right = findFarthestLimitFromItems('right', itemsArray);
+        else if (right.itemId === id) updatedLimits.right = findFarthestLimitFromItems('right', itemsArray);
 
         if (minY < top.extent + BOARD_PADDING) updatedLimits.top = { extent: minY - BOARD_PADDING, itemId: id };
-        else if (bottom.itemId === id) updatedLimits.top = findFarthestLimitFromItems('top', itemsArray);
+        else if (top.itemId === id) updatedLimits.top = findFarthestLimitFromItems('top', itemsArray);
 
         if (minX < left.extent + BOARD_PADDING) updatedLimits.left = { extent: minX - BOARD_PADDING, itemId: id };
-        else if (bottom.itemId === id) updatedLimits.left = findFarthestLimitFromItems('left', itemsArray);
+        else if (left.itemId === id) updatedLimits.left = findFarthestLimitFromItems('left', itemsArray);
     } else {
         // otherwise update all 4 limits
         updatedLimits.bottom = findFarthestLimitFromItems('bottom', itemsArray);
