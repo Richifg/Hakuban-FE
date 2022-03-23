@@ -1,9 +1,8 @@
-import { Line, ArrowType } from '../interfaces';
-
-const ARROW_SIZE = 4;
+import { Line } from '../interfaces';
+import drawArrows from './drawArrows';
 
 function drawLine(line: Line, ctx: CanvasRenderingContext2D): void {
-    const { x0, y0, x2, y2, lineColor, lineWidth, arrow0Type, arrow2Type } = line;
+    const { x0, y0, x2, y2, lineColor, lineWidth, lineType } = line;
 
     // line
     ctx.strokeStyle = lineColor;
@@ -11,55 +10,34 @@ function drawLine(line: Line, ctx: CanvasRenderingContext2D): void {
     ctx.lineWidth = lineWidth;
     ctx.beginPath();
     ctx.moveTo(x0, y0);
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
 
-    // arrow calculations
-    const angle = Math.atan((y2 - y0) / (x2 - x0));
-    const arrowHeight = ARROW_SIZE + (lineWidth - 1);
-
-    const flipArrow = x2 < x0;
-    drawArrow(arrow0Type, x0, y0, angle, arrowHeight, ctx, flipArrow);
-    drawArrow(arrow2Type, x2, y2, angle, arrowHeight, ctx, !flipArrow);
-}
-
-function drawArrow(
-    arrowType: ArrowType,
-    x: number,
-    y: number,
-    angle: number,
-    arrowHeight: number,
-    ctx: CanvasRenderingContext2D,
-    flip = false,
-) {
-    // arrows are drawn as if line is horizontal to avoid calculating proyections
-    // canvas is rotated to make arrow point where it should
-    const height = flip ? -arrowHeight : arrowHeight;
-
-    if (arrowType !== 'none') {
-        ctx.save();
-        ctx.beginPath();
-        ctx.translate(x, y);
-        ctx.rotate(angle);
-        ctx.moveTo(0, 0);
-        if (arrowType === 'simple') {
-            ctx.moveTo(height, height);
-            ctx.lineTo(0, 0);
-            ctx.lineTo(height, -height);
-            ctx.lineTo(0, 0);
-        } else if (arrowType === 'triangle') {
-            const base = height * 0.5;
-            ctx.lineTo(height, base);
-            ctx.lineTo(height, -base);
-            ctx.closePath();
-        } else if (arrowType === 'circle') {
-            const base = arrowHeight * 0.5;
-            ctx.ellipse(0, 0, base, base, 0, 0, Math.PI * 2);
+    if (lineType === 'straight') {
+        ctx.lineTo(x2, y2);
+    } else {
+        const width = x2 - x0;
+        const height = y2 - y0;
+        const horizontal = Math.abs(width) > Math.abs(height);
+        const [midX, midY] = [(x2 + x0) / 2, (y2 + y0) / 2];
+        if (lineType === 'stepped') {
+            if (horizontal) {
+                ctx.lineTo(midX, y0);
+                ctx.lineTo(midX, y2);
+            } else {
+                ctx.lineTo(x0, midY);
+                ctx.lineTo(x2, midY);
+            }
+            ctx.lineTo(x2, y2);
+        } else if (lineType === 'curved') {
+            const multiplier = 0.25;
+            const [c1x, c1y] = horizontal ? [x0 + width * multiplier, y0] : [x0, y0 + height * multiplier];
+            const [c2x, c2y] = horizontal ? [x2 - width * multiplier, y2] : [x2, y2 - height * multiplier];
+            ctx.quadraticCurveTo(c1x, c1y, midX, midY);
+            ctx.quadraticCurveTo(c2x, c2y, x2, y2);
         }
-        ctx.stroke();
-        ctx.fill();
-        ctx.restore();
     }
+
+    ctx.stroke();
+    drawArrows(line, ctx);
 }
 
 export default drawLine;
