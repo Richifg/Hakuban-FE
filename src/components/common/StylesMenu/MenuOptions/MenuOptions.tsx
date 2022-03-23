@@ -1,6 +1,14 @@
 import React from 'react';
 import { useDispatch, useSelector } from '../../../../hooks';
-import { AlignmentSelector, ColorSelector, FontSizeSelector, LineSelector, TextStyleSelector, ArrowSelector } from '.';
+import {
+    AlignmentSelector,
+    ColorSelector,
+    FontSizeSelector,
+    WidthSelector,
+    TextStyleSelector,
+    ArrowSelector,
+    LineTypeSelector,
+} from '.';
 import { Align, BoardItem } from '../../../../interfaces';
 import { updateItem, addItem } from '../../../../store/slices/itemsSlice';
 import './MenuOptions.scss';
@@ -34,7 +42,7 @@ const MenuOptions = ({ item }: MenuOptions): React.ReactElement => {
         <div className="menu-options" onMouseDown={stopMouseDown}>
             {'fillColor' in item && <ColorSelector onChange={handleChange} styleKey="fillColor" />}
             {'lineColor' in item && <ColorSelector onChange={handleChange} styleKey="lineColor" />}
-            {'lineWidth' in item && <LineSelector onChange={handleChange} styleKey="lineWidth" value={item.lineWidth} />}
+            {'lineWidth' in item && <WidthSelector onChange={handleChange} styleKey="lineWidth" value={item.lineWidth} />}
             {item.type === 'line' && (
                 <ArrowSelector
                     onChange={handleChange}
@@ -44,6 +52,7 @@ const MenuOptions = ({ item }: MenuOptions): React.ReactElement => {
                     arrow2Key="arrow2Type"
                 />
             )}
+            {'lineType' in item && <LineTypeSelector onChange={handleChange} styleKey="lineType" value={item.lineType} />}
             {'text' in item && (
                 <>
                     <AlignmentSelector onChange={handleNestedChange} styleKey="vAlign" />

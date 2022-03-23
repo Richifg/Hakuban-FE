@@ -80,7 +80,9 @@ export interface Drawing extends ItemBase, Coordinates, DrawingStyle {
 
 // --LINE
 export type ArrowType = 'none' | 'simple' | 'triangle' | 'circle';
+export type LineType = 'straight' | 'curved' | 'stepped';
 export interface LineStyle {
+    lineType: LineType;
     lineColor: string;
     lineWidth: number;
     arrow0Type: ArrowType;

@@ -1,14 +1,14 @@
 import React from 'react';
 import { ShapeStyle, DrawingStyle } from '../../../../../interfaces';
-import './LineSelector.scss';
+import './WidthSelector.scss';
 
-interface LineSelector {
+interface WidthSelector {
     value: number;
     onChange(value: number, styleKey: string): void;
     styleKey: keyof ShapeStyle | keyof DrawingStyle;
 }
 
-const LineSelector = ({ onChange, value, styleKey }: LineSelector): React.ReactElement => {
+const WidthSelector = ({ onChange, value, styleKey }: WidthSelector): React.ReactElement => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.currentTarget.value);
         if (value > 20 || value < 1) return;
@@ -16,10 +16,10 @@ const LineSelector = ({ onChange, value, styleKey }: LineSelector): React.ReactE
     };
 
     return (
-        <div className="line-selector">
+        <div className="width-selector">
             <input className="line-width-input" type="number" onChange={handleChange} value={value} />
         </div>
     );
 };
 
-export default LineSelector;
+export default WidthSelector;
