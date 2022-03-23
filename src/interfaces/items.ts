@@ -20,6 +20,11 @@ interface ItemBase {
     creationDate?: Date;
 }
 
+interface BoardItemBase extends ItemBase, Coordinates {
+    type: BoardItemType;
+    zIndex: number;
+}
+
 // --TEXT
 export type Align = 'start' | 'center' | 'end';
 export interface TextStyle {
@@ -35,7 +40,7 @@ export interface TextStyle {
 export interface TextData extends TextStyle {
     content: string;
 }
-export interface Text extends ItemBase, Coordinates {
+export interface Text extends BoardItemBase {
     type: 'text';
     text: TextData;
     connections?: LineConnections;
@@ -48,7 +53,7 @@ export interface ShapeStyle {
     lineColor: string;
     fillColor: string;
 }
-export interface Shape extends ItemBase, ShapeStyle, Coordinates {
+export interface Shape extends BoardItemBase, ShapeStyle {
     type: 'shape';
     shapeType: ShapeType;
     text?: TextData;
@@ -60,7 +65,7 @@ export interface NoteStyle {
     fillColor: string;
     size: number;
 }
-export interface Note extends ItemBase, Coordinates, NoteStyle {
+export interface Note extends BoardItemBase, NoteStyle {
     type: 'note';
     text?: TextData;
     connections?: LineConnections;
@@ -71,7 +76,7 @@ export interface DrawingStyle {
     lineColor: string;
     lineWidth: number;
 }
-export interface Drawing extends ItemBase, Coordinates, DrawingStyle {
+export interface Drawing extends BoardItemBase, DrawingStyle {
     type: 'drawing';
     points: [number, number][];
     inProgress?: boolean;
@@ -88,7 +93,7 @@ export interface LineStyle {
     arrow0Type: ArrowType;
     arrow2Type: ArrowType;
 }
-export interface Line extends ItemBase, Coordinates, LineStyle {
+export interface Line extends BoardItemBase, LineStyle {
     type: 'line';
 }
 

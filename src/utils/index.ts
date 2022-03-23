@@ -6,11 +6,8 @@ import getItemPositionCSSVars from './getItemPositionCSSVars';
 import getItemResizePoints from './getItemResizePoints';
 import getItemTranslatePoints from './getItemTranslatePoints';
 import getItemMaxCoordinates from './getItemMaxCoordinates';
-import getNewDrawing from './getNewDrawing';
 import getNewId from './getNewId';
-import getNewLine from './getNewLine';
-import getNewNote from './getNewNote';
-import getNewShape from './getNewShape';
+import getNewItem from './getNewItem';
 import getTextAreaCoordinates from './getTextAreaCoordinates';
 import getUpdatedBoardLimits from './getUpdatedBoardLimits';
 import getWrappedTextLines from './getWrappedTextLines';
@@ -28,11 +25,8 @@ export {
     getItemResizePoints,
     getItemTranslatePoints,
     getItemMaxCoordinates,
-    getNewDrawing,
     getNewId,
-    getNewLine,
-    getNewNote,
-    getNewShape,
+    getNewItem,
     getTextAreaCoordinates,
     getUpdatedBoardLimits,
     getWrappedTextLines,

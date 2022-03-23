@@ -17,10 +17,7 @@ import {
     getItemTranslatePoints,
     isPointInsideItem,
     isMainPoint,
-    getNewNote,
-    getNewShape,
-    getNewDrawing,
-    getNewLine,
+    getNewItem,
     getBoardCoordinates,
     getCanvasCoordinates,
     getFinishedDrawing,
@@ -79,17 +76,17 @@ const BoardStateMachine = {
                 } else {
                     let newItem: BoardItem | undefined = undefined;
                     if (selectedTool === 'SHAPE') {
-                        newItem = getNewShape(boardX, boardY);
+                        newItem = getNewItem(boardX, boardY, 0, 'shape');
                         dispatch(setSelectedPoint('P2'));
                         dispatch(setCurrentAction('RESIZE'));
                     } else if (selectedTool === 'NOTE') {
-                        newItem = getNewNote(boardX, boardY);
+                        newItem = getNewItem(boardX, boardY, 0, 'note');
                         dispatch(setCurrentAction('IDLE'));
                     } else if (selectedTool === 'PEN') {
-                        newItem = getNewDrawing(boardX, boardY);
+                        newItem = getNewItem(boardX, boardY, 0, 'drawing');
                         dispatch(setCurrentAction('DRAW'));
                     } else if (selectedTool === 'LINE') {
-                        newItem = getNewLine(boardX, boardY);
+                        newItem = getNewItem(boardX, boardY, 0, 'line');
                         dispatch(setSelectedPoint('P2'));
                         dispatch(setCurrentAction('RESIZE'));
                         if (clickedItem) connectItem(clickedItem, newItem, 'P0', boardX, boardY);
