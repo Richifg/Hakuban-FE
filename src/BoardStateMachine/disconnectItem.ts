@@ -15,7 +15,7 @@ function disconnectItem(line: Line, point: MainPoint): void {
                 ([connId, connPoint]) => connId !== line.id || connPoint !== point,
             );
             store.dispatch(addItem(itemToDisconnect));
-            store.dispatch(removeLineConnection([line.id, point]));
+            store.dispatch(removeLineConnection({ lineId: line.id, point }));
         }
     }
 }

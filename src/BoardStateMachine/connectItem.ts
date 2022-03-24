@@ -15,7 +15,7 @@ function connectItem(itemToConnect: BoardItem, line: Line, point: MainPoint, boa
         const [x, y] = [parseFloat(((boardX - minX) / width).toFixed(2)), parseFloat(((boardY - minY) / height).toFixed(2))];
         connectedItem.connections = [...connectedItem.connections, [line.id, point, x, y]];
         store.dispatch(addItem(connectedItem));
-        store.dispatch(addLineConnection([line.id, point, connectedItem.id]));
+        store.dispatch(addLineConnection({ lineId: line.id, point, itemId: connectedItem.id }));
     }
 }
 

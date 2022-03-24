@@ -1,5 +1,5 @@
 import { store } from '../store/store';
-import { setItems, addItem, setLineConnections, addLineConnection } from '../store/slices/itemsSlice';
+import { setItems, addItem, setLineConnections, addLineConnection, setMaxZIndex, setMinZIndex } from '../store/slices/itemsSlice';
 import { setId, setError } from '../store/slices/connectionSlice';
 import { setMessages, addMessage } from '../store/slices/chatSlice';
 import { WSMessage } from '../interfaces/webSocket';
@@ -47,8 +47,12 @@ class WebSocketService {
                             store.dispatch(setBoardLimits(getUpdatedBoardLimits(item)));
                             if ('connections' in item)
                                 item.connections?.forEach(([lineId, point]) =>
-                                    store.dispatch(addLineConnection([lineId, point, item.id])),
+                                    store.dispatch(addLineConnection({ lineId, point, itemId: item.id })),
                                 );
+                            const { zIndex } = item;
+                            const { minZIndex, maxZIndex } = store.getState().items;
+                            if (zIndex > maxZIndex) store.dispatch(setMaxZIndex(zIndex));
+                            if (zIndex < minZIndex) store.dispatch(setMinZIndex(zIndex));
                         }
                         break;
                     case 'collection':
@@ -58,7 +62,8 @@ class WebSocketService {
                         store.dispatch(setItems(boardItems));
                         store.dispatch(setMessages(chatMessages));
                         store.dispatch(setBoardLimits(getUpdatedBoardLimits(undefined, Object.values(boardItems))));
-                        // set all line connections
+                        // set all line connections and find max/min zIndex
+                        let [maxZIndex, minZIndex] = [-Infinity, Infinity];
                         const lineConnections: { [lineId: string]: { [point: string]: string } } = {};
                         boardItems.forEach((item) => {
                             if ('connections' in item)
@@ -66,8 +71,12 @@ class WebSocketService {
                                     if (!lineConnections[lineId]) lineConnections[lineId] = {};
                                     lineConnections[lineId][point] = item.id;
                                 });
+                            maxZIndex = Math.max(maxZIndex, item.zIndex);
+                            minZIndex = Math.min(minZIndex, item.zIndex);
                         });
                         store.dispatch(setLineConnections(lineConnections));
+                        store.dispatch(setMaxZIndex(maxZIndex));
+                        store.dispatch(setMinZIndex(minZIndex));
                         break;
                     case 'id':
                         store.dispatch(setId(message.content));

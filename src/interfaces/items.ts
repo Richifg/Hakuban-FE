@@ -1,9 +1,10 @@
 export type Point = 'P0' | 'P1' | 'P2' | 'P3';
 export type MainPoint = 'P0' | 'P2';
 
-export type LineConnections = [lineId: string, point: 'P0' | 'P2', x: number, y: number][];
+export type LineConnections = [lineId: string, point: MainPoint, x: number, y: number][];
 
 export type BoardItemType = 'text' | 'shape' | 'note' | 'drawing' | 'line';
+export type ItemType = BoardItemType | 'chat';
 
 export interface Coordinates {
     x0: number;
@@ -11,8 +12,6 @@ export interface Coordinates {
     x2: number;
     y2: number;
 }
-
-type ItemType = BoardItemType | 'chat';
 
 interface ItemBase {
     type: ItemType;
@@ -23,6 +22,15 @@ interface ItemBase {
 interface BoardItemBase extends ItemBase, Coordinates {
     type: BoardItemType;
     zIndex: number;
+}
+
+export interface StrokeStyle {
+    lineColor: string;
+    lineWidth: number;
+}
+
+export interface FillStyle {
+    fillColor: string;
 }
 
 // --TEXT
@@ -48,11 +56,7 @@ export interface Text extends BoardItemBase {
 
 // --SHAPE
 export type ShapeType = 'rect' | 'circle' | 'roundedRect' | 'romboid' | 'triangle' | 'bubble';
-export interface ShapeStyle {
-    lineWidth: number;
-    lineColor: string;
-    fillColor: string;
-}
+export interface ShapeStyle extends StrokeStyle, FillStyle {}
 export interface Shape extends BoardItemBase, ShapeStyle {
     type: 'shape';
     shapeType: ShapeType;
@@ -61,9 +65,9 @@ export interface Shape extends BoardItemBase, ShapeStyle {
 }
 
 // --NOTE
-export interface NoteStyle {
-    fillColor: string;
+export interface NoteStyle extends FillStyle {
     size: number;
+    shadowType?: string; // TODO
 }
 export interface Note extends BoardItemBase, NoteStyle {
     type: 'note';
@@ -72,10 +76,7 @@ export interface Note extends BoardItemBase, NoteStyle {
 }
 
 // --DRAWING
-export interface DrawingStyle {
-    lineColor: string;
-    lineWidth: number;
-}
+export type DrawingStyle = StrokeStyle;
 export interface Drawing extends BoardItemBase, DrawingStyle {
     type: 'drawing';
     points: [number, number][];
@@ -86,10 +87,8 @@ export interface Drawing extends BoardItemBase, DrawingStyle {
 // --LINE
 export type ArrowType = 'none' | 'simple' | 'triangle' | 'circle';
 export type LineType = 'straight' | 'curved' | 'stepped';
-export interface LineStyle {
+export interface LineStyle extends StrokeStyle {
     lineType: LineType;
-    lineColor: string;
-    lineWidth: number;
     arrow0Type: ArrowType;
     arrow2Type: ArrowType;
 }

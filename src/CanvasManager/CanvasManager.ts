@@ -64,7 +64,11 @@ class CanvasManager {
         this.clear();
         this.showGrid && drawGrid(this.transform, this.size, this.ctx);
         this.transformCanvas();
-        Object.values(this.items).forEach((item) => this.drawItem(item));
+
+        // TEMP TEST
+        Object.values(this.items)
+            .sort((a, b) => (a.zIndex > b.zIndex ? 1 : -1))
+            .forEach((item) => this.drawItem(item));
         this.animationId = requestAnimationFrame(this.animate.bind(this));
     }
 

@@ -4,15 +4,15 @@ import './FontSizeSelector.scss';
 
 interface FontSizeSelector {
     styleKey: keyof TextStyle;
-    onChange(value: number, key: string): void;
     value: number;
+    onChange(value: number, key: string): void;
 }
 
-const FontSizeSelector = ({ onChange, value }: FontSizeSelector): React.ReactElement => {
+const FontSizeSelector = ({ styleKey, value, onChange }: FontSizeSelector): React.ReactElement => {
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.currentTarget.value);
         if (value < 1) return;
-        onChange(value, 'fontSize');
+        onChange(value, styleKey);
     };
 
     return (

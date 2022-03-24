@@ -1,42 +1,40 @@
 import React from 'react';
 import ArrowOptions from './ArrowOptions';
+import { useSelector, useDispatch } from '../../../../../hooks';
+import { updateItem } from '../../../../../store/slices/itemsSlice';
 import { ArrowType, LineStyle } from '../../../../../interfaces';
 import './ArrowSelector.scss';
 
+const key0: keyof LineStyle = 'arrow0Type';
+const key2: keyof LineStyle = 'arrow2Type';
+
 interface ArrowSelector {
-    arrow0?: ArrowType;
-    arrow0Key: keyof LineStyle;
-    arrow2?: ArrowType;
-    arrow2Key: keyof LineStyle;
-    onChange: (value: string, key: keyof LineStyle) => void;
+    arrow0Type?: ArrowType;
+    arrow2Type?: ArrowType;
 }
 
-const ArrowSelector = ({
-    arrow0 = 'none',
-    arrow0Key,
-    arrow2 = 'none',
-    arrow2Key,
-    onChange,
-}: ArrowSelector): React.ReactElement => {
-    const handleArrow0Change = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        onChange(e.currentTarget.value, arrow0Key);
-    };
-    const handleArrow2Change = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        onChange(e.currentTarget.value, arrow2Key);
+const ArrowSelector = ({ arrow0Type = 'none', arrow2Type = 'none' }: ArrowSelector): React.ReactElement => {
+    const dispatch = useDispatch();
+    const { selectedItem } = useSelector((s) => s.items);
+
+    const handleArrowChange = (index: 0 | 2) => (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const key: keyof LineStyle = `arrow${index}Type` as const;
+        const { value } = e.currentTarget;
+        dispatch(updateItem({ id: selectedItem?.id, key, value }));
     };
 
     const handleSwap = () => {
-        onChange(arrow0, arrow2Key);
-        onChange(arrow2, arrow0Key);
+        dispatch(updateItem({ id: selectedItem?.id, key: key0, value: arrow2Type }));
+        dispatch(updateItem({ id: selectedItem?.id, key: key2, value: arrow0Type }));
     };
 
     return (
         <div className="arrow-selector">
-            <select onChange={handleArrow0Change} value={arrow0}>
+            <select onChange={handleArrowChange(0)} value={arrow0Type}>
                 <ArrowOptions flipIcon />
             </select>
             <button onClick={handleSwap}>swap</button>
-            <select onChange={handleArrow2Change} value={arrow2}>
+            <select onChange={handleArrowChange(2)} value={arrow2Type}>
                 <ArrowOptions flipIcon />
             </select>
         </div>

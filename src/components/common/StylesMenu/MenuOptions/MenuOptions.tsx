@@ -8,6 +8,7 @@ import {
     TextStyleSelector,
     ArrowSelector,
     LineTypeSelector,
+    ZIndexSelector,
 } from '.';
 import { Align, BoardItem } from '../../../../interfaces';
 import { updateItem, addItem } from '../../../../store/slices/itemsSlice';
@@ -42,21 +43,16 @@ const MenuOptions = ({ item }: MenuOptions): React.ReactElement => {
         <div className="menu-options" onMouseDown={stopMouseDown}>
             {'fillColor' in item && <ColorSelector onChange={handleChange} styleKey="fillColor" />}
             {'lineColor' in item && <ColorSelector onChange={handleChange} styleKey="lineColor" />}
-            {'lineWidth' in item && <WidthSelector onChange={handleChange} styleKey="lineWidth" value={item.lineWidth} />}
+            {'lineWidth' in item && <WidthSelector value={item.lineWidth} />}
             {item.type === 'line' && (
-                <ArrowSelector
-                    onChange={handleChange}
-                    arrow0={item.arrow0Type}
-                    arrow2={item.arrow2Type}
-                    arrow0Key="arrow0Type"
-                    arrow2Key="arrow2Type"
-                />
+                <>
+                    <LineTypeSelector value={item.lineType} />
+                    <ArrowSelector arrow0Type={item.arrow0Type} arrow2Type={item.arrow2Type} />
+                </>
             )}
-            {'lineType' in item && <LineTypeSelector onChange={handleChange} styleKey="lineType" value={item.lineType} />}
             {'text' in item && (
                 <>
                     <AlignmentSelector onChange={handleNestedChange} styleKey="vAlign" />
-                    <AlignmentSelector onChange={handleNestedChange} styleKey="hAlign" />
                     <ColorSelector onChange={handleNestedChange} styleKey="textColor" />
                     <FontSizeSelector onChange={handleNestedChange} styleKey="fontSize" value={item.text?.fontSize || 0} />
                     <TextStyleSelector
@@ -68,6 +64,7 @@ const MenuOptions = ({ item }: MenuOptions): React.ReactElement => {
                     />
                 </>
             )}
+            <ZIndexSelector />
         </div>
     );
 };
