@@ -7,7 +7,7 @@ function useCanvas(
     canvasSize: CanvasSize,
     canvasTransform: CanvasTransform,
     showGrid: boolean,
-    items: { [key: string]: BoardItem },
+    items: BoardItem[],
 ): void {
     const [manager, setManager] = useState<CanvasManager>();
 

@@ -9,25 +9,31 @@ function getNewItem(x: number, y: number, zIndex: number, type: 'shape'): Shape;
 function getNewItem(x: number, y: number, zIndex: number, type: 'text'): Text;
 function getNewItem(x: number, y: number, zIndex: number, type: BoardItemType): BoardItem {
     const id = getNewId();
+    const creationDate = Date.now();
+    const itemBase = {
+        id,
+        creationDate,
+        zIndex,
+        type,
+    };
     switch (type) {
         case 'line':
+            const { lineStyle } = store.getState().tools;
             return {
-                id,
+                ...itemBase,
                 type,
-                zIndex,
                 x0: x,
                 x2: x,
                 y0: y,
                 y2: y,
-                ...store.getState().tools.lineStyle,
+                ...lineStyle,
             };
         case 'note':
             const { noteStyle } = store.getState().tools;
             const offset = noteStyle.size / 2;
             return {
-                id,
+                ...itemBase,
                 type,
-                zIndex,
                 x0: x - offset,
                 x2: x + offset,
                 y0: y - offset,
@@ -37,9 +43,8 @@ function getNewItem(x: number, y: number, zIndex: number, type: BoardItemType): 
         case 'shape':
             const { shapeStyle, shapeType } = store.getState().tools;
             return {
-                id,
+                ...itemBase,
                 type,
-                zIndex,
                 x0: x,
                 y0: y,
                 x2: x,
@@ -48,30 +53,30 @@ function getNewItem(x: number, y: number, zIndex: number, type: BoardItemType): 
                 ...shapeStyle,
             };
         case 'drawing':
+            const { drawingStyle } = store.getState().tools;
             return {
-                id,
+                ...itemBase,
                 type,
-                zIndex,
                 x0: 0,
                 x2: 0,
                 y0: 0,
                 y2: 0,
                 points: [[x, y]],
-                ...store.getState().tools.drawingStyle,
+                ...drawingStyle,
                 inProgress: true,
             };
         case 'text':
+            const { textStyle } = store.getState().tools;
             return {
-                id,
+                ...itemBase,
                 type,
-                zIndex,
                 x0: x,
                 y0: y,
                 x2: x,
                 y2: y,
                 text: {
                     content: '',
-                    ...store.getState().tools.textStyle,
+                    ...textStyle,
                 },
             };
     }

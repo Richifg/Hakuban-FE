@@ -96,10 +96,11 @@ class WebSocketService {
         const message: WSMessage = {
             type: 'item',
             content: {
-                id: 'TEMP', // #TODO decide if ids where generated
+                id: 'TEMP', // #TODO decide wher ids are generated
                 type: 'chat',
                 content: text,
                 from: this.id,
+                creationDate: Date.now(),
             },
         };
         this.socket?.send(JSON.stringify(message));

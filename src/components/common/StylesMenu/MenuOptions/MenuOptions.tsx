@@ -53,6 +53,7 @@ const MenuOptions = ({ item }: MenuOptions): React.ReactElement => {
             {'text' in item && (
                 <>
                     <AlignmentSelector onChange={handleNestedChange} styleKey="vAlign" />
+                    <AlignmentSelector onChange={handleNestedChange} styleKey="hAlign" />
                     <ColorSelector onChange={handleNestedChange} styleKey="textColor" />
                     <FontSizeSelector onChange={handleNestedChange} styleKey="fontSize" value={item.text?.fontSize || 0} />
                     <TextStyleSelector

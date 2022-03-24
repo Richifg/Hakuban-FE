@@ -16,7 +16,7 @@ export interface Coordinates {
 interface ItemBase {
     type: ItemType;
     id: string;
-    creationDate?: Date;
+    creationDate: number;
 }
 
 interface BoardItemBase extends ItemBase, Coordinates {

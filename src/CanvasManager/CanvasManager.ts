@@ -20,7 +20,7 @@ class CanvasManager {
     private ctx: CanvasRenderingContext2D;
     size: CanvasSize;
     transform: CanvasTransform;
-    items: { [key: string]: BoardItem };
+    items: BoardItem[];
     showGrid: boolean;
     animationId?: number;
 
@@ -28,7 +28,7 @@ class CanvasManager {
         this.ctx = ctx;
         this.size = { width: 0, height: 0 };
         this.transform = { scale: 1, dX: 0, dY: 0 };
-        this.items = {};
+        this.items = [];
         this.showGrid = true;
     }
 
@@ -64,11 +64,7 @@ class CanvasManager {
         this.clear();
         this.showGrid && drawGrid(this.transform, this.size, this.ctx);
         this.transformCanvas();
-
-        // TEMP TEST
-        Object.values(this.items)
-            .sort((a, b) => (a.zIndex > b.zIndex ? 1 : -1))
-            .forEach((item) => this.drawItem(item));
+        this.items.forEach((item) => this.drawItem(item));
         this.animationId = requestAnimationFrame(this.animate.bind(this));
     }
 

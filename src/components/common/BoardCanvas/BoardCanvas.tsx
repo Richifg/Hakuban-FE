@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { setCurrentAction, translateCanvas } from '../../../store/slices/boardSlice';
 import { useCanvas, useDispatch, useSelector, useMovementFriction } from '../../../hooks';
 import './BoardCanvas.scss';
@@ -10,8 +10,16 @@ const BoardCanvas = (): React.ReactElement => {
     const { canvasSize, canvasTransform, lastTranslate, currentAction, showGrid } = useSelector((s) => s.board);
     const { width, height } = canvasSize;
 
+    const orderedItems = useMemo(
+        () =>
+            Object.values(items).sort((a, b) =>
+                a.zIndex > b.zIndex || (a.zIndex === b.zIndex && a.creationDate > b.creationDate) ? 1 : -1,
+            ),
+        [items],
+    );
+
     // renders items on every update
-    useCanvas(canvasRef, canvasSize, canvasTransform, showGrid, items);
+    useCanvas(canvasRef, canvasSize, canvasTransform, showGrid, orderedItems);
 
     // controls camera slide after user pans the camera
     // ##TODO maybe this shouldn't be in Canvas, or even in a component??
