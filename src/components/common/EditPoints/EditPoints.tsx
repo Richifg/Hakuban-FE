@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Point, Action } from '../../../interfaces';
 import { useSelector, useDispatch } from '../../../hooks';
 import { setSelectedPoint } from '../../../store/slices/itemsSlice';
-import { setCurrentAction } from '../../../store/slices/boardSlice';
+import { setCurrentAction, setMouseButton } from '../../../store/slices/boardSlice';
 import getEditPoints from './getEditPoints';
 import './EditPoints.scss';
 
@@ -16,6 +16,7 @@ const EditPoints = (): React.ReactElement => {
     const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
         e.stopPropagation();
         const point = e.currentTarget.id as Point;
+        dispatch(setMouseButton(e.button));
         dispatch(setSelectedPoint(point));
         dispatch(setCurrentAction('RESIZE'));
     };
