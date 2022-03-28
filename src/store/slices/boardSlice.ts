@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { Action, CanvasTransform, BoardLimits } from '../../interfaces';
+import type { Action, CanvasTransform, BoardLimits, MouseButton } from '../../interfaces';
 
 interface BoardState {
     currentAction: Action;
@@ -10,6 +10,8 @@ interface BoardState {
     boardLimits: BoardLimits;
     showGrid: boolean;
     isWriting: boolean;
+    mouseButton?: MouseButton;
+    hasCursorMoved: boolean;
 }
 
 const initialState: BoardState = {
@@ -26,6 +28,7 @@ const initialState: BoardState = {
     },
     showGrid: true,
     isWriting: false,
+    hasCursorMoved: false,
 };
 
 export const boardSlice = createSlice({
@@ -67,6 +70,12 @@ export const boardSlice = createSlice({
         setIsWriting: (state, action: PayloadAction<boolean>) => {
             state.isWriting = action.payload;
         },
+        setMouseButton: (state, action: PayloadAction<MouseButton | undefined>) => {
+            state.mouseButton = action.payload;
+        },
+        setHasCursorMoved: (state, action: PayloadAction<boolean>) => {
+            state.hasCursorMoved = action.payload;
+        },
     },
 });
 
@@ -80,6 +89,8 @@ export const {
     setBoardLimits,
     toggleGrid,
     setIsWriting,
+    setMouseButton,
+    setHasCursorMoved,
 } = boardSlice.actions;
 
 export default boardSlice.reducer;

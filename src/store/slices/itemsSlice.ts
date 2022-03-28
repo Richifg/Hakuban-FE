@@ -4,6 +4,7 @@ import type { BoardItem, Point, MainPoint } from '../../interfaces/items';
 interface ItemsState {
     items: { [id: string]: BoardItem };
     dragOffset: { x: number; y: number };
+    draggedItem?: BoardItem;
     selectedItem?: BoardItem;
     selectedPoint?: Point;
     lineConnections: { [id: string]: { [point: string]: string } };
@@ -49,6 +50,9 @@ const itemsSlice = createSlice({
             const [x, y] = action.payload;
             state.dragOffset = { x, y };
         },
+        setDraggedItem: (state, action: PayloadAction<BoardItem | undefined>) => {
+            state.draggedItem = action.payload;
+        },
         setSelectedItem: (state, action: PayloadAction<BoardItem | undefined>) => {
             state.selectedItem = action.payload;
         },
@@ -85,6 +89,7 @@ export const {
     updateItem,
     deleteItem,
     setDragOffset,
+    setDraggedItem,
     setSelectedItem,
     setSelectedPoint,
     setLineConnections,

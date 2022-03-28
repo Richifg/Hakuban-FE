@@ -1,6 +1,6 @@
 export type Tool = 'POINTER' | 'SHAPE' | 'PEN' | 'TEXT' | 'NOTE' | 'LINE';
 
-export type Action = 'IDLE' | 'DRAW' | 'DRAG' | 'EDIT' | 'PAN' | 'SLIDE' | 'RESIZE';
+export type Action = 'IDLE' | 'DRAW' | 'DRAG' | 'EDIT' | 'PAN' | 'SLIDE' | 'RESIZE' | 'DRAGSELECT';
 
 export type CanvasTransform = { scale: number; dX: number; dY: number };
 
