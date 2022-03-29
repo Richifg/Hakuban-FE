@@ -4,8 +4,9 @@ import type { BoardItem, Point, MainPoint } from '../../interfaces/items';
 interface ItemsState {
     items: { [id: string]: BoardItem };
     dragOffset: { x: number; y: number };
-    draggedItem?: BoardItem;
-    selectedItem?: BoardItem;
+    draggedItemId?: string;
+    selectedItemId?: string;
+    dragSelectedItemIds?: string[];
     selectedPoint?: Point;
     lineConnections: { [id: string]: { [point: string]: string } };
     maxZIndex: number;
@@ -30,8 +31,6 @@ const itemsSlice = createSlice({
         addItem: (state, action: PayloadAction<BoardItem>) => {
             const newItem = action.payload;
             state.items[newItem.id] = newItem;
-            if (state.selectedItem?.id === newItem.id) state.selectedItem = newItem;
-            if (state.draggedItem?.id === newItem.id) state.draggedItem = newItem;
         },
         updateItem: (state, action: PayloadAction<{ id: string | undefined; key: string; value: string | number | boolean }>) => {
             const { id, key, value } = action.payload;
@@ -40,8 +39,6 @@ const itemsSlice = createSlice({
                 if (key in oldItem) {
                     const newItem = { ...oldItem, [key]: value };
                     state.items[id] = newItem;
-                    if (state.selectedItem?.id === newItem.id) state.selectedItem = newItem;
-                    if (state.draggedItem?.id === newItem.id) state.draggedItem = newItem;
                 }
             }
         },
@@ -52,11 +49,16 @@ const itemsSlice = createSlice({
             const [x, y] = action.payload;
             state.dragOffset = { x, y };
         },
-        setDraggedItem: (state, action: PayloadAction<BoardItem | undefined>) => {
-            state.draggedItem = action.payload;
+        setDraggedItemId: (state, action: PayloadAction<string | undefined>) => {
+            state.draggedItemId = action.payload;
+            if (state.dragSelectedItemIds) state.dragSelectedItemIds = undefined;
         },
-        setSelectedItem: (state, action: PayloadAction<BoardItem | undefined>) => {
-            state.selectedItem = action.payload;
+        setSelectedItemId: (state, action: PayloadAction<string | undefined>) => {
+            state.selectedItemId = action.payload;
+            if (state.dragSelectedItemIds) state.dragSelectedItemIds = undefined;
+        },
+        setDragSelectedItemIds: (state, action: PayloadAction<string[] | undefined>) => {
+            state.dragSelectedItemIds = action.payload;
         },
         setSelectedPoint: (state, action: PayloadAction<Point>) => {
             state.selectedPoint = action.payload;
@@ -91,8 +93,9 @@ export const {
     updateItem,
     deleteItem,
     setDragOffset,
-    setDraggedItem,
-    setSelectedItem,
+    setDraggedItemId,
+    setSelectedItemId,
+    setDragSelectedItemIds,
     setSelectedPoint,
     setLineConnections,
     addLineConnection,

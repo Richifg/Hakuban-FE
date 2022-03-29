@@ -12,7 +12,7 @@ import {
 } from '../store/slices/boardSlice';
 import { translateCanvas } from '../store/slices/boardSlice';
 import { setNoteStyle } from '../store/slices/toolSlice';
-import { addItem, setDragOffset, setDraggedItem, setSelectedItem } from '../store/slices/itemsSlice';
+import { addItem, setDragOffset, setDraggedItemId, setSelectedItemId } from '../store/slices/itemsSlice';
 import {
     isPointInsideItem,
     isMainPoint,
@@ -44,7 +44,7 @@ const { dispatch, getState } = store;
 const BoardStateMachine = {
     mouseDown(e: MouseEvent<HTMLDivElement>): void {
         const { canvasTransform } = getState().board;
-        const { items, selectedItem, lineConnections } = getState().items;
+        const { items, selectedItemId, lineConnections } = getState().items;
         const { selectedTool } = getState().tools;
 
         const [screenX, screenY] = [e.clientX, e.clientY];
@@ -60,9 +60,10 @@ const BoardStateMachine = {
                     // only drag if clicked item isnt a line with connections
                     if (clickedItem && (clickedItem.type !== 'line' || !lineConnections[clickedItem.id])) {
                         dispatch(setDragOffset([boardX - clickedItem.x0, boardY - clickedItem.y0]));
-                        dispatch(setDraggedItem(clickedItem));
+                        dispatch(setDraggedItemId(clickedItem.id));
                         dispatch(setCurrentAction('DRAG'));
-                        if (selectedItem !== clickedItem) dispatch(setSelectedItem());
+                        // only clicked item in the selectedItemIds array
+                        if (clickedItem.id === selectedItemId) dispatch(setSelectedItemId());
                     } else {
                         dispatch(setDragOffset([boardX, boardY]));
                         dispatch(setCurrentAction('DRAGSELECT'));
@@ -71,13 +72,13 @@ const BoardStateMachine = {
 
                 case 'NOTE':
                     // notes are on mouseUp
-                    selectedItem && dispatch(setSelectedItem());
+                    selectedItemId && dispatch(setSelectedItemId());
                     dispatch(setCurrentAction('IDLE'));
                     break;
 
                 default:
                     // all other tools make items that need resize on creation
-                    selectedItem && dispatch(setSelectedItem());
+                    selectedItemId && dispatch(setSelectedItemId());
                     dispatch(setCurrentAction('RESIZE'));
             }
         } else if (e.button === MouseButton.Middle || e.button === MouseButton.Right) {
@@ -87,7 +88,8 @@ const BoardStateMachine = {
 
     mouseMove(e: MouseEvent<HTMLDivElement>): void {
         const { currentAction, cursorPosition, canvasTransform, isWriting, hasCursorMoved, mouseButton } = getState().board;
-        const { selectedItem, selectedPoint, draggedItem, dragOffset } = getState().items;
+        const { items, selectedItemId, draggedItemId, dragSelectedItemIds, selectedPoint, dragOffset } = getState().items;
+        const selectedItem = selectedItemId ? items[selectedItemId] : undefined;
 
         const [x, y] = [e.clientX, e.clientY];
         !hasCursorMoved && dispatch(setHasCursorMoved(true));
@@ -105,8 +107,9 @@ const BoardStateMachine = {
                     break;
 
                 case 'DRAG':
-                    if (draggedItem) {
-                        // ## TODO gotta drag all selectedItems
+                    const ids = draggedItemId ? [draggedItemId] : dragSelectedItemIds;
+                    ids?.forEach((id) => {
+                        const draggedItem = items[id];
                         const updatedItem = {
                             ...draggedItem,
                             ...getItemTranslatePoints(draggedItem, dragOffset, x, y, canvasTransform),
@@ -114,12 +117,11 @@ const BoardStateMachine = {
                         dispatch(addItem(updatedItem));
                         updateLineConnections(updatedItem);
                         dispatch(setCursorPosition([x, y]));
-                    }
+                    });
                     break;
 
                 case 'RESIZE':
                     if (selectedItem && selectedPoint) {
-                        // ## TODO gotta resize all selectedItems
                         const { type } = selectedItem;
                         const maintainRatio = type === 'note' || type === 'drawing';
                         const points = getItemResizePoints(selectedItem, selectedPoint, x, y, canvasTransform, maintainRatio);
@@ -145,9 +147,10 @@ const BoardStateMachine = {
     },
 
     mouseUp(e: MouseEvent<HTMLDivElement>): void {
-        const { currentAction, canvasTransform, isWriting, hasCursorMoved } = getState().board;
-        const { items, selectedItem, selectedPoint } = getState().items;
         const { selectedTool } = getState().tools;
+        const { items, selectedItemId, selectedPoint } = getState().items;
+        const { currentAction, canvasTransform, isWriting, hasCursorMoved } = getState().board;
+        const selectedItem = selectedItemId ? items[selectedItemId] : undefined;
 
         const [screenX, screenY] = [e.clientX, e.clientY];
         dispatch(setCursorPosition([screenX, screenY]));
@@ -177,10 +180,10 @@ const BoardStateMachine = {
                     break;
 
                 case 'DRAG':
-                    dispatch(setDraggedItem());
+                    dispatch(setDraggedItemId());
                     if (clickedItem) {
                         if (!hasCursorMoved) {
-                            if (clickedItem !== selectedItem) dispatch(setSelectedItem(clickedItem));
+                            if (clickedItem !== selectedItem) dispatch(setSelectedItemId(clickedItem.id));
                             else !isWriting && dispatch(setIsWriting(true));
                         }
                         dispatch(setCurrentAction('EDIT'));
@@ -203,12 +206,12 @@ const BoardStateMachine = {
 
                 case 'DRAGSELECT':
                     if (clickedItem && !hasCursorMoved) {
-                        dispatch(setSelectedItem(clickedItem));
+                        dispatch(setSelectedItemId(clickedItem.id));
                         dispatch(setCurrentAction('EDIT'));
                     } else {
                         // ## TODO check selectedItems
                         dispatch(setCurrentAction('IDLE'));
-                        selectedItem && dispatch(setSelectedItem());
+                        selectedItem && dispatch(setSelectedItemId());
                         isWriting && dispatch(setIsWriting(false));
                     }
                     break;

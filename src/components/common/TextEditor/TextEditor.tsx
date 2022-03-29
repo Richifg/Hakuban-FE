@@ -10,9 +10,10 @@ const TextEditor = (): React.ReactElement => {
     const dispatch = useDispatch();
     const { canvasTransform, isWriting } = useSelector((s) => s.board);
     const { textStyle } = useSelector((s) => s.tools);
-    const { selectedItem } = useSelector((s) => s.items);
+    const { items, selectedItemId } = useSelector((s) => s.items);
     const [initText, setInitText] = useState('');
     const textBoxRef = useRef<HTMLDivElement>(null);
+    const selectedItem = selectedItemId ? items[selectedItemId] : undefined;
 
     // keep last selected item on ref so it can be used inside debounce callback below
     const lastSelectedItemRef = useRef<BoardItem>();

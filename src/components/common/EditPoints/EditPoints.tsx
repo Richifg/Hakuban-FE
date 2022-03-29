@@ -10,8 +10,9 @@ const EditPointsActions: Action[] = ['EDIT', 'RESIZE'];
 
 const EditPoints = (): React.ReactElement => {
     const dispatch = useDispatch();
-    const { selectedItem } = useSelector((s) => s.items);
+    const { items, selectedItemId } = useSelector((s) => s.items);
     const { canvasTransform, currentAction } = useSelector((s) => s.board);
+    const selectedItem = selectedItemId ? items[selectedItemId] : undefined;
 
     const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
         e.stopPropagation();
