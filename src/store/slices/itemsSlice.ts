@@ -31,6 +31,7 @@ const itemsSlice = createSlice({
             const newItem = action.payload;
             state.items[newItem.id] = newItem;
             if (state.selectedItem?.id === newItem.id) state.selectedItem = newItem;
+            if (state.draggedItem?.id === newItem.id) state.draggedItem = newItem;
         },
         updateItem: (state, action: PayloadAction<{ id: string | undefined; key: string; value: string | number | boolean }>) => {
             const { id, key, value } = action.payload;
@@ -40,6 +41,7 @@ const itemsSlice = createSlice({
                     const newItem = { ...oldItem, [key]: value };
                     state.items[id] = newItem;
                     if (state.selectedItem?.id === newItem.id) state.selectedItem = newItem;
+                    if (state.draggedItem?.id === newItem.id) state.draggedItem = newItem;
                 }
             }
         },

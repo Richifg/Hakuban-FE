@@ -91,7 +91,6 @@ const BoardStateMachine = {
 
         const [x, y] = [e.clientX, e.clientY];
         !hasCursorMoved && dispatch(setHasCursorMoved(true));
-        if (currentAction !== 'IDLE') dispatch(setCursorPosition([x, y]));
 
         if (mouseButton === MouseButton.Left) {
             isWriting && dispatch(setIsWriting(false));
@@ -101,6 +100,7 @@ const BoardStateMachine = {
                         const [boardX, boardY] = getBoardCoordinates(x, y, canvasTransform);
                         const points = [...selectedItem.points, [boardX, boardY]] as [number, number][];
                         dispatch(addItem({ ...selectedItem, points }));
+                        dispatch(setCursorPosition([x, y]));
                     }
                     break;
 
@@ -113,6 +113,7 @@ const BoardStateMachine = {
                         };
                         dispatch(addItem(updatedItem));
                         updateLineConnections(updatedItem);
+                        dispatch(setCursorPosition([x, y]));
                     }
                     break;
 
@@ -129,10 +130,12 @@ const BoardStateMachine = {
                         // resizing without selectedItem means the item gotta be created
                         createItem(x, y);
                     }
+                    dispatch(setCursorPosition([x, y]));
                     break;
 
                 case 'DRAGSELECT':
                     // ## TODO inplement update of selectedItems
+                    dispatch(setCursorPosition([x, y]));
                     break;
             }
         } else if (mouseButton === MouseButton.Middle || mouseButton === MouseButton.Right) {
