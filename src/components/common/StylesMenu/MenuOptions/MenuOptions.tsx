@@ -46,11 +46,7 @@ const MenuOptions = ({ items }: MenuOptions): React.ReactElement => {
 
     // only when all items have the appropiate attribute does the attribute style selector gets shown
     const { showFillColor, showLineColor, showLineWidth, showTextStyles, showLineStyles } = useMemo(() => {
-        let showFillColor = true;
-        let showLineColor = true;
-        let showLineWidth = true;
-        let showTextStyles = true;
-        let showLineStyles = true;
+        let [showFillColor, showLineColor, showLineWidth, showTextStyles, showLineStyles] = [true, true, true, true, true];
         items.forEach((item) => {
             if (!('fillColor' in item)) showFillColor = false;
             if (!('lineWidth' in item)) showLineWidth = false;

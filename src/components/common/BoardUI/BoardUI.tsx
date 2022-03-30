@@ -51,6 +51,7 @@ const CanvasUI = (): React.ReactElement => {
             onMouseMove={handleMouseMove}
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
             onWheel={handleWheel}
         >
             <p className="temp">Work In Progress!</p>

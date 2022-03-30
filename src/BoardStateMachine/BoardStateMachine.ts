@@ -138,6 +138,7 @@ const BoardStateMachine = {
                 case 'DRAGSELECT':
                     // ## TODO inplement update of selectedItems
                     dispatch(setCursorPosition([x, y]));
+
                     break;
             }
             if (updatedItem) {
@@ -188,7 +189,7 @@ const BoardStateMachine = {
                         if (!hasCursorMoved) {
                             if (clickedItem !== selectedItem) dispatch(setSelectedItemId(clickedItem.id));
                             else !isWriting && dispatch(setIsWriting(true));
-                        }
+                        } else editedItem = clickedItem;
                         dispatch(setCurrentAction('EDIT'));
                     } else dispatch(setCurrentAction('IDLE'));
                     break;
@@ -200,9 +201,9 @@ const BoardStateMachine = {
                         const size = Math.abs(selectedItem.x2 - selectedItem.x0);
                         dispatch(setNoteStyle({ fillColor, size }));
                     } else if (selectedItem?.type === 'line' && isMainPoint(selectedPoint)) {
-                        if (clickedItem) {
+                        if (clickedItem && clickedItem.type !== 'line')
                             connectItem(clickedItem, selectedItem, selectedPoint, boardX, boardY);
-                        } else disconnectItem(selectedItem, selectedPoint);
+                        else disconnectItem(selectedItem, selectedPoint);
                     }
                     dispatch(setCurrentAction('EDIT'));
                     break;
