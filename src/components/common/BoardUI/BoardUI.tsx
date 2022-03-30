@@ -1,6 +1,6 @@
 import React, { useLayoutEffect } from 'react';
 import { useSelector, useDebouncedCallback } from '../../../hooks';
-import { EditPoints, TextEditor, StylesMenu } from '../../common';
+import { EditPoints, TextEditor, StylesMenu, DragSelectArea } from '../../common';
 import SM from '../../../BoardStateMachine/BoardStateMachine';
 
 import './BoardUI.scss';
@@ -60,6 +60,7 @@ const CanvasUI = (): React.ReactElement => {
             <EditPoints />
             <TextEditor />
             <StylesMenu />
+            <DragSelectArea />
         </div>
     );
 };

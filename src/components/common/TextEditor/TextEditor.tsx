@@ -78,10 +78,10 @@ const TextEditor = (): React.ReactElement => {
         const { type } = selectedItem;
         if (type === 'shape' || type === 'note') {
             const coordinates = getTextAreaCoordinates(selectedItem);
-            return getPositionCSSVars(canvasTransform, coordinates);
+            return getPositionCSSVars(canvasTransform, coordinates, false);
         } else {
             const { x0, y0, x2, y2 } = selectedItem;
-            return getPositionCSSVars(canvasTransform, { x0, y0, x2, y2 });
+            return getPositionCSSVars(canvasTransform, { x0, y0, x2, y2 }, false);
         }
     }, [canvasTransform, selectedItem]);
 
@@ -89,7 +89,6 @@ const TextEditor = (): React.ReactElement => {
     const handleMouseDown = (e: React.MouseEvent) => e.stopPropagation();
 
     if (!isWriting || !isTextItem(selectedItem)) return <></>;
-
     const { scale } = canvasTransform;
     return (
         <div

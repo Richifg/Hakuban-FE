@@ -62,8 +62,8 @@ const BoardStateMachine = {
                         dispatch(setDragOffset([boardX - clickedItem.x0, boardY - clickedItem.y0]));
                         dispatch(setDraggedItemId(clickedItem.id));
                         dispatch(setCurrentAction('DRAG'));
-                        // only clicked item in the selectedItemIds array
-                        if (clickedItem.id === selectedItemId) dispatch(setSelectedItemId());
+                        // deselect item if draggin a different one
+                        if (clickedItem.id !== selectedItemId) dispatch(setSelectedItemId());
                     } else {
                         dispatch(setDragOffset([boardX, boardY]));
                         dispatch(setCurrentAction('DRAGSELECT'));
@@ -94,6 +94,8 @@ const BoardStateMachine = {
         const [x, y] = [e.clientX, e.clientY];
         !hasCursorMoved && dispatch(setHasCursorMoved(true));
 
+        let updatedItem: BoardItem | undefined = undefined;
+
         if (mouseButton === MouseButton.Left) {
             isWriting && dispatch(setIsWriting(false));
             switch (currentAction) {
@@ -101,7 +103,7 @@ const BoardStateMachine = {
                     if (selectedItem?.type === 'drawing') {
                         const [boardX, boardY] = getBoardCoordinates(x, y, canvasTransform);
                         const points = [...selectedItem.points, [boardX, boardY]] as [number, number][];
-                        dispatch(addItem({ ...selectedItem, points }));
+                        updatedItem = { ...selectedItem, points };
                         dispatch(setCursorPosition([x, y]));
                     }
                     break;
@@ -110,11 +112,10 @@ const BoardStateMachine = {
                     const ids = draggedItemId ? [draggedItemId] : dragSelectedItemIds;
                     ids?.forEach((id) => {
                         const draggedItem = items[id];
-                        const updatedItem = {
+                        updatedItem = {
                             ...draggedItem,
                             ...getItemTranslatePoints(draggedItem, dragOffset, x, y, canvasTransform),
                         };
-                        dispatch(addItem(updatedItem));
                         updateLineConnections(updatedItem);
                         dispatch(setCursorPosition([x, y]));
                     });
@@ -125,8 +126,7 @@ const BoardStateMachine = {
                         const { type } = selectedItem;
                         const maintainRatio = type === 'note' || type === 'drawing';
                         const points = getItemResizePoints(selectedItem, selectedPoint, x, y, canvasTransform, maintainRatio);
-                        const updatedItem = { ...selectedItem, ...points };
-                        dispatch(addItem(updatedItem));
+                        updatedItem = { ...selectedItem, ...points };
                         updateLineConnections(updatedItem);
                     } else {
                         // resizing without selectedItem means the item gotta be created
@@ -139,6 +139,9 @@ const BoardStateMachine = {
                     // ## TODO inplement update of selectedItems
                     dispatch(setCursorPosition([x, y]));
                     break;
+            }
+            if (updatedItem) {
+                dispatch(addItem(updatedItem));
             }
         } else if (mouseButton === MouseButton.Middle || mouseButton === MouseButton.Right) {
             dispatch(translateCanvas([x - cursorPosition.x, y - cursorPosition.y]));

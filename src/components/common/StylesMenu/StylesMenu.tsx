@@ -35,16 +35,15 @@ const StylesMenu = (): React.ReactElement => {
                       })();
 
             const { top, left, width, height } = getPositionCSSVars(canvasTransform, coordinates);
-            const { scale } = canvasTransform;
             const menuHeight = menuRef.current?.clientHeight || 0;
             const menuWidth = menuRef.current?.clientWidth || 0;
 
             // try to have menu above item and centered horizontally
             menuTop = top - ITEM_OFFSET - menuHeight;
-            menuLeft = left + (width * scale - menuWidth) / 2;
+            menuLeft = left + (width - menuWidth) / 2;
 
             // avoid a position where menu goes off screen
-            if (menuTop < CANVAS_OFFSET) menuTop = top + ITEM_OFFSET + height * scale;
+            if (menuTop < CANVAS_OFFSET) menuTop = top + ITEM_OFFSET + height;
             if (menuLeft < CANVAS_OFFSET) menuLeft = CANVAS_OFFSET;
             else if (menuLeft + menuWidth > canvasSize.width - CANVAS_OFFSET)
                 menuLeft = canvasSize.width - CANVAS_OFFSET - menuWidth;
