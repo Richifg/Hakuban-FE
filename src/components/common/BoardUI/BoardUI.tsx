@@ -26,6 +26,7 @@ const CanvasUI = (): React.ReactElement => {
         SM.mouseDown(e);
     };
     const handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
+        console.log('UP');
         e.persist();
         SM.mouseUp(e);
     };
@@ -51,6 +52,7 @@ const CanvasUI = (): React.ReactElement => {
             onMouseMove={handleMouseMove}
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
             onWheel={handleWheel}
         >
             <p className="temp">Work In Progress!</p>

@@ -7,7 +7,7 @@ const key0: keyof LineStyle = 'arrow0Type';
 const key2: keyof LineStyle = 'arrow2Type';
 
 interface ArrowSelector {
-    onChange(value: string, key: string): void;
+    onChange(value: ArrowType, key: string): void;
     arrow0Type: ArrowType;
     arrow2Type: ArrowType;
 }
@@ -15,13 +15,13 @@ interface ArrowSelector {
 const ArrowSelector = ({ onChange, arrow0Type, arrow2Type }: ArrowSelector): React.ReactElement => {
     const handleArrowChange = (index: 0 | 2) => (e: React.ChangeEvent<HTMLSelectElement>) => {
         const key: keyof LineStyle = `arrow${index}Type`;
-        const { value } = e.currentTarget;
+        const value = e.currentTarget.value as ArrowType;
         onChange(value, key);
     };
 
     const handleSwap = () => {
-        onChange(key0, arrow2Type);
-        onChange(key2, arrow0Type);
+        onChange(arrow2Type, key0);
+        onChange(arrow0Type, key2);
     };
 
     return (

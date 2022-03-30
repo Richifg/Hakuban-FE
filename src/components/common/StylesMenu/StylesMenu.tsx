@@ -13,6 +13,11 @@ const StylesMenu = (): React.ReactElement => {
     const { canvasTransform, canvasSize, currentAction } = useSelector((s) => s.board);
     const { items, selectedItemId, dragSelectedItemIds } = useSelector((s) => s.items);
 
+    // stop click events reaching board
+    const handleClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+    };
+
     const selectedItems = useMemo(() => {
         const selectedItems: BoardItem[] = [];
         if (selectedItemId) selectedItems.push(items[selectedItemId]);
@@ -53,7 +58,7 @@ const StylesMenu = (): React.ReactElement => {
     }, [selectedItems, canvasTransform, canvasSize, currentAction]);
 
     return (
-        <div ref={menuRef} className="styles-menu" style={{ left, top }}>
+        <div ref={menuRef} className="styles-menu" style={{ left, top }} onClick={handleClick} onMouseUp={handleClick}>
             {selectedItems.length && <MenuOptions items={selectedItems} />}
         </div>
     );
