@@ -1,28 +1,24 @@
 import React from 'react';
-import { useSelector, useDispatch } from '../../../../../hooks';
 import { StrokeStyle } from '../../../../../interfaces';
-import { updateItem } from '../../../../../store/slices/itemsSlice';
 import './WidthSelector.scss';
 
 const key: keyof StrokeStyle = 'lineWidth';
 
 interface WidthSelector {
-    value: number;
+    width: number;
+    onChange(value: number, key: string): void;
 }
 
-const WidthSelector = ({ value }: WidthSelector): React.ReactElement => {
-    const dispatch = useDispatch();
-    const { selectedItem } = useSelector((s) => s.items);
-
+const WidthSelector = ({ onChange, width }: WidthSelector): React.ReactElement => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.currentTarget.value);
         if (value > 20 || value < 1) return;
-        dispatch(updateItem({ id: selectedItem?.id, key, value }));
+        onChange(value, key);
     };
 
     return (
         <div className="width-selector">
-            <input className="line-width-input" type="number" onChange={handleChange} value={value} />
+            <input className="line-width-input" type="number" onChange={handleChange} value={width} />
         </div>
     );
 };

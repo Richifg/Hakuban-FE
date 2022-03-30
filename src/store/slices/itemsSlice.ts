@@ -6,7 +6,7 @@ interface ItemsState {
     dragOffset: { x: number; y: number };
     draggedItemId?: string;
     selectedItemId?: string;
-    dragSelectedItemIds?: string[];
+    dragSelectedItemIds: string[];
     selectedPoint?: Point;
     lineConnections: { [id: string]: { [point: string]: string } };
     maxZIndex: number;
@@ -16,6 +16,7 @@ interface ItemsState {
 const initialState: ItemsState = {
     items: {},
     dragOffset: { x: 0, y: 0 },
+    dragSelectedItemIds: [],
     lineConnections: {},
     maxZIndex: -Infinity,
     minZIndex: Infinity,
@@ -51,14 +52,17 @@ const itemsSlice = createSlice({
         },
         setDraggedItemId: (state, action: PayloadAction<string | undefined>) => {
             state.draggedItemId = action.payload;
-            if (state.dragSelectedItemIds) state.dragSelectedItemIds = undefined;
+            if (state.dragSelectedItemIds) state.dragSelectedItemIds = [];
         },
         setSelectedItemId: (state, action: PayloadAction<string | undefined>) => {
             state.selectedItemId = action.payload;
-            if (state.dragSelectedItemIds) state.dragSelectedItemIds = undefined;
+            if (state.dragSelectedItemIds) state.dragSelectedItemIds = [];
         },
         setDragSelectedItemIds: (state, action: PayloadAction<string[] | undefined>) => {
-            state.dragSelectedItemIds = action.payload;
+            const ids = action.payload || [];
+            state.dragSelectedItemIds = ids;
+            state.draggedItemId = undefined;
+            state.selectedItemId = undefined;
         },
         setSelectedPoint: (state, action: PayloadAction<Point>) => {
             state.selectedPoint = action.payload;

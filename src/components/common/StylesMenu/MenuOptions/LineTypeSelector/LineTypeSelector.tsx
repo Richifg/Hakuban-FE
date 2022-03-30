@@ -1,28 +1,24 @@
 import React from 'react';
 import LineTypeOptions from './LineTypeOptions';
-import { useSelector, useDispatch } from '../../../../../hooks';
-import { updateItem } from '../../../../../store/slices/itemsSlice';
 import { LineType, LineStyle } from '../../../../../interfaces';
 import './LineTypeSelector.scss';
 
 const key: keyof LineStyle = 'lineType';
 
 interface LineTypeSelector {
-    value: LineType;
+    onChange(value: string, key: string): void;
+    lineType: LineType;
 }
 
-const LineTypeSelector = ({ value }: LineTypeSelector): React.ReactElement => {
-    const dispatch = useDispatch();
-    const { selectedItem } = useSelector((s) => s.items);
-
-    const handleChnage = (e: React.ChangeEvent<HTMLSelectElement>) => {
+const LineTypeSelector = ({ onChange, lineType }: LineTypeSelector): React.ReactElement => {
+    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const { value } = e.currentTarget;
-        dispatch(updateItem({ id: selectedItem?.id, key, value }));
+        onChange(value, key);
     };
 
     return (
         <div className="arrow-selector">
-            <select onChange={handleChnage} value={value}>
+            <select onChange={handleChange} value={lineType}>
                 <LineTypeOptions />
             </select>
         </div>

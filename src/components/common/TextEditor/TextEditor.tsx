@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useLayoutEffect, useRef } from 'react';
-import { getItemPositionCSSVars, getTextAreaCoordinates, isTextItem } from '../../../utils';
+import { getPositionCSSVars, getTextAreaCoordinates, isTextItem } from '../../../utils';
 import { useSelector, useDispatch, useDebouncedCallback } from '../../../hooks';
 import { addItem } from '../../../store/slices/itemsSlice';
 import { Align, BoardItem } from '../../../interfaces';
@@ -78,10 +78,10 @@ const TextEditor = (): React.ReactElement => {
         const { type } = selectedItem;
         if (type === 'shape' || type === 'note') {
             const coordinates = getTextAreaCoordinates(selectedItem);
-            return getItemPositionCSSVars(canvasTransform, coordinates);
+            return getPositionCSSVars(canvasTransform, coordinates);
         } else {
             const { x0, y0, x2, y2 } = selectedItem;
-            return getItemPositionCSSVars(canvasTransform, { x0, y0, x2, y2 });
+            return getPositionCSSVars(canvasTransform, { x0, y0, x2, y2 });
         }
     }, [canvasTransform, selectedItem]);
 

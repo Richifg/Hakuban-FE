@@ -4,11 +4,12 @@ import alignmentOptions from './alignmentOptions';
 import './AlignmentSelector.scss';
 
 interface AligmentSelector {
+    align: Align;
     onChange(value: Align, key: string): void;
     styleKey: keyof TextStyle;
 }
 
-const AligmentSelector = ({ onChange, styleKey }: AligmentSelector): React.ReactElement => {
+const AligmentSelector = ({ onChange, styleKey, align }: AligmentSelector): React.ReactElement => {
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         const value = e.currentTarget.value as Align;
         onChange(value, styleKey);
