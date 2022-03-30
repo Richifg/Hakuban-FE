@@ -1,8 +1,8 @@
 import { CanvasTransform } from '../interfaces/board';
 import { BoardItem, Coordinates } from '../interfaces/items';
-import { getBoardCoordinates } from './';
+import { getBoardCoordinates } from '.';
 
-function getItemTranslatePoints(
+function getTranslatedCoordinates(
     item: BoardItem,
     offset: { x: number; y: number },
     newX: number,
@@ -16,4 +16,4 @@ function getItemTranslatePoints(
     return { x0, y0, x2, y2 };
 }
 
-export default getItemTranslatePoints;
+export default getTranslatedCoordinates;

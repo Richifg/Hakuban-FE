@@ -18,8 +18,8 @@ import {
     isMainPoint,
     getCanvasCoordinates,
     getBoardCoordinates,
-    getItemTranslatePoints,
-    getItemResizePoints,
+    getTranslatedCoordinates,
+    getResizedCoordinates,
     getFinishedDrawing,
     getUpdatedBoardLimits,
 } from '../utils';
@@ -94,7 +94,7 @@ const BoardStateMachine = {
 
         const [x, y] = [e.clientX, e.clientY];
         const [boardX, boardY] = getBoardCoordinates(x, y, canvasTransform);
-        !hasCursorMoved && dispatch(setHasCursorMoved(true));
+        !hasCursorMoved && mouseButton !== undefined && dispatch(setHasCursorMoved(true));
 
         let updatedItem: BoardItem | undefined = undefined;
 
@@ -115,7 +115,7 @@ const BoardStateMachine = {
                         const draggedItem = items[id];
                         updatedItem = {
                             ...draggedItem,
-                            ...getItemTranslatePoints(draggedItem, dragOffset, x, y, canvasTransform),
+                            ...getTranslatedCoordinates(draggedItem, dragOffset, x, y, canvasTransform),
                         };
                         updateLineConnections(updatedItem);
                         dispatch(setCursorPosition([x, y]));
@@ -126,7 +126,7 @@ const BoardStateMachine = {
                     if (selectedItem && selectedPoint) {
                         const { type } = selectedItem;
                         const maintainRatio = type === 'note' || type === 'drawing';
-                        const points = getItemResizePoints(selectedItem, selectedPoint, x, y, canvasTransform, maintainRatio);
+                        const points = getResizedCoordinates(selectedItem, selectedPoint, x, y, canvasTransform, maintainRatio);
                         updatedItem = { ...selectedItem, ...points };
                         updateLineConnections(updatedItem);
                     } else {
@@ -138,10 +138,14 @@ const BoardStateMachine = {
 
                 case 'DRAGSELECT':
                     // ## TODO inplement update of selectedItems
-                    const areaCoordinates = { x0: dragOffset.x, y0: dragOffset.y, x2: boardX, y2: boardY };
-                    const insideItems = Object.values(items).filter((item) => isAreaInsideArea(item, areaCoordinates));
-                    console.log(insideItems);
-                    dispatch(setDragSelectedItemIds(insideItems.map((item) => item.id)));
+                    let coveredItemIds: string[] = [];
+                    if (hasCursorMoved) {
+                        const areaCoordinates = { x0: dragOffset.x, y0: dragOffset.y, x2: boardX, y2: boardY };
+                        const insideItems = Object.values(items).filter((item) => isAreaInsideArea(item, areaCoordinates));
+                        coveredItemIds = insideItems.map((item) => item.id);
+                    }
+                    if (dragSelectedItemIds.length > 0 && coveredItemIds.length === 0) dispatch(setDragSelectedItemIds());
+                    else if (coveredItemIds.length) dispatch(setDragSelectedItemIds(coveredItemIds));
                     dispatch(setCursorPosition([x, y]));
 
                     break;

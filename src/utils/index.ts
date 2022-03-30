@@ -3,8 +3,8 @@ import getCanvasCoordinates from './getCanvasCoordinates';
 import getDebouncedFunction from './getDebouncedFunction';
 import getFinishedDrawing from './getFinishedDrawing';
 import getPositionCSSVars from './getPositionCSSVars';
-import getItemResizePoints from './getItemResizePoints';
-import getItemTranslatePoints from './getItemTranslatePoints';
+import getResizedCoordinates from './getResizedCoordinates';
+import getTranslatedCoordinates from './getTranslatedCoordinates';
 import getMaxCoordinates from './getMaxCoordinates';
 import getNewId from './getNewId';
 import getNewItem from './getNewItem';
@@ -22,8 +22,8 @@ export {
     getDebouncedFunction,
     getFinishedDrawing,
     getPositionCSSVars,
-    getItemResizePoints,
-    getItemTranslatePoints,
+    getResizedCoordinates,
+    getTranslatedCoordinates,
     getMaxCoordinates,
     getNewId,
     getNewItem,
