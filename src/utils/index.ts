@@ -5,7 +5,7 @@ import getFinishedDrawing from './getFinishedDrawing';
 import getPositionCSSVars from './getPositionCSSVars';
 import getItemResizePoints from './getItemResizePoints';
 import getItemTranslatePoints from './getItemTranslatePoints';
-import getItemsMaxCoordinates from './getItemsMaxCoordinates';
+import getMaxCoordinates from './getMaxCoordinates';
 import getNewId from './getNewId';
 import getNewItem from './getNewItem';
 import getTextAreaCoordinates from './getTextAreaCoordinates';
@@ -13,7 +13,7 @@ import getUpdatedBoardLimits from './getUpdatedBoardLimits';
 import getWrappedTextLines from './getWrappedTextLines';
 import isConnectableItem from './isConnectableItem';
 import isMainPoint from './isMainPoint';
-import isPointInsideItem from './isPointInsideItem';
+import isPointInsideArea from './isPointInsideArea';
 import isTextItem from './isTextItem';
 
 export {
@@ -24,7 +24,7 @@ export {
     getPositionCSSVars,
     getItemResizePoints,
     getItemTranslatePoints,
-    getItemsMaxCoordinates,
+    getMaxCoordinates,
     getNewId,
     getNewItem,
     getTextAreaCoordinates,
@@ -32,6 +32,6 @@ export {
     getWrappedTextLines,
     isConnectableItem,
     isMainPoint,
-    isPointInsideItem,
+    isPointInsideArea,
     isTextItem,
 };

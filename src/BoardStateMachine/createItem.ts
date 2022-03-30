@@ -2,7 +2,7 @@ import { store } from '../store/store';
 import { BoardItem } from '../interfaces';
 import { setCurrentAction, setBoardLimits } from '../store/slices/boardSlice';
 import { addItem, setSelectedItemId, setSelectedPoint } from '../store/slices/itemsSlice';
-import { isPointInsideItem, getBoardCoordinates, getNewItem, getUpdatedBoardLimits } from '../utils';
+import { isPointInsideArea, getBoardCoordinates, getNewItem, getUpdatedBoardLimits } from '../utils';
 import connectItem from './connectItem';
 
 function createItem(x: number, y: number): void {
@@ -30,7 +30,7 @@ function createItem(x: number, y: number): void {
         dispatch(setSelectedPoint('P2'));
         dispatch(setCurrentAction('RESIZE'));
         // when creating a line it could be connected to an item right away
-        const clickedItem = Object.values(items).find((item) => isPointInsideItem(boardX, boardY, item));
+        const clickedItem = Object.values(items).find((item) => isPointInsideArea(boardX, boardY, item));
         if (clickedItem) connectItem(clickedItem, newItem, 'P0', boardX, boardY);
     }
     if (newItem) {

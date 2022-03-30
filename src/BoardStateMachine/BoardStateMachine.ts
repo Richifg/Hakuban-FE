@@ -12,9 +12,9 @@ import {
 } from '../store/slices/boardSlice';
 import { translateCanvas } from '../store/slices/boardSlice';
 import { setNoteStyle } from '../store/slices/toolSlice';
-import { addItem, setDragOffset, setDraggedItemId, setSelectedItemId } from '../store/slices/itemsSlice';
+import { addItem, setDragOffset, setDraggedItemId, setSelectedItemId, setDragSelectedItemIds } from '../store/slices/itemsSlice';
 import {
-    isPointInsideItem,
+    isPointInsideArea,
     isMainPoint,
     getCanvasCoordinates,
     getBoardCoordinates,
@@ -29,6 +29,7 @@ import createItem from './createItem';
 import connectItem from './connectItem';
 import disconnectItem from './disconnectItem';
 import updateLineConnections from './updateLineConnections';
+import isAreaInsideArea from '../utils/isAreaInsideArea';
 
 const { dispatch, getState } = store;
 
@@ -56,7 +57,7 @@ const BoardStateMachine = {
             switch (selectedTool) {
                 case 'POINTER':
                     const [boardX, boardY] = getBoardCoordinates(screenX, screenY, canvasTransform);
-                    const clickedItem = Object.values(items).find((item) => isPointInsideItem(boardX, boardY, item));
+                    const clickedItem = Object.values(items).find((item) => isPointInsideArea(boardX, boardY, item));
                     // only drag if clicked item isnt a line with connections
                     if (clickedItem && (clickedItem.type !== 'line' || !lineConnections[clickedItem.id])) {
                         dispatch(setDragOffset([boardX - clickedItem.x0, boardY - clickedItem.y0]));
@@ -92,6 +93,7 @@ const BoardStateMachine = {
         const selectedItem = selectedItemId ? items[selectedItemId] : undefined;
 
         const [x, y] = [e.clientX, e.clientY];
+        const [boardX, boardY] = getBoardCoordinates(x, y, canvasTransform);
         !hasCursorMoved && dispatch(setHasCursorMoved(true));
 
         let updatedItem: BoardItem | undefined = undefined;
@@ -101,7 +103,6 @@ const BoardStateMachine = {
             switch (currentAction) {
                 case 'DRAW':
                     if (selectedItem?.type === 'drawing') {
-                        const [boardX, boardY] = getBoardCoordinates(x, y, canvasTransform);
                         const points = [...selectedItem.points, [boardX, boardY]] as [number, number][];
                         updatedItem = { ...selectedItem, points };
                         dispatch(setCursorPosition([x, y]));
@@ -137,6 +138,10 @@ const BoardStateMachine = {
 
                 case 'DRAGSELECT':
                     // ## TODO inplement update of selectedItems
+                    const areaCoordinates = { x0: dragOffset.x, y0: dragOffset.y, x2: boardX, y2: boardY };
+                    const insideItems = Object.values(items).filter((item) => isAreaInsideArea(item, areaCoordinates));
+                    console.log(insideItems);
+                    dispatch(setDragSelectedItemIds(insideItems.map((item) => item.id)));
                     dispatch(setCursorPosition([x, y]));
 
                     break;
@@ -161,7 +166,7 @@ const BoardStateMachine = {
         dispatch(setMouseButton());
 
         const [boardX, boardY] = getBoardCoordinates(screenX, screenY, canvasTransform);
-        const clickedItem = Object.values(items).find((item) => isPointInsideItem(boardX, boardY, item));
+        const clickedItem = Object.values(items).find((item) => isPointInsideArea(boardX, boardY, item));
 
         let editedItem: BoardItem | undefined = undefined;
         if (e.button === MouseButton.Left) {

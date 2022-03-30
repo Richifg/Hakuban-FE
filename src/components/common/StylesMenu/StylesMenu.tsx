@@ -1,7 +1,7 @@
 import React, { useMemo, useRef } from 'react';
 import { useSelector } from '../../../hooks';
 import { BoardItem } from '../../../interfaces';
-import { getPositionCSSVars, getItemsMaxCoordinates } from '../../../utils';
+import { getPositionCSSVars, getMaxCoordinates } from '../../../utils';
 import MenuOptions from './MenuOptions/MenuOptions';
 import './StylesMenu.scss';
 
@@ -35,7 +35,7 @@ const StylesMenu = (): React.ReactElement => {
                 selectedItems.length === 1
                     ? selectedItems[0]
                     : (() => {
-                          const maxCoord = getItemsMaxCoordinates(selectedItems);
+                          const maxCoord = getMaxCoordinates(selectedItems);
                           return { x0: maxCoord.minX, x2: maxCoord.maxX, y0: maxCoord.minX, y2: maxCoord.maxY };
                       })();
 

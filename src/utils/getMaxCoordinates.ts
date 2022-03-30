@@ -1,6 +1,6 @@
-import { BoardItem } from '../interfaces';
+import { Coordinates } from '../interfaces';
 
-function getItemsMaxCoordinates(item: BoardItem | BoardItem[]): { maxX: number; minX: number; maxY: number; minY: number } {
+function getMaxCoordinates(item: Coordinates | Coordinates[]): { maxX: number; minX: number; maxY: number; minY: number } {
     let maxX = 0;
     let maxY = 0;
     let minX = 0;
@@ -27,4 +27,4 @@ function getItemsMaxCoordinates(item: BoardItem | BoardItem[]): { maxX: number; 
     return { maxX, minX, maxY, minY };
 }
 
-export default getItemsMaxCoordinates;
+export default getMaxCoordinates;
