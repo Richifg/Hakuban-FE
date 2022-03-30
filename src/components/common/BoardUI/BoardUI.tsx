@@ -26,6 +26,7 @@ const CanvasUI = (): React.ReactElement => {
         SM.mouseDown(e);
     };
     const handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
+        console.log('UP');
         e.persist();
         SM.mouseUp(e);
     };
