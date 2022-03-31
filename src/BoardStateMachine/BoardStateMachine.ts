@@ -231,8 +231,7 @@ const BoardStateMachine = {
             }
         } else if (e.button === MouseButton.Middle || e.button === MouseButton.Right) {
             if (currentAction === 'PAN') {
-                if (selectedItem) dispatch(setCurrentAction('EDIT'));
-                else dispatch(setCurrentAction('IDLE'));
+                dispatch(setCurrentAction('SLIDE'));
             }
         }
         // board limits are not updated until user mouseUp

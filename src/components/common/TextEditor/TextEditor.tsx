@@ -78,10 +78,10 @@ const TextEditor = (): React.ReactElement => {
         const { type } = selectedItem;
         if (type === 'shape' || type === 'note') {
             const coordinates = getTextAreaCoordinates(selectedItem);
-            return getPositionCSSVars(canvasTransform, coordinates, false);
+            return getPositionCSSVars(canvasTransform, coordinates);
         } else {
             const { x0, y0, x2, y2 } = selectedItem;
-            return getPositionCSSVars(canvasTransform, { x0, y0, x2, y2 }, false);
+            return getPositionCSSVars(canvasTransform, { x0, y0, x2, y2 });
         }
     }, [canvasTransform, selectedItem]);
 

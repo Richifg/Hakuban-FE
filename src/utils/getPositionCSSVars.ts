@@ -4,7 +4,7 @@ import { Coordinates, CanvasTransform } from '../interfaces';
 function getPositionCSSVars(
     transform: CanvasTransform,
     boardCoordinates: Coordinates,
-    scaleSize = true,
+    scaleSize = false,
 ): { left: number; top: number; width: number; height: number } {
     const { x0, y0, x2, y2 } = boardCoordinates;
     const { scale } = transform;

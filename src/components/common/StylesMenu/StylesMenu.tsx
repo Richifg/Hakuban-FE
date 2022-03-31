@@ -39,7 +39,7 @@ const StylesMenu = (): React.ReactElement => {
                           return { x0: maxCoord.minX, x2: maxCoord.maxX, y0: maxCoord.minX, y2: maxCoord.maxY };
                       })();
 
-            const { top, left, width, height } = getPositionCSSVars(canvasTransform, coordinates);
+            const { top, left, width, height } = getPositionCSSVars(canvasTransform, coordinates, true);
             const menuHeight = menuRef.current?.clientHeight || 0;
             const menuWidth = menuRef.current?.clientWidth || 0;
 
