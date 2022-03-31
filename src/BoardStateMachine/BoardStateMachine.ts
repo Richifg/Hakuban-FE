@@ -22,6 +22,7 @@ import {
     getResizedCoordinates,
     getFinishedDrawing,
     getUpdatedBoardLimits,
+    getMaxCoordinates,
 } from '../utils';
 
 import { store } from '../store/store';
@@ -45,7 +46,7 @@ const { dispatch, getState } = store;
 const BoardStateMachine = {
     mouseDown(e: MouseEvent<HTMLDivElement>): void {
         const { canvasTransform } = getState().board;
-        const { items, selectedItemId, lineConnections } = getState().items;
+        const { items, selectedItemId, lineConnections, dragSelectedItemIds } = getState().items;
         const { selectedTool } = getState().tools;
 
         const [screenX, screenY] = [e.clientX, e.clientY];
@@ -57,22 +58,38 @@ const BoardStateMachine = {
             switch (selectedTool) {
                 case 'POINTER':
                     const [boardX, boardY] = getBoardCoordinates(screenX, screenY, canvasTransform);
-                    const clickedItem = Object.values(items).find((item) => isPointInsideArea(boardX, boardY, item));
-                    // only drag if clicked item isnt a line with connections
-                    if (clickedItem && (clickedItem.type !== 'line' || !lineConnections[clickedItem.id])) {
-                        dispatch(setDragOffset([boardX - clickedItem.x0, boardY - clickedItem.y0]));
-                        dispatch(setDraggedItemId(clickedItem.id));
-                        dispatch(setCurrentAction('DRAG'));
-                        // deselect item if draggin a different one
-                        if (clickedItem.id !== selectedItemId) dispatch(setSelectedItemId());
+
+                    if (dragSelectedItemIds.length) {
+                        const draggableItems = dragSelectedItemIds.map((id) => items[id]);
+                        const { minX, maxX, minY, maxY } = getMaxCoordinates(draggableItems);
+                        if (isPointInsideArea(boardX, boardY, { x0: minX, x2: maxX, y0: minY, y2: maxY })) {
+                            // has group of selected items and mouseDown within the the group
+                            dispatch(setDragOffset([boardX - minX, boardY - minY]));
+                            dispatch(setCurrentAction('DRAG'));
+                        } else {
+                            // has a group of selected items but clicked outside
+                            dispatch(setCurrentAction('IDLE'));
+                            dispatch(setDragSelectedItemIds());
+                        }
                     } else {
-                        dispatch(setDragOffset([boardX, boardY]));
-                        dispatch(setCurrentAction('DRAGSELECT'));
+                        const clickedItem = Object.values(items).find((item) => isPointInsideArea(boardX, boardY, item));
+                        // check if mouseDown on top of a draggable item
+                        if (clickedItem && (clickedItem.type !== 'line' || !lineConnections[clickedItem.id])) {
+                            dispatch(setDragOffset([boardX - clickedItem.x0, boardY - clickedItem.y0]));
+                            dispatch(setDraggedItemId(clickedItem.id));
+                            dispatch(setCurrentAction('DRAG'));
+                            // deselect item if dragging a different one
+                            if (clickedItem.id !== selectedItemId) dispatch(setSelectedItemId());
+                        } else {
+                            // dragSelect only happens if nothing was clicked and there was no previous selection
+                            dispatch(setDragOffset([boardX, boardY]));
+                            dispatch(setCurrentAction('DRAGSELECT'));
+                        }
                     }
                     break;
 
                 case 'NOTE':
-                    // notes are on mouseUp
+                    // notes are created on mouseUp
                     selectedItemId && dispatch(setSelectedItemId());
                     dispatch(setCurrentAction('IDLE'));
                     break;
@@ -96,7 +113,7 @@ const BoardStateMachine = {
         const [boardX, boardY] = getBoardCoordinates(x, y, canvasTransform);
         !hasCursorMoved && mouseButton !== undefined && dispatch(setHasCursorMoved(true));
 
-        let updatedItem: BoardItem | undefined = undefined;
+        const updatedItems: BoardItem[] = [];
 
         if (mouseButton === MouseButton.Left) {
             isWriting && dispatch(setIsWriting(false));
@@ -104,22 +121,29 @@ const BoardStateMachine = {
                 case 'DRAW':
                     if (selectedItem?.type === 'drawing') {
                         const points = [...selectedItem.points, [boardX, boardY]] as [number, number][];
-                        updatedItem = { ...selectedItem, points };
+                        updatedItems.push({ ...selectedItem, points });
                         dispatch(setCursorPosition([x, y]));
                     }
                     break;
 
                 case 'DRAG':
                     const ids = draggedItemId ? [draggedItemId] : dragSelectedItemIds;
-                    ids?.forEach((id) => {
-                        const draggedItem = items[id];
-                        updatedItem = {
-                            ...draggedItem,
-                            ...getTranslatedCoordinates(draggedItem, dragOffset, x, y, canvasTransform),
+                    const draggedItems = ids.map((id) => items[id]);
+                    // draggOffset is relative to the whole group when selecting multiple items
+                    const { minX, minY } =
+                        draggedItems.length > 1
+                            ? getMaxCoordinates(draggedItems)
+                            : { minX: draggedItems[0].x0, minY: draggedItems[0].y0 };
+                    draggedItems.forEach((item) => {
+                        const { x0, y0 } = item;
+                        const offset = { x: dragOffset.x + minX - x0, y: dragOffset.y + minY - y0 };
+                        const updatedItem = {
+                            ...item,
+                            ...getTranslatedCoordinates(item, offset, boardX, boardY),
                         };
-                        updateLineConnections(updatedItem);
-                        dispatch(setCursorPosition([x, y]));
+                        updatedItems.push(updatedItem);
                     });
+                    dispatch(setCursorPosition([x, y]));
                     break;
 
                 case 'RESIZE':
@@ -127,8 +151,8 @@ const BoardStateMachine = {
                         const { type } = selectedItem;
                         const maintainRatio = type === 'note' || type === 'drawing';
                         const points = getResizedCoordinates(selectedItem, selectedPoint, x, y, canvasTransform, maintainRatio);
-                        updatedItem = { ...selectedItem, ...points };
-                        updateLineConnections(updatedItem);
+                        const updatedItem = { ...selectedItem, ...points };
+                        updatedItems.push(updatedItem);
                     } else {
                         // resizing without selectedItem means the item gotta be created
                         createItem(x, y);
@@ -137,7 +161,6 @@ const BoardStateMachine = {
                     break;
 
                 case 'DRAGSELECT':
-                    // ## TODO inplement update of selectedItems
                     let coveredItemIds: string[] = [];
                     if (hasCursorMoved) {
                         const areaCoordinates = { x0: dragOffset.x, y0: dragOffset.y, x2: boardX, y2: boardY };
@@ -150,9 +173,10 @@ const BoardStateMachine = {
 
                     break;
             }
-            if (updatedItem) {
-                dispatch(addItem(updatedItem));
-            }
+            updatedItems.forEach((item) => {
+                updateLineConnections(item);
+                dispatch(addItem(item));
+            });
         } else if (mouseButton === MouseButton.Middle || mouseButton === MouseButton.Right) {
             dispatch(translateCanvas([x - cursorPosition.x, y - cursorPosition.y]));
             dispatch(setCursorPosition([x, y]));
@@ -161,7 +185,7 @@ const BoardStateMachine = {
 
     mouseUp(e: MouseEvent<HTMLDivElement>): void {
         const { selectedTool } = getState().tools;
-        const { items, selectedItemId, selectedPoint, dragSelectedItemIds } = getState().items;
+        const { items, selectedItemId, selectedPoint, dragSelectedItemIds, draggedItemId } = getState().items;
         const { currentAction, canvasTransform, isWriting, hasCursorMoved } = getState().board;
         const selectedItem = selectedItemId ? items[selectedItemId] : undefined;
 
@@ -176,9 +200,7 @@ const BoardStateMachine = {
         if (e.button === MouseButton.Left) {
             switch (currentAction) {
                 case 'IDLE':
-                    if (selectedTool === 'NOTE') {
-                        createItem(screenX, screenY);
-                    }
+                    if (selectedTool === 'NOTE') createItem(screenX, screenY);
                     break;
 
                 case 'DRAW':
@@ -193,27 +215,31 @@ const BoardStateMachine = {
                     break;
 
                 case 'DRAG':
-                    dispatch(setDraggedItemId());
-                    if (clickedItem) {
+                    if (draggedItemId) {
+                        dispatch(setDraggedItemId());
                         if (!hasCursorMoved) {
-                            if (clickedItem !== selectedItem) dispatch(setSelectedItemId(clickedItem.id));
+                            // click on top of an item without moving cursor means the item has to be selected
+                            if (clickedItem && clickedItem !== selectedItem) dispatch(setSelectedItemId(clickedItem.id));
                             else !isWriting && dispatch(setIsWriting(true));
                             dispatch(setCurrentAction('EDIT'));
                         } else {
+                            // otherwise an item was dragged and could be editted
                             editedItem = clickedItem;
                             if (selectedItemId) dispatch(setCurrentAction('EDIT'));
                             else dispatch(setCurrentAction('IDLE'));
                         }
-                    }
+                    } else if (dragSelectedItemIds.length) dispatch(setCurrentAction('EDIT'));
                     break;
 
                 case 'RESIZE':
                     editedItem = selectedItem;
                     if (selectedTool === 'NOTE' && selectedItem?.type === 'note') {
+                        // resizing an Note involves updating preffered Note size
                         const { fillColor } = selectedItem;
                         const size = Math.abs(selectedItem.x2 - selectedItem.x0);
                         dispatch(setNoteStyle({ fillColor, size }));
                     } else if (selectedItem?.type === 'line' && isMainPoint(selectedPoint)) {
+                        // only connect Lines to other non-Line items
                         if (clickedItem && clickedItem.type !== 'line')
                             connectItem(clickedItem, selectedItem, selectedPoint, boardX, boardY);
                         else disconnectItem(selectedItem, selectedPoint);

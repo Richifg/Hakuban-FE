@@ -1,16 +1,12 @@
-import { CanvasTransform } from '../interfaces/board';
-import { BoardItem, Coordinates } from '../interfaces/items';
-import { getBoardCoordinates } from '.';
+import { Coordinates } from '../interfaces/items';
 
 function getTranslatedCoordinates(
-    item: BoardItem,
+    coordinates: Coordinates,
     offset: { x: number; y: number },
-    newX: number,
-    newY: number,
-    transform: CanvasTransform,
+    boardX: number,
+    boardY: number,
 ): Coordinates {
-    const [width, height] = [item.x2 - item.x0, item.y2 - item.y0];
-    const [boardX, boardY] = getBoardCoordinates(newX, newY, transform);
+    const [width, height] = [coordinates.x2 - coordinates.x0, coordinates.y2 - coordinates.y0];
     const [x0, y0] = [boardX - offset.x, boardY - offset.y];
     const [x2, y2] = [x0 + width, y0 + height];
     return { x0, y0, x2, y2 };
