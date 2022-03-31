@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { useSelector } from '../../../hooks';
 import { BoardItem } from '../../../interfaces';
 import { getPositionCSSVars, getMaxCoordinates } from '../../../utils';
@@ -12,8 +12,10 @@ const StylesMenu = (): React.ReactElement => {
     const menuRef = useRef<HTMLDivElement>(null);
     const { canvasTransform, canvasSize, currentAction } = useSelector((s) => s.board);
     const { items, selectedItemId, dragSelectedItemIds } = useSelector((s) => s.items);
+    // flag to avoid calculating menu position without menu having full size
+    const [calculatePosition, setCalculatePosition] = useState(false);
 
-    // stop click events reaching board
+    // stop click events from reaching board
     const handleClick = (e: React.MouseEvent) => {
         e.stopPropagation();
     };
@@ -22,6 +24,7 @@ const StylesMenu = (): React.ReactElement => {
         const selectedItems: BoardItem[] = [];
         if (selectedItemId) selectedItems.push(items[selectedItemId]);
         else selectedItems.push(...dragSelectedItemIds.map((id) => items[id]));
+        setCalculatePosition(false);
         return selectedItems;
     }, [items, selectedItemId, dragSelectedItemIds]);
 
@@ -30,13 +33,13 @@ const StylesMenu = (): React.ReactElement => {
         let [menuTop, menuLeft] = [-500, -500];
 
         // calculate position if an item is being edited
-        if (selectedItems.length && currentAction === 'EDIT') {
+        if (selectedItems.length && currentAction === 'EDIT' && calculatePosition) {
             const coordinates =
                 selectedItems.length === 1
                     ? selectedItems[0]
                     : (() => {
                           const maxCoord = getMaxCoordinates(selectedItems);
-                          return { x0: maxCoord.minX, x2: maxCoord.maxX, y0: maxCoord.minX, y2: maxCoord.maxY };
+                          return { x0: maxCoord.minX, x2: maxCoord.maxX, y0: maxCoord.minY, y2: maxCoord.maxY };
                       })();
 
             const { top, left, width, height } = getPositionCSSVars(canvasTransform, coordinates, true);
@@ -55,11 +58,11 @@ const StylesMenu = (): React.ReactElement => {
         }
 
         return [menuTop, menuLeft];
-    }, [selectedItems, canvasTransform, canvasSize, currentAction]);
+    }, [selectedItems, canvasTransform, canvasSize, currentAction, calculatePosition]);
 
     return (
         <div ref={menuRef} className="styles-menu" style={{ left, top }} onClick={handleClick} onMouseUp={handleClick}>
-            {selectedItems.length && <MenuOptions items={selectedItems} />}
+            {selectedItems.length && <MenuOptions items={selectedItems} onRender={() => setCalculatePosition(true)} />}
         </div>
     );
 };

@@ -1,12 +1,12 @@
 import React, { useLayoutEffect } from 'react';
 import { useSelector, useDebouncedCallback } from '../../../hooks';
 import { EditPoints, TextEditor, StylesMenu, DragSelectArea, SelectionHighlight } from '../../common';
-import SM from '../../../BoardStateMachine/BoardStateMachine';
 
+import SM from '../../../BoardStateMachine/BoardStateMachine';
 import './BoardUI.scss';
 
 const CanvasUI = (): React.ReactElement => {
-    const { canvasSize, cursorPosition, currentAction } = useSelector((s) => s.board);
+    const { canvasSize, cursorPosition, currentAction, isWriting } = useSelector((s) => s.board);
     const { selectedTool } = useSelector((s) => s.tools);
     const { width, height } = canvasSize;
     const tool = selectedTool.toLowerCase();
@@ -20,7 +20,7 @@ const CanvasUI = (): React.ReactElement => {
         return () => window.removeEventListener('resize', resizeHandler);
     }, []);
 
-    // handle user inputs
+    // handle user with BoardStateMachine
     const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
         e.persist();
         SM.mouseDown(e);
@@ -29,20 +29,16 @@ const CanvasUI = (): React.ReactElement => {
         e.persist();
         SM.mouseUp(e);
     };
-
-    // 5ms debounced mouse move
+    const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+        e.persist();
+        SM.mouseWheel(e);
+    };
+    // 5ms debounc on mouse move
     const handleMouseMove = useDebouncedCallback((e: React.MouseEvent<HTMLDivElement>) => {
         e.persist;
         SM.mouseMove(e);
     }, 5);
 
-    const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
-        e.persist();
-        SM.mouseWheel(e);
-    };
-
-    // ##TODO move EditPoints TextEditor and StylesMenu out of here
-    // make a UI ELEMENTS component with everything in it
     return (
         <div
             role="application"
@@ -56,13 +52,13 @@ const CanvasUI = (): React.ReactElement => {
         >
             <p className="temp">Work In Progress!</p>
             <p className="cursor-position">
-                X: {cursorPosition.x} Y:{cursorPosition.y} {currentAction}
+                X: {cursorPosition.x} Y:{cursorPosition.y} {currentAction} {isWriting.toString()}
             </p>
+            <DragSelectArea />
+            <SelectionHighlight />
             <EditPoints />
             <TextEditor />
             <StylesMenu />
-            <DragSelectArea />
-            <SelectionHighlight />
         </div>
     );
 };

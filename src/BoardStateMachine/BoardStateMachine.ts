@@ -161,7 +161,7 @@ const BoardStateMachine = {
 
     mouseUp(e: MouseEvent<HTMLDivElement>): void {
         const { selectedTool } = getState().tools;
-        const { items, selectedItemId, selectedPoint } = getState().items;
+        const { items, selectedItemId, selectedPoint, dragSelectedItemIds } = getState().items;
         const { currentAction, canvasTransform, isWriting, hasCursorMoved } = getState().board;
         const selectedItem = selectedItemId ? items[selectedItemId] : undefined;
 
@@ -198,9 +198,13 @@ const BoardStateMachine = {
                         if (!hasCursorMoved) {
                             if (clickedItem !== selectedItem) dispatch(setSelectedItemId(clickedItem.id));
                             else !isWriting && dispatch(setIsWriting(true));
-                        } else editedItem = clickedItem;
-                        dispatch(setCurrentAction('EDIT'));
-                    } else dispatch(setCurrentAction('IDLE'));
+                            dispatch(setCurrentAction('EDIT'));
+                        } else {
+                            editedItem = clickedItem;
+                            if (selectedItemId) dispatch(setCurrentAction('EDIT'));
+                            else dispatch(setCurrentAction('IDLE'));
+                        }
+                    }
                     break;
 
                 case 'RESIZE':
@@ -218,14 +222,22 @@ const BoardStateMachine = {
                     break;
 
                 case 'DRAGSELECT':
-                    if (clickedItem && !hasCursorMoved) {
+                    // if cursor moved then multiple items might have been selected
+                    if (hasCursorMoved) {
+                        isWriting && dispatch(setIsWriting(false));
+                        if (dragSelectedItemIds.length) {
+                            dragSelectedItemIds.length === 1 && dispatch(setSelectedItemId(dragSelectedItemIds[0]));
+                            dispatch(setCurrentAction('EDIT'));
+                        } else {
+                            selectedItem && dispatch(setSelectedItemId());
+                            dispatch(setCurrentAction('IDLE'));
+                        }
+                    } else if (clickedItem) {
                         dispatch(setSelectedItemId(clickedItem.id));
                         dispatch(setCurrentAction('EDIT'));
-                    } else {
-                        // ## TODO check selectedItems
+                    } else if (dragSelectedItemIds) {
+                        dispatch(setDragSelectedItemIds());
                         dispatch(setCurrentAction('IDLE'));
-                        selectedItem && dispatch(setSelectedItemId());
-                        isWriting && dispatch(setIsWriting(false));
                     }
                     break;
             }

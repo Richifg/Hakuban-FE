@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useLayoutEffect } from 'react';
 import { useDispatch, useSelector } from '../../../../hooks';
 import {
     AlignmentSelector,
@@ -16,11 +16,17 @@ import './MenuOptions.scss';
 
 interface MenuOptions {
     items: BoardItem[];
+    onRender: () => void;
 }
 
-const MenuOptions = ({ items }: MenuOptions): React.ReactElement => {
+const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
     const dispatch = useDispatch();
     const { textStyle } = useSelector((s) => s.tools);
+
+    useLayoutEffect(() => {
+        // let parent know options for new items have rendered
+        onRender();
+    }, [items]);
 
     const handleChange = (value: string | number, key: string) => {
         items.forEach((item) => {
