@@ -1,8 +1,8 @@
-import { store } from '../store/store';
-import { BoardItem } from '../interfaces';
-import { setCurrentAction, setBoardLimits } from '../store/slices/boardSlice';
-import { addItem, setSelectedItemId, setSelectedPoint } from '../store/slices/itemsSlice';
-import { isPointInsideArea, getBoardCoordinates, getNewItem, getUpdatedBoardLimits } from '../utils';
+import { store } from '../../store/store';
+import { BoardItem } from '../../interfaces';
+import { setCurrentAction, setBoardLimits } from '../../store/slices/boardSlice';
+import { addItem, setSelectedItemId, setSelectedPoint } from '../../store/slices/itemsSlice';
+import { isPointInsideArea, getBoardCoordinates, getNewItem, getUpdatedBoardLimits } from '../../utils';
 import connectItem from './connectItem';
 
 function createItem(x: number, y: number): void {

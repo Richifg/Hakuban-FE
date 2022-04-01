@@ -1,6 +1,6 @@
-import { store } from '../store/store';
-import { BoardItem } from '../interfaces';
-import { addItem } from '../store/slices/itemsSlice';
+import { store } from '../../store/store';
+import { BoardItem } from '../../interfaces';
+import { addItem } from '../../store/slices/itemsSlice';
 
 // updates the coordinates of the Lines to wich an item is connected
 

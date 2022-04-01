@@ -11,6 +11,7 @@ import getNewItem from './getNewItem';
 import getTextAreaCoordinates from './getTextAreaCoordinates';
 import getUpdatedBoardLimits from './getUpdatedBoardLimits';
 import getWrappedTextLines from './getWrappedTextLines';
+import isAreaInsideArea from './isAreaInsideArea';
 import isConnectableItem from './isConnectableItem';
 import isMainPoint from './isMainPoint';
 import isPointInsideArea from './isPointInsideArea';
@@ -30,6 +31,7 @@ export {
     getTextAreaCoordinates,
     getUpdatedBoardLimits,
     getWrappedTextLines,
+    isAreaInsideArea,
     isConnectableItem,
     isMainPoint,
     isPointInsideArea,

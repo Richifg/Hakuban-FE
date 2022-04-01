@@ -1,7 +1,7 @@
-import { store } from '../store/store';
-import { BoardItem, Line, MainPoint } from '../interfaces';
-import { addItem, addLineConnection } from '../store/slices/itemsSlice';
-import { isConnectableItem } from '../utils';
+import { store } from '../../store/store';
+import { BoardItem, Line, MainPoint } from '../../interfaces';
+import { addItem, addLineConnection } from '../../store/slices/itemsSlice';
+import { isConnectableItem } from '../../utils';
 
 // adds a Line connection to an item
 

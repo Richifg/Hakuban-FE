@@ -1,7 +1,7 @@
-import { store } from '../store/store';
-import { Line, MainPoint } from '../interfaces';
-import { addItem, removeLineConnection } from '../store/slices/itemsSlice';
-import { isConnectableItem } from '../utils';
+import { store } from '../../store/store';
+import { Line, MainPoint } from '../../interfaces';
+import { addItem, removeLineConnection } from '../../store/slices/itemsSlice';
+import { isConnectableItem } from '../../utils';
 
 // removes an item connnection from the selected point of a Line
 
