@@ -41,7 +41,8 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
                 break;
 
             case 'DRAG':
-                if (draggedItemId) {
+                if (dragSelectedItemIds.length) dispatch(setCurrentAction('EDIT'));
+                else {
                     dispatch(setDraggedItemId());
                     if (!hasCursorMoved) {
                         // click on top of an item without moving cursor means the item has to be selected
@@ -54,7 +55,7 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
                         if (selectedItemId) dispatch(setCurrentAction('EDIT'));
                         else dispatch(setCurrentAction('IDLE'));
                     }
-                } else if (dragSelectedItemIds.length) dispatch(setCurrentAction('EDIT'));
+                }
                 break;
 
             case 'RESIZE':
@@ -91,6 +92,10 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
                     dispatch(setDragSelectedItemIds());
                     dispatch(setCurrentAction('IDLE'));
                 }
+                break;
+
+            case 'BLOCKED':
+                dispatch(setCurrentAction('IDLE'));
                 break;
         }
     } else if (e.button === MouseButton.Middle || e.button === MouseButton.Right) {

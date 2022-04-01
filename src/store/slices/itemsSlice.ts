@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { BoardItem, Point, MainPoint } from '../../interfaces/items';
+import { BoardItem, Point, MainPoint } from '../../interfaces/items';
 
 interface ItemsState {
     items: { [id: string]: BoardItem };
@@ -8,7 +8,7 @@ interface ItemsState {
     selectedItemId?: string;
     dragSelectedItemIds: string[];
     selectedPoint?: Point;
-    lineConnections: { [id: string]: { [point: string]: string } };
+    lineConnections: { [lineId: string]: { [point: string]: string } };
     maxZIndex: number;
     minZIndex: number;
 }

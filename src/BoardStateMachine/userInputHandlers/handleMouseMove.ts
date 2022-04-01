@@ -1,23 +1,25 @@
 import { MouseEvent } from 'react';
 import { MouseButton, BoardItem } from '../../interfaces';
 import { createItem, updateLineConnections } from '../BoardStateMachineUtils';
+import { setCursorPosition, setIsWriting, setHasCursorMoved, setCurrentAction } from '../../store/slices/boardSlice';
+import { addItem, setDragSelectedItemIds } from '../../store/slices/itemsSlice';
+import { translateCanvas } from '../../store/slices/boardSlice';
 import {
     getBoardCoordinates,
     getTranslatedCoordinates,
     getResizedCoordinates,
     getMaxCoordinates,
     isAreaInsideArea,
+    isItemDraggable,
 } from '../../utils';
-import { setCursorPosition, setIsWriting, setHasCursorMoved } from '../../store/slices/boardSlice';
-import { addItem, setDragSelectedItemIds } from '../../store/slices/itemsSlice';
-import { translateCanvas } from '../../store/slices/boardSlice';
 
 import { store } from '../../store/store';
 const { dispatch, getState } = store;
 
 function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
     const { currentAction, cursorPosition, canvasTransform, isWriting, hasCursorMoved, mouseButton } = getState().board;
-    const { items, selectedItemId, draggedItemId, dragSelectedItemIds, selectedPoint, dragOffset } = getState().items;
+    const { items, selectedItemId, draggedItemId, dragSelectedItemIds, selectedPoint, dragOffset, lineConnections } =
+        getState().items;
     const selectedItem = selectedItemId ? items[selectedItemId] : undefined;
 
     const [x, y] = [e.clientX, e.clientY];
@@ -39,21 +41,23 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
 
             case 'DRAG':
                 const ids = draggedItemId ? [draggedItemId] : dragSelectedItemIds;
-                const draggedItems = ids.map((id) => items[id]);
-                // draggOffset is relative to the whole group when selecting multiple items
-                const { minX, minY } =
-                    draggedItems.length > 1
-                        ? getMaxCoordinates(draggedItems)
-                        : { minX: draggedItems[0].x0, minY: draggedItems[0].y0 };
-                draggedItems.forEach((item) => {
-                    const { x0, y0 } = item;
-                    const offset = { x: dragOffset.x + minX - x0, y: dragOffset.y + minY - y0 };
-                    const updatedItem = {
-                        ...item,
-                        ...getTranslatedCoordinates(item, offset, boardX, boardY),
-                    };
-                    updatedItems.push(updatedItem);
-                });
+                if (ids.length) {
+                    const draggedItems = ids.map((id) => items[id]).filter((item) => isItemDraggable(item, lineConnections));
+                    // draggOffset is relative to the whole group when selecting multiple items
+                    const { minX, minY } =
+                        draggedItems.length > 1
+                            ? getMaxCoordinates(draggedItems)
+                            : { minX: draggedItems[0].x0, minY: draggedItems[0].y0 };
+                    draggedItems.forEach((item) => {
+                        const { x0, y0 } = item;
+                        const offset = { x: dragOffset.x + minX - x0, y: dragOffset.y + minY - y0 };
+                        const updatedItem = {
+                            ...item,
+                            ...getTranslatedCoordinates(item, offset, boardX, boardY),
+                        };
+                        updatedItems.push(updatedItem);
+                    });
+                } else dispatch(setCurrentAction('BLOCKED'));
                 dispatch(setCursorPosition([x, y]));
                 break;
 
