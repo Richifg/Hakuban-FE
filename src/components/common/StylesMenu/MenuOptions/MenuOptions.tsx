@@ -11,8 +11,9 @@ import {
     ZIndexSelector,
 } from '.';
 import { Align, BoardItem, Shape, Line, Text } from '../../../../interfaces';
-import { updateItem, addItem } from '../../../../store/slices/itemsSlice';
+import { updateItem, addItem, deleteItems } from '../../../../store/slices/itemsSlice';
 import './MenuOptions.scss';
+import { setCurrentAction } from '../../../../store/slices/boardSlice';
 
 interface MenuOptions {
     items: BoardItem[];
@@ -24,7 +25,7 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
     const { textStyle } = useSelector((s) => s.tools);
 
     useLayoutEffect(() => {
-        // let parent know options for new items have rendered
+        // let parent know options for new items have been rendered
         onRender();
     }, [items]);
 
@@ -46,6 +47,11 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
                 dispatch(addItem(newItem));
             }
         });
+    };
+
+    const handleDelete = () => {
+        dispatch(deleteItems(items.map((item) => item.id)));
+        dispatch(setCurrentAction('IDLE'));
     };
 
     const stopMouseDown = (e: React.MouseEvent) => e.stopPropagation();
@@ -94,6 +100,7 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
                 </>
             )}
             <ZIndexSelector items={items} />
+            <button onClick={handleDelete}>DEL</button>
         </div>
     );
 };

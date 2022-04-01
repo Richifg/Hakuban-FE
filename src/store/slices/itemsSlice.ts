@@ -43,8 +43,11 @@ const itemsSlice = createSlice({
                 }
             }
         },
-        deleteItem: (state, action: PayloadAction<string>) => {
-            delete state.items[action.payload];
+        deleteItems: (state, action: PayloadAction<string | string[]>) => {
+            const ids = Array.isArray(action.payload) ? action.payload : [action.payload];
+            ids.forEach((id) => delete state.items[id]);
+            delete state.selectedItemId;
+            state.dragSelectedItemIds = [];
         },
         setDragOffset: (state, action: PayloadAction<[x: number, y: number]>) => {
             const [x, y] = action.payload;
@@ -95,7 +98,7 @@ export const {
     setItems,
     addItem,
     updateItem,
-    deleteItem,
+    deleteItems,
     setDragOffset,
     setDraggedItemId,
     setSelectedItemId,

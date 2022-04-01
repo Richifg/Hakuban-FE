@@ -1,6 +1,6 @@
 import { store } from '../store/store';
 import { setCanvasSize } from '../store/slices/boardSlice';
-import { handleMouseDown, handleMouseMove, handleMouseUp, handleMouseWheel } from './userInputHandlers';
+import { handleMouseDown, handleMouseMove, handleMouseUp, handleMouseWheel, handleKeyboard } from './userInputHandlers';
 
 /* 
     Board is in one of many possible states (IDLE, PAN, DRAG, DRAW, etc)
@@ -18,7 +18,9 @@ const BoardStateMachine = {
 
     mouseUp: handleMouseUp,
 
-    mouseWheel: handleMouseWheel,
+    wheelScroll: handleMouseWheel,
+
+    keyPress: handleKeyboard,
 
     windowResize(): void {
         store.dispatch(setCanvasSize({ width: window.innerWidth, height: window.innerHeight }));

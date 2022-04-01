@@ -31,7 +31,11 @@ const CanvasUI = (): React.ReactElement => {
     };
     const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
         e.persist();
-        SM.mouseWheel(e);
+        SM.wheelScroll(e);
+    };
+    const handleKeyboard = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        e.persist();
+        SM.keyPress(e);
     };
     // 5ms debounc on mouse move
     const handleMouseMove = useDebouncedCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -48,6 +52,10 @@ const CanvasUI = (): React.ReactElement => {
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
+            onKeyDown={handleKeyboard}
+            onKeyDownCapture={handleKeyboard}
+            onKeyPressCapture={handleKeyboard}
+            onKeyPress={handleKeyboard}
             onWheel={handleWheel}
         >
             <p className="temp">Work In Progress!</p>
