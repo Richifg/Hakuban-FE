@@ -1,23 +1,24 @@
 import React from 'react';
-import { ShapeStyle, DrawingStyle } from '../../../../../interfaces';
+import { StrokeStyle } from '../../../../../interfaces';
 import './WidthSelector.scss';
 
+const key: keyof StrokeStyle = 'lineWidth';
+
 interface WidthSelector {
-    value: number;
-    onChange(value: number, styleKey: string): void;
-    styleKey: keyof ShapeStyle | keyof DrawingStyle;
+    width: number;
+    onChange(value: number, key: string): void;
 }
 
-const WidthSelector = ({ onChange, value, styleKey }: WidthSelector): React.ReactElement => {
+const WidthSelector = ({ onChange, width }: WidthSelector): React.ReactElement => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.currentTarget.value);
         if (value > 20 || value < 1) return;
-        onChange(value, styleKey);
+        onChange(value, key);
     };
 
     return (
         <div className="width-selector">
-            <input className="line-width-input" type="number" onChange={handleChange} value={value} />
+            <input className="line-width-input" type="number" onChange={handleChange} value={width} />
         </div>
     );
 };

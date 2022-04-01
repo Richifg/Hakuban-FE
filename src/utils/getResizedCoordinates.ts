@@ -5,7 +5,7 @@ import { getBoardCoordinates } from '.';
 // return new points for item based on cursor position and selectedPoint
 // if resizeOffset is provided, resize will mantain aspect ratio
 
-function getItemResizePoints(
+function getResizedCoordinates(
     item: BoardItem,
     selectedPoint: Point,
     cursorX: number,
@@ -45,4 +45,4 @@ function getItemResizePoints(
     else return { x0: newX, x2, y0, y2: newY };
 }
 
-export default getItemResizePoints;
+export default getResizedCoordinates;

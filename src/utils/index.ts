@@ -2,21 +2,20 @@ import getBoardCoordinates from './getBoardCoordinates';
 import getCanvasCoordinates from './getCanvasCoordinates';
 import getDebouncedFunction from './getDebouncedFunction';
 import getFinishedDrawing from './getFinishedDrawing';
-import getItemPositionCSSVars from './getItemPositionCSSVars';
-import getItemResizePoints from './getItemResizePoints';
-import getItemTranslatePoints from './getItemTranslatePoints';
-import getItemMaxCoordinates from './getItemMaxCoordinates';
-import getNewDrawing from './getNewDrawing';
+import getPositionCSSVars from './getPositionCSSVars';
+import getResizedCoordinates from './getResizedCoordinates';
+import getTranslatedCoordinates from './getTranslatedCoordinates';
+import getMaxCoordinates from './getMaxCoordinates';
 import getNewId from './getNewId';
-import getNewLine from './getNewLine';
-import getNewNote from './getNewNote';
-import getNewShape from './getNewShape';
+import getNewItem from './getNewItem';
 import getTextAreaCoordinates from './getTextAreaCoordinates';
 import getUpdatedBoardLimits from './getUpdatedBoardLimits';
 import getWrappedTextLines from './getWrappedTextLines';
+import isAreaInsideArea from './isAreaInsideArea';
 import isConnectableItem from './isConnectableItem';
+import isItemDraggable from './isItemDraggable';
 import isMainPoint from './isMainPoint';
-import isPointInsideItem from './isPointInsideItem';
+import isPointInsideArea from './isPointInsideArea';
 import isTextItem from './isTextItem';
 
 export {
@@ -24,20 +23,19 @@ export {
     getCanvasCoordinates,
     getDebouncedFunction,
     getFinishedDrawing,
-    getItemPositionCSSVars,
-    getItemResizePoints,
-    getItemTranslatePoints,
-    getItemMaxCoordinates,
-    getNewDrawing,
+    getPositionCSSVars,
+    getResizedCoordinates,
+    getTranslatedCoordinates,
+    getMaxCoordinates,
     getNewId,
-    getNewLine,
-    getNewNote,
-    getNewShape,
+    getNewItem,
     getTextAreaCoordinates,
     getUpdatedBoardLimits,
     getWrappedTextLines,
+    isAreaInsideArea,
     isConnectableItem,
+    isItemDraggable,
     isMainPoint,
-    isPointInsideItem,
+    isPointInsideArea,
     isTextItem,
 };

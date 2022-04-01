@@ -7,6 +7,7 @@ import FontSizeSelector from './FontSizeSelector/FontSizeSelector';
 import LineTypeSelector from './LineTypeSelector/LineTypeSelector';
 import TextStyleSelector from './TextStyleSelector/TextStyleSelector';
 import WidthSelector from './WidthSelector/WidthSelector';
+import ZIndexSelector from './ZIndexSelector/ZIndexSelector';
 
 export {
     MenuOptions,
@@ -17,4 +18,5 @@ export {
     LineTypeSelector,
     TextStyleSelector,
     WidthSelector,
+    ZIndexSelector,
 };

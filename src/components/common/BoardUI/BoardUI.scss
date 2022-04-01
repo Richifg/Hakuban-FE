@@ -7,6 +7,8 @@
     &.pointer { cursor: pointer; }
     &.shape { cursor: crosshair; }
     &.pan, &.drag { cursor: grabbing !important; } 
+    &.dragselect { cursor: crosshair; }
+    &.blocked { cursor: not-allowed; }
 
     .temp {
         opacity: 0.2;

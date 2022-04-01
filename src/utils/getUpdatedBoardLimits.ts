@@ -1,6 +1,6 @@
 import { store } from '../store/store';
 import { BoardItem, BoardLimits, Limit } from '../interfaces';
-import { getItemMaxCoordinates } from './';
+import { getMaxCoordinates } from './';
 
 const BOARD_PADDING = 200; //px
 
@@ -12,7 +12,7 @@ function getUpdatedBoardLimits(item?: BoardItem, items?: BoardItem[]): BoardLimi
     // if an item is provided, update the relevant board limits
     if (item) {
         const { id } = item;
-        const { maxX, maxY, minX, minY } = getItemMaxCoordinates(item);
+        const { maxX, maxY, minX, minY } = getMaxCoordinates(item);
         const { top, right, bottom, left } = boardLimits;
 
         // update limit if item coordinates exceeds previous one

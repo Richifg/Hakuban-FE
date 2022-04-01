@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useLayoutEffect, useRef } from 'react';
-import { getItemPositionCSSVars, getTextAreaCoordinates, isTextItem } from '../../../utils';
+import { getPositionCSSVars, getTextAreaCoordinates, isTextItem } from '../../../utils';
 import { useSelector, useDispatch, useDebouncedCallback } from '../../../hooks';
 import { addItem } from '../../../store/slices/itemsSlice';
 import { Align, BoardItem } from '../../../interfaces';
@@ -10,9 +10,10 @@ const TextEditor = (): React.ReactElement => {
     const dispatch = useDispatch();
     const { canvasTransform, isWriting } = useSelector((s) => s.board);
     const { textStyle } = useSelector((s) => s.tools);
-    const { selectedItem } = useSelector((s) => s.items);
+    const { items, selectedItemId } = useSelector((s) => s.items);
     const [initText, setInitText] = useState('');
     const textBoxRef = useRef<HTMLDivElement>(null);
+    const selectedItem = selectedItemId ? items[selectedItemId] : undefined;
 
     // keep last selected item on ref so it can be used inside debounce callback below
     const lastSelectedItemRef = useRef<BoardItem>();
@@ -28,7 +29,7 @@ const TextEditor = (): React.ReactElement => {
         }
     }, [selectedItem?.id]);
 
-    // update skip rendering so canvas doenst double render text of edited item
+    // update skip rendering so canvas doesnt double render text of edited item
     useEffect(() => {
         // if selected item had text, it needs to be skipped
         if (isWriting && isTextItem(selectedItem) && selectedItem.text) {
@@ -77,10 +78,10 @@ const TextEditor = (): React.ReactElement => {
         const { type } = selectedItem;
         if (type === 'shape' || type === 'note') {
             const coordinates = getTextAreaCoordinates(selectedItem);
-            return getItemPositionCSSVars(canvasTransform, coordinates);
+            return getPositionCSSVars(canvasTransform, coordinates);
         } else {
             const { x0, y0, x2, y2 } = selectedItem;
-            return getItemPositionCSSVars(canvasTransform, { x0, y0, x2, y2 });
+            return getPositionCSSVars(canvasTransform, { x0, y0, x2, y2 });
         }
     }, [canvasTransform, selectedItem]);
 
@@ -88,7 +89,6 @@ const TextEditor = (): React.ReactElement => {
     const handleMouseDown = (e: React.MouseEvent) => e.stopPropagation();
 
     if (!isWriting || !isTextItem(selectedItem)) return <></>;
-
     const { scale } = canvasTransform;
     return (
         <div

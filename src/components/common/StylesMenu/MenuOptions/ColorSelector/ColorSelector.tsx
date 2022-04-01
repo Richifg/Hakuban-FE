@@ -4,11 +4,12 @@ import colorOptions from './colorOptions';
 import './ColorSelector.scss';
 
 interface ColorSelector {
+    color: string;
     styleKey: keyof ShapeStyle | keyof TextStyle;
     onChange(value: string, key: string): void;
 }
 
-const ColorSelector = ({ onChange, styleKey }: ColorSelector): React.ReactElement => {
+const ColorSelector = ({ onChange, styleKey, color }: ColorSelector): React.ReactElement => {
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         const { value } = e.currentTarget;
         onChange(value, styleKey);
