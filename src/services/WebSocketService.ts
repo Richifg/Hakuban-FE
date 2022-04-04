@@ -4,8 +4,7 @@ import { setId, setError } from '../store/slices/connectionSlice';
 import { setMessages, addMessage } from '../store/slices/chatSlice';
 import { WSMessage } from '../interfaces/webSocket';
 import { ChatMessage, BoardItem } from '../interfaces/items';
-import { setBoardLimits } from '../store/slices/boardSlice';
-import { getUpdatedBoardLimits } from '../utils';
+import { updateBoardLimits } from '../BoardStateMachine/BoardStateMachineUtils';
 
 const url = process.env.REACT_APP_SERVER_URL;
 
@@ -44,7 +43,7 @@ class WebSocketService {
                         else {
                             const item = message.content;
                             store.dispatch(addItem(item));
-                            store.dispatch(setBoardLimits(getUpdatedBoardLimits(item)));
+                            updateBoardLimits(item);
                             if ('connections' in item)
                                 item.connections?.forEach(([lineId, point]) =>
                                     store.dispatch(addLineConnection({ lineId, point, itemId: item.id })),
@@ -61,7 +60,7 @@ class WebSocketService {
                         const boardItems = message.content.filter((item) => item.type !== 'chat') as BoardItem[];
                         store.dispatch(setItems(boardItems));
                         store.dispatch(setMessages(chatMessages));
-                        store.dispatch(setBoardLimits(getUpdatedBoardLimits(undefined, Object.values(boardItems))));
+                        updateBoardLimits(undefined, Object.values(boardItems));
                         // set all line connections and find max/min zIndex
                         let [maxZIndex, minZIndex] = [-Infinity, Infinity];
                         const lineConnections: { [lineId: string]: { [point: string]: string } } = {};

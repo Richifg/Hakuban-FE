@@ -1,10 +1,11 @@
-import { store } from '../store/store';
-import { BoardItem, BoardLimits, Limit } from '../interfaces';
-import { getMaxCoordinates } from './';
+import { store } from '../../store/store';
+import { setBoardLimits } from '../../store/slices/boardSlice';
+import { BoardItem, Limit } from '../../interfaces';
+import { getMaxCoordinates } from '../../utils';
 
 const BOARD_PADDING = 200; //px
 
-function getUpdatedBoardLimits(item?: BoardItem, items?: BoardItem[]): BoardLimits {
+function updateBoardLimits(item?: BoardItem, items?: BoardItem[]): void {
     const { boardLimits } = store.getState().board;
     const itemsArray = items || Object.values(store.getState().items.items);
     const updatedLimits = { ...boardLimits };
@@ -36,7 +37,7 @@ function getUpdatedBoardLimits(item?: BoardItem, items?: BoardItem[]): BoardLimi
         updatedLimits.left = findFarthestLimitFromItems('left', itemsArray);
     }
 
-    return updatedLimits;
+    store.dispatch(setBoardLimits(updatedLimits));
 }
 
 // finds the item with the farthest extent in the provided direction
@@ -61,4 +62,4 @@ function findFarthestLimitFromItems(direction: 'top' | 'bottom' | 'right' | 'lef
     return newLimit;
 }
 
-export default getUpdatedBoardLimits;
+export default updateBoardLimits;

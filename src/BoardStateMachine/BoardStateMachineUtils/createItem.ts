@@ -1,9 +1,10 @@
 import { store } from '../../store/store';
 import { BoardItem } from '../../interfaces';
-import { setCurrentAction, setBoardLimits } from '../../store/slices/boardSlice';
+import { setCurrentAction } from '../../store/slices/boardSlice';
 import { addItem, setSelectedItemId, setSelectedPoint } from '../../store/slices/itemsSlice';
-import { isPointInsideArea, getBoardCoordinates, getNewItem, getUpdatedBoardLimits } from '../../utils';
+import { isPointInsideArea, getBoardCoordinates, getNewItem } from '../../utils';
 import connectItem from './connectItem';
+import updateBoardLimits from './updateBoardLimits';
 
 function createItem(x: number, y: number): void {
     const { dispatch } = store;
@@ -36,7 +37,7 @@ function createItem(x: number, y: number): void {
     if (newItem) {
         dispatch(addItem(newItem));
         dispatch(setSelectedItemId(newItem.id));
-        dispatch(setBoardLimits(getUpdatedBoardLimits(newItem)));
+        updateBoardLimits(newItem);
     }
 }
 

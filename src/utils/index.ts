@@ -9,7 +9,6 @@ import getMaxCoordinates from './getMaxCoordinates';
 import getNewId from './getNewId';
 import getNewItem from './getNewItem';
 import getTextAreaCoordinates from './getTextAreaCoordinates';
-import getUpdatedBoardLimits from './getUpdatedBoardLimits';
 import getWrappedTextLines from './getWrappedTextLines';
 import isAreaInsideArea from './isAreaInsideArea';
 import isConnectableItem from './isConnectableItem';
@@ -30,7 +29,6 @@ export {
     getNewId,
     getNewItem,
     getTextAreaCoordinates,
-    getUpdatedBoardLimits,
     getWrappedTextLines,
     isAreaInsideArea,
     isConnectableItem,

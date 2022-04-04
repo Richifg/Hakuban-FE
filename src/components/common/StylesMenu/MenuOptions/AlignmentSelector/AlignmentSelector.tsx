@@ -1,6 +1,6 @@
 import React from 'react';
 import { Align, TextStyle } from '../../../../../interfaces';
-import alignmentOptions from './alignmentOptions';
+import AlignmentOptions from './AlignmentOptions';
 import './AlignmentSelector.scss';
 
 interface AligmentSelector {
@@ -10,7 +10,7 @@ interface AligmentSelector {
 }
 
 const AligmentSelector = ({ onChange, styleKey, align }: AligmentSelector): React.ReactElement => {
-    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const value = e.currentTarget.value as Align;
         onChange(value, styleKey);
     };
@@ -18,13 +18,9 @@ const AligmentSelector = ({ onChange, styleKey, align }: AligmentSelector): Reac
     return (
         <div className="alignment-selector">
             {styleKey}
-            <div className="options-container">
-                {alignmentOptions.map((option) => (
-                    <button className="alignment-button" value={option.value} key={option.value} onClick={handleClick}>
-                        {option.value}
-                    </button>
-                ))}
-            </div>
+            <select onChange={handleChange} value={align}>
+                <AlignmentOptions />
+            </select>
         </div>
     );
 };

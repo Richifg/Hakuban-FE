@@ -2,16 +2,16 @@ import { MouseEvent } from 'react';
 import { MouseButton, BoardItem } from '../../interfaces';
 import { setNoteStyle } from '../../store/slices/toolSlice';
 import { addItem, setDraggedItemId, setSelectedItemId, setDragSelectedItemIds } from '../../store/slices/itemsSlice';
-import { setCurrentAction, setCursorPosition, setIsWriting, setBoardLimits, setMouseButton } from '../../store/slices/boardSlice';
-import { isPointInsideArea, isMainPoint, getBoardCoordinates, getFinishedDrawing, getUpdatedBoardLimits } from '../../utils';
-import { createItem, disconnectItem, connectItem } from '../BoardStateMachineUtils';
+import { setCurrentAction, setCursorPosition, setIsWriting, setMouseButton } from '../../store/slices/boardSlice';
+import { isPointInsideArea, isMainPoint, getBoardCoordinates, getFinishedDrawing } from '../../utils';
+import { createItem, disconnectItem, connectItem, updateBoardLimits } from '../BoardStateMachineUtils';
 
 import { store } from '../../store/store';
 const { dispatch, getState } = store;
 
 function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
     const { selectedTool } = getState().tools;
-    const { items, selectedItemId, selectedPoint, dragSelectedItemIds, draggedItemId } = getState().items;
+    const { items, selectedItemId, selectedPoint, dragSelectedItemIds } = getState().items;
     const { currentAction, canvasTransform, isWriting, hasCursorMoved } = getState().board;
     const selectedItem = selectedItemId ? items[selectedItemId] : undefined;
 
@@ -35,7 +35,6 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
                     const finishedDrawing = getFinishedDrawing(selectedItem);
                     editedItem = finishedDrawing;
                     dispatch(addItem(finishedDrawing));
-                    dispatch(setBoardLimits(getUpdatedBoardLimits(finishedDrawing)));
                     dispatch(setCurrentAction('IDLE'));
                 }
                 break;
@@ -104,7 +103,7 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
         }
     }
     // board limits are not updated until user mouseUp
-    if (editedItem) dispatch(setBoardLimits(getUpdatedBoardLimits(editedItem)));
+    if (editedItem) updateBoardLimits(editedItem);
 }
 
 export default handleMouseUp;
