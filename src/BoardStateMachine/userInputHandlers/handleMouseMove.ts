@@ -2,7 +2,7 @@ import { MouseEvent } from 'react';
 import { MouseButton, BoardItem } from '../../interfaces';
 import { createItem, updateLineConnections } from '../BoardStateMachineUtils';
 import { setCursorPosition, setIsWriting, setHasCursorMoved, setCurrentAction } from '../../store/slices/boardSlice';
-import { addItem, setDragSelectedItemIds } from '../../store/slices/itemsSlice';
+import { addItem, setDragSelectedItemIds, setDragOffset } from '../../store/slices/itemsSlice';
 import { translateCanvas } from '../../store/slices/boardSlice';
 import {
     getBoardCoordinates,
@@ -41,22 +41,35 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
 
             case 'DRAG':
                 const ids = draggedItemId ? [draggedItemId] : dragSelectedItemIds;
-                if (ids.length) {
-                    const draggedItems = ids.map((id) => items[id]).filter((item) => isItemDraggable(item, lineConnections));
-                    // draggOffset is relative to the whole group when selecting multiple items
+                const selectedItems = ids.map((id) => items[id]);
+                const draggabledItems = selectedItems.filter((item) => isItemDraggable(item, lineConnections));
+                const updatedLines: BoardItem[] = [];
+                const updatedDraggables: BoardItem[] = [];
+                if (draggabledItems.length) {
+                    // draggOffset is relative to the whole group of items
                     const { minX, minY } =
-                        draggedItems.length > 1
-                            ? getMaxCoordinates(draggedItems)
-                            : { minX: draggedItems[0].x0, minY: draggedItems[0].y0 };
-                    draggedItems.forEach((item) => {
+                        selectedItems.length > 1
+                            ? getMaxCoordinates(selectedItems)
+                            : { minX: selectedItems[0].x0, minY: selectedItems[0].y0 };
+                    // only translate draggable items
+                    draggabledItems.forEach((item) => {
                         const { x0, y0 } = item;
                         const offset = { x: dragOffset.x + minX - x0, y: dragOffset.y + minY - y0 };
                         const updatedItem = {
                             ...item,
                             ...getTranslatedCoordinates(item, offset, boardX, boardY),
                         };
-                        updatedItems.push(updatedItem);
+                        updatedDraggables.push(updatedItem);
+                        updatedLines.push(...updateLineConnections(updatedItem));
+                        dispatch(addItem(updatedItem));
                     });
+                    // a selection with unmoveable items requires a new dragOffset for each update (lines grow when selection is moved)
+                    const updatedLinesOnSelection = updatedLines.filter((line) => ids.includes(line.id));
+                    if (updatedLinesOnSelection.length) {
+                        const updatedSelection = [...updatedDraggables, ...updatedLinesOnSelection];
+                        const { minX, minY } = getMaxCoordinates(updatedSelection);
+                        dispatch(setDragOffset([boardX - minX, boardY - minY]));
+                    }
                 } else dispatch(setCurrentAction('BLOCKED'));
                 dispatch(setCursorPosition([x, y]));
                 break;

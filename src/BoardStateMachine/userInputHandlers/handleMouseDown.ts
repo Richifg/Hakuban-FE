@@ -23,10 +23,8 @@ function handleMouseDown(e: MouseEvent<HTMLDivElement>): void {
                 const [boardX, boardY] = getBoardCoordinates(screenX, screenY, canvasTransform);
 
                 if (dragSelectedItemIds.length) {
-                    const draggableItems = dragSelectedItemIds
-                        .map((id) => items[id])
-                        .filter((item) => isItemDraggable(item, lineConnections));
-                    const { minX, maxX, minY, maxY } = getMaxCoordinates(draggableItems);
+                    const selectedItems = dragSelectedItemIds.map((id) => items[id]);
+                    const { minX, maxX, minY, maxY } = getMaxCoordinates(selectedItems);
                     if (isPointInsideArea(boardX, boardY, { x0: minX, x2: maxX, y0: minY, y2: maxY })) {
                         // has group of selected items and clicked within the the group
                         dispatch(setDragOffset([boardX - minX, boardY - minY]));
