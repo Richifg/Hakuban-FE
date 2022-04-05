@@ -3,7 +3,7 @@ import { MouseButton, BoardItem } from '../../interfaces';
 import { setNoteStyle } from '../../store/slices/toolSlice';
 import { addItem, setDraggedItemId, setSelectedItemId, setDragSelectedItemIds } from '../../store/slices/itemsSlice';
 import { setCurrentAction, setCursorPosition, setIsWriting, setMouseButton } from '../../store/slices/boardSlice';
-import { isPointInsideArea, isMainPoint, getBoardCoordinates, getFinishedDrawing } from '../../utils';
+import { isMainPoint, getBoardCoordinates, getFinishedDrawing, getClickedItem } from '../../utils';
 import { createItem, disconnectItem, connectItem, updateBoardLimits } from '../BoardStateMachineUtils';
 
 import { store } from '../../store/store';
@@ -20,7 +20,7 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
     dispatch(setMouseButton());
 
     const [boardX, boardY] = getBoardCoordinates(screenX, screenY, canvasTransform);
-    const clickedItem = Object.values(items).find((item) => isPointInsideArea(boardX, boardY, item));
+    const clickedItem = getClickedItem(boardX, boardY, Object.values(items));
 
     let editedItem: BoardItem | undefined = undefined;
     if (e.button === MouseButton.Left) {

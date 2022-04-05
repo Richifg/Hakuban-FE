@@ -1,6 +1,8 @@
 import getBoardCoordinates from './getBoardCoordinates';
 import getCanvasCoordinates from './getCanvasCoordinates';
+import getClickedItem from './getClickedItem';
 import getDebouncedFunction from './getDebouncedFunction';
+import getDistanceToLine from './getDistanceToLine';
 import getFinishedDrawing from './getFinishedDrawing';
 import getPositionCSSVars from './getPositionCSSVars';
 import getResizedCoordinates from './getResizedCoordinates';
@@ -20,7 +22,9 @@ import isTextItem from './isTextItem';
 export {
     getBoardCoordinates,
     getCanvasCoordinates,
+    getClickedItem,
     getDebouncedFunction,
+    getDistanceToLine,
     getFinishedDrawing,
     getPositionCSSVars,
     getResizedCoordinates,
