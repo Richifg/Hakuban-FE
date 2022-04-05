@@ -1,7 +1,7 @@
-import { Shape, Note, Text, Coordinates } from '../interfaces';
+import { BoardTextItem, Coordinates } from '../interfaces';
 import { getMaxCoordinates } from '../utils';
 
-function getTextAreaCoordinates(item: Shape | Note | Text): Coordinates {
+function getTextAreaCoordinates(item: BoardTextItem): Coordinates {
     const { x0, x2, y0, y2 } = item;
     let [xL, xR, yT, yB] = [0, 0, 0, 0];
 

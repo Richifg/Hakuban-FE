@@ -1,6 +1,12 @@
 import { MouseEvent } from 'react';
 import { MouseButton } from '../../interfaces';
-import { setCurrentAction, setCursorPosition, setHasCursorMoved, setMouseButton } from '../../store/slices/boardSlice';
+import {
+    setCurrentAction,
+    setCursorPosition,
+    setHasCursorMoved,
+    setIsWriting,
+    setMouseButton,
+} from '../../store/slices/boardSlice';
 import { setDragOffset, setDraggedItemId, setSelectedItemId, setDragSelectedItemIds } from '../../store/slices/itemsSlice';
 import { isPointInsideArea, getBoardCoordinates, getMaxCoordinates, isItemDraggable } from '../../utils';
 
@@ -8,7 +14,7 @@ import { store } from '../../store/store';
 const { dispatch, getState } = store;
 
 function handleMouseDown(e: MouseEvent<HTMLDivElement>): void {
-    const { canvasTransform } = getState().board;
+    const { canvasTransform, isWriting } = getState().board;
     const { items, selectedItemId, lineConnections, draggedItemId, dragSelectedItemIds } = getState().items;
     const { selectedTool } = getState().tools;
 
@@ -46,12 +52,16 @@ function handleMouseDown(e: MouseEvent<HTMLDivElement>): void {
                             draggedItemId && dispatch(setDraggedItemId());
                         }
                         // deselect item if dragging a different item
-                        if (clickedItem.id !== selectedItemId) dispatch(setSelectedItemId());
+                        if (clickedItem.id !== selectedItemId) {
+                            dispatch(setSelectedItemId());
+                            isWriting && dispatch(setIsWriting(false));
+                        }
                         dispatch(setCurrentAction('DRAG'));
                     } else {
                         // nothing was clicked and there was no previous group selection
                         dispatch(setDragOffset([boardX, boardY]));
                         dispatch(setCurrentAction('DRAGSELECT'));
+                        isWriting && dispatch(setIsWriting(false));
                     }
                 }
                 break;

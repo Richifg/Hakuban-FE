@@ -29,6 +29,11 @@ const TextEditor = (): React.ReactElement => {
         }
     }, [selectedItem?.id]);
 
+    // keeps track of last selectedItem with every change of item
+    useEffect(() => {
+        lastSelectedItemRef.current = selectedItem;
+    }, [selectedItem]);
+
     // update skip rendering so canvas doesnt double render text of edited item
     useEffect(() => {
         // if selected item had text, it needs to be skipped
@@ -43,11 +48,6 @@ const TextEditor = (): React.ReactElement => {
             dispatch(addItem({ ...lastItem, text: { ...lastItem.text, content, skipRendering: false } }));
         }
     }, [isWriting]);
-
-    // keeps track of last selectedItem with every change of item
-    useEffect(() => {
-        lastSelectedItemRef.current = selectedItem;
-    }, [selectedItem]);
 
     // handles update of item's text
     const handleTextChange = useDebouncedCallback((e: React.ChangeEvent<HTMLDivElement>) => {
