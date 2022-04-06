@@ -1,5 +1,12 @@
 import { store } from '../store/store';
-import { setItems, addItem, setLineConnections, addLineConnection, setMaxZIndex, setMinZIndex } from '../store/slices/itemsSlice';
+import {
+    setItems,
+    setLineConnections,
+    addLineConnection,
+    setMaxZIndex,
+    setMinZIndex,
+    addBEItem,
+} from '../store/slices/itemsSlice';
 import { setId, setError } from '../store/slices/connectionSlice';
 import { setMessages, addMessage } from '../store/slices/chatSlice';
 import { WSMessage } from '../interfaces/webSocket';
@@ -42,7 +49,7 @@ class WebSocketService {
                         if (message.content.type === 'chat') store.dispatch(addMessage(message.content));
                         else {
                             const item = message.content;
-                            store.dispatch(addItem(item));
+                            store.dispatch(addBEItem(item));
                             updateBoardLimits(item);
                             if ('connections' in item)
                                 item.connections?.forEach(([lineId, point]) =>
@@ -95,7 +102,7 @@ class WebSocketService {
         const message: WSMessage = {
             type: 'item',
             content: {
-                id: 'TEMP', // #TODO decide wher ids are generated
+                id: 'TEMP', // #TODO decide where ids are generated
                 type: 'chat',
                 content: text,
                 from: this.id,
@@ -104,6 +111,18 @@ class WebSocketService {
         };
         this.socket?.send(JSON.stringify(message));
     }
+
+    sendItem(item: BoardItem): void {
+        const sanitizedItem = { ...item };
+        if (item.inProgress) delete item.inProgress;
+        if ('text' in item) delete item.text?.skipRendering;
+        const message: WSMessage = {
+            type: 'item',
+            content: sanitizedItem,
+        };
+        this.socket?.send(JSON.stringify(message));
+    }
+
     disconnect(): void {
         this.socket?.close();
         this.socket = undefined;

@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { BoardItem, Point, MainPoint } from '../../interfaces/items';
+import websocket from '../../services/WebSocketService';
 
 interface ItemsState {
     items: { [id: string]: BoardItem };
@@ -29,9 +30,14 @@ const itemsSlice = createSlice({
         setItems: (state, action: PayloadAction<BoardItem[]>) => {
             action.payload.forEach((item) => (state.items[item.id] = item));
         },
+        addBEItem: (state, action: PayloadAction<BoardItem>) => {
+            const newItem = action.payload;
+            state.items[newItem.id] = newItem;
+        },
         addItem: (state, action: PayloadAction<BoardItem>) => {
             const newItem = action.payload;
             state.items[newItem.id] = newItem;
+            // if (!newItem.inProgress) websocket.sendItem(newItem);
         },
         updateItem: (state, action: PayloadAction<{ id: string | undefined; key: string; value: string | number | boolean }>) => {
             const { id, key, value } = action.payload;
@@ -96,6 +102,7 @@ const itemsSlice = createSlice({
 
 export const {
     setItems,
+    addBEItem,
     addItem,
     updateItem,
     deleteItems,

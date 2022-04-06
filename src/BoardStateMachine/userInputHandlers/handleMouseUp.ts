@@ -22,7 +22,7 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
     const [boardX, boardY] = getBoardCoordinates(screenX, screenY, canvasTransform);
     const clickedItem = getClickedItem(boardX, boardY, Object.values(items));
 
-    let editedItem: BoardItem | undefined = undefined;
+    const editedItems: BoardItem[] = [];
     if (e.button === MouseButton.Left) {
         switch (currentAction) {
             case 'IDLE':
@@ -33,15 +33,17 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
                 if (selectedItem?.type === 'drawing') {
                     // transformed in-progress drawing into relative coordinates drawing
                     const finishedDrawing = getFinishedDrawing(selectedItem);
-                    editedItem = finishedDrawing;
+                    editedItems.push(finishedDrawing);
                     dispatch(addItem(finishedDrawing));
                     dispatch(setCurrentAction('IDLE'));
                 }
                 break;
 
             case 'DRAG':
-                if (dragSelectedItemIds.length) dispatch(setCurrentAction('EDIT'));
-                else {
+                if (dragSelectedItemIds.length) {
+                    editedItems.push(...dragSelectedItemIds.map((id) => items[id]));
+                    dispatch(setCurrentAction('EDIT'));
+                } else {
                     dispatch(setDraggedItemId());
                     if (!hasCursorMoved) {
                         // click on top of an item without moving cursor means the item has to be selected
@@ -50,7 +52,7 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
                         dispatch(setCurrentAction('EDIT'));
                     } else {
                         // otherwise an item was dragged and could be editted
-                        editedItem = clickedItem;
+                        clickedItem && editedItems.push(clickedItem);
                         if (selectedItemId) dispatch(setCurrentAction('EDIT'));
                         else dispatch(setCurrentAction('IDLE'));
                     }
@@ -58,7 +60,7 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
                 break;
 
             case 'RESIZE':
-                editedItem = selectedItem;
+                selectedItem && editedItems.push(selectedItem);
                 if (selectedTool === 'NOTE' && selectedItem?.type === 'note') {
                     // resizing an Note involves updating preffered Note size
                     const { fillColor } = selectedItem;
@@ -103,7 +105,10 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
         }
     }
     // board limits are not updated until user mouseUp
-    if (editedItem) updateBoardLimits(editedItem);
+    editedItems.forEach((item) => {
+        updateBoardLimits(item);
+        dispatch(addItem({ ...item, inProgress: false }));
+    });
 }
 
 export default handleMouseUp;

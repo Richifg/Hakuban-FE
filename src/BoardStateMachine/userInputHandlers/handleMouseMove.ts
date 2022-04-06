@@ -58,10 +58,12 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
                         const updatedItem = {
                             ...item,
                             ...getTranslatedCoordinates(item, offset, boardX, boardY),
+                            inProgress: true,
                         };
+                        // OJO OJO OJO TODO SOMENTHING HERE, LINES SHOULE BE MADE IN PROGRESS AND RESTORE ON MOUSE UP!!!!!!!!!!!!!!!!!!!!
                         updatedDraggables.push(updatedItem);
+                        updatedItems.push(updatedItem);
                         updatedLines.push(...updateLineConnections(updatedItem));
-                        dispatch(addItem(updatedItem));
                     });
                     // a selection with unmoveable items requires a new dragOffset for each update (lines grow when selection is moved)
                     const updatedLinesOnSelection = updatedLines.filter((line) => ids.includes(line.id));
@@ -79,7 +81,7 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
                     const { type } = selectedItem;
                     const maintainRatio = type === 'note' || type === 'drawing';
                     const points = getResizedCoordinates(selectedItem, selectedPoint, x, y, canvasTransform, maintainRatio);
-                    const updatedItem = { ...selectedItem, ...points };
+                    const updatedItem = { ...selectedItem, ...points, inProgress: true };
                     updatedItems.push(updatedItem);
                 } else {
                     // resizing without selectedItem means the item gotta be created
