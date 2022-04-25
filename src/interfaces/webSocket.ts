@@ -10,6 +10,11 @@ interface WSCollectionMessage {
     content: Item[];
 }
 
+interface WSDeleteMessage {
+    type: 'delete';
+    content: string;
+}
+
 interface WSIdMessage {
     type: 'id';
     content: string;
@@ -21,4 +26,4 @@ interface WSErrorMessage {
 }
 
 // Messages sent via webSocket
-export type WSMessage = WSItemMessage | WSCollectionMessage | WSIdMessage | WSErrorMessage;
+export type WSMessage = WSItemMessage | WSCollectionMessage | WSDeleteMessage | WSIdMessage | WSErrorMessage;

@@ -37,7 +37,7 @@ const itemsSlice = createSlice({
         addItem: (state, action: PayloadAction<BoardItem>) => {
             const newItem = action.payload;
             state.items[newItem.id] = newItem;
-            // if (!newItem.inProgress) websocket.sendItem(newItem);
+            if (!newItem.inProgress) websocket.sendItem(newItem);
         },
         updateItem: (state, action: PayloadAction<{ id: string | undefined; key: string; value: string | number | boolean }>) => {
             const { id, key, value } = action.payload;
@@ -51,7 +51,10 @@ const itemsSlice = createSlice({
         },
         deleteItems: (state, action: PayloadAction<string | string[]>) => {
             const ids = Array.isArray(action.payload) ? action.payload : [action.payload];
-            ids.forEach((id) => delete state.items[id]);
+            ids.forEach((id) => {
+                delete state.items[id];
+                websocket.deleteItem(id);
+            });
             delete state.selectedItemId;
             state.dragSelectedItemIds = [];
         },

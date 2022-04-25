@@ -125,6 +125,14 @@ class WebSocketService {
         this.socket?.send(JSON.stringify(message));
     }
 
+    deleteItem(id: string): void {
+        const message: WSMessage = {
+            type: 'delete',
+            content: id,
+        };
+        this.socket?.send(JSON.stringify(message));
+    }
+
     disconnect(): void {
         this.socket?.close();
         this.socket = undefined;
