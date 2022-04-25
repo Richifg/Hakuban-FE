@@ -8,7 +8,7 @@ import {
     setMouseButton,
 } from '../../store/slices/boardSlice';
 import { setDragOffset, setDraggedItemId, setSelectedItemId, setDragSelectedItemIds } from '../../store/slices/itemsSlice';
-import { isPointInsideArea, getBoardCoordinates, getMaxCoordinates, isItemDraggable, getClickedItem } from '../../utils';
+import { isPointInsideArea, getBoardCoordinates, getMaxCoordinates, isItemDraggable, getItemAtPosition } from '../../utils';
 
 import { store } from '../../store/store';
 const { dispatch, getState } = store;
@@ -41,7 +41,7 @@ function handleMouseDown(e: MouseEvent<HTMLDivElement>): void {
                         dispatch(setDragSelectedItemIds());
                     }
                 } else {
-                    const clickedItem = getClickedItem(boardX, boardY, Object.values(items));
+                    const clickedItem = getItemAtPosition(boardX, boardY, Object.values(items));
                     if (clickedItem) {
                         if (isItemDraggable(clickedItem, lineConnections)) {
                             dispatch(setDragOffset([boardX - clickedItem.x0, boardY - clickedItem.y0]));

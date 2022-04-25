@@ -1,32 +1,29 @@
 import { store } from '../../store/store';
-import { BoardItem } from '../../interfaces';
+import { BoardItem, Tool } from '../../interfaces';
 import { setCurrentAction } from '../../store/slices/boardSlice';
 import { addItem, setSelectedItemId, setSelectedPoint } from '../../store/slices/itemsSlice';
-import { isPointInsideArea, getBoardCoordinates, getNewItem } from '../../utils';
+import { isPointInsideArea, getNewItem } from '../../utils';
 import connectItem from './connectItem';
 import updateBoardLimits from './updateBoardLimits';
 
-function createItem(x: number, y: number): void {
-    const { dispatch } = store;
-    const { canvasTransform } = store.getState().board;
-    const { selectedTool } = store.getState().tools;
+// TODO possibly simplify this function and let stateMachine handle state changes
 
-    const [boardX, boardY] = getBoardCoordinates(x, y, canvasTransform);
+function createItem(boardX: number, boardY: number, tool: Tool): void {
+    const { dispatch } = store;
     let newItem: BoardItem | undefined = undefined;
 
-    if (selectedTool === 'SHAPE') {
+    if (tool === 'SHAPE') {
         newItem = getNewItem(boardX, boardY, 0, 'shape');
         dispatch(setSelectedPoint('P2'));
         dispatch(setCurrentAction('RESIZE'));
-    } else if (selectedTool === 'NOTE') {
+    } else if (tool === 'NOTE') {
         newItem = getNewItem(boardX, boardY, 0, 'note');
         dispatch(setCurrentAction('EDIT'));
-    } else if (selectedTool === 'PEN') {
+    } else if (tool === 'PEN') {
         newItem = getNewItem(boardX, boardY, 0, 'drawing');
         dispatch(setCurrentAction('DRAW'));
-    } else if (selectedTool === 'LINE') {
+    } else if (tool === 'LINE') {
         const { items } = store.getState().items;
-        const [boardX, boardY] = getBoardCoordinates(x, y, canvasTransform);
         newItem = getNewItem(boardX, boardY, 0, 'line');
         dispatch(setSelectedPoint('P2'));
         dispatch(setCurrentAction('RESIZE'));

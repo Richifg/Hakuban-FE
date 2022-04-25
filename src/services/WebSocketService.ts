@@ -113,9 +113,11 @@ class WebSocketService {
     }
 
     sendItem(item: BoardItem): void {
+        // clean up temporary properties on items
         const sanitizedItem = { ...item };
-        if (item.inProgress) delete item.inProgress;
-        if ('text' in item) delete item.text?.skipRendering;
+        delete sanitizedItem.inProgress;
+        if ('text' in sanitizedItem) delete sanitizedItem.text?.skipRendering;
+
         const message: WSMessage = {
             type: 'item',
             content: sanitizedItem,

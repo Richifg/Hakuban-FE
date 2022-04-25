@@ -4,7 +4,7 @@ import { addItem } from '../../store/slices/itemsSlice';
 
 // updates the coordinates of the Lines to wich an item is connected
 
-function updateLineConnections(item: BoardItem): BoardItem[] {
+function updateLineConnections(item: BoardItem, inProgress = true): BoardItem[] {
     const updatedLines: BoardItem[] = [];
     if ('connections' in item) {
         const { items } = store.getState().items;
@@ -23,6 +23,8 @@ function updateLineConnections(item: BoardItem): BoardItem[] {
                     updatedLine.x2 = x;
                     updatedLine.y2 = y;
                 }
+                updatedLine.inProgress = inProgress;
+
                 store.dispatch(addItem(updatedLine));
                 updatedLines.push(updatedLine);
             }

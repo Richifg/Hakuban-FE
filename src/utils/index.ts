@@ -1,10 +1,10 @@
 import getBoardCoordinates from './getBoardCoordinates';
 import getCanvasCoordinates from './getCanvasCoordinates';
-import getClickedItem from './getClickedItem';
 import getDebouncedFunction from './getDebouncedFunction';
 import getDistanceToLine from './getDistanceToLine';
-import getFinishedDrawing from './getFinishedDrawing';
+import getItemAtPosition from './getItemAtPosition';
 import getPositionCSSVars from './getPositionCSSVars';
+import getRelativeDrawing from './getRelativeDrawing';
 import getResizedCoordinates from './getResizedCoordinates';
 import getTranslatedCoordinates from './getTranslatedCoordinates';
 import getMaxCoordinates from './getMaxCoordinates';
@@ -22,11 +22,11 @@ import isTextItem from './isTextItem';
 export {
     getBoardCoordinates,
     getCanvasCoordinates,
-    getClickedItem,
     getDebouncedFunction,
     getDistanceToLine,
-    getFinishedDrawing,
+    getItemAtPosition,
     getPositionCSSVars,
+    getRelativeDrawing,
     getResizedCoordinates,
     getTranslatedCoordinates,
     getMaxCoordinates,

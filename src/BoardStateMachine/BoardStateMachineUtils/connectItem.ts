@@ -3,7 +3,7 @@ import { BoardItem, Line, MainPoint } from '../../interfaces';
 import { addItem, addLineConnection } from '../../store/slices/itemsSlice';
 import { isConnectableItem } from '../../utils';
 
-// adds a Line connection to an item
+// adds a Line connection to an item and returns the updated item
 
 function connectItem(itemToConnect: BoardItem, line: Line, point: MainPoint, boardX: number, boardY: number): void {
     if (isConnectableItem(itemToConnect)) {
