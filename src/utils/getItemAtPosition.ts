@@ -1,8 +1,5 @@
 import { BoardItem } from '../interfaces';
-import { isPointInsideArea, getDistanceToLine } from '.';
-
-// clicking exactly on a 1px line is not easy
-const LINE_DISTANCE_THRESHOLD = 10; //px
+import { isPointInsideArea, isPointInsideLine } from '.';
 
 function getItemAtPosition(
     boardX: number,
@@ -16,9 +13,7 @@ function getItemAtPosition(
         .sort((a, b) => (a.zIndex > b.zIndex || (a.zIndex === b.zIndex && a.creationDate > b.creationDate) ? -1 : 1));
 
     return items.find((item) =>
-        item.type === 'line'
-            ? getDistanceToLine(item, boardX, boardY) <= LINE_DISTANCE_THRESHOLD + item.lineWidth
-            : isPointInsideArea(boardX, boardY, item),
+        item.type === 'line' ? isPointInsideLine(boardX, boardY, item) : isPointInsideArea(boardX, boardY, item),
     );
 }
 

@@ -1,7 +1,6 @@
 import getBoardCoordinates from './getBoardCoordinates';
 import getCanvasCoordinates from './getCanvasCoordinates';
 import getDebouncedFunction from './getDebouncedFunction';
-import getDistanceToLine from './getDistanceToLine';
 import getItemAtPosition from './getItemAtPosition';
 import getPositionCSSVars from './getPositionCSSVars';
 import getRelativeDrawing from './getRelativeDrawing';
@@ -17,13 +16,13 @@ import isConnectableItem from './isConnectableItem';
 import isItemDraggable from './isItemDraggable';
 import isMainPoint from './isMainPoint';
 import isPointInsideArea from './isPointInsideArea';
+import isPointInsideLine from './isPointInsideLine';
 import isTextItem from './isTextItem';
 
 export {
     getBoardCoordinates,
     getCanvasCoordinates,
     getDebouncedFunction,
-    getDistanceToLine,
     getItemAtPosition,
     getPositionCSSVars,
     getRelativeDrawing,
@@ -39,5 +38,6 @@ export {
     isItemDraggable,
     isMainPoint,
     isPointInsideArea,
+    isPointInsideLine,
     isTextItem,
 };
