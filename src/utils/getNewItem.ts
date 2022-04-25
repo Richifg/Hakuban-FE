@@ -15,7 +15,6 @@ function getNewItem(x: number, y: number, zIndex: number, type: BoardItemType): 
         creationDate,
         zIndex,
         type,
-        inProgress: true,
     };
     switch (type) {
         case 'line':

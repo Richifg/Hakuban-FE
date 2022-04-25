@@ -1,16 +1,24 @@
 import { MouseEvent } from 'react';
 import { MouseButton, BoardItem } from '../../interfaces';
-import { createItem, updateLineConnections } from '../BoardStateMachineUtils';
+import { updateLineConnections, connectItem } from '../BoardStateMachineUtils';
 import { setCursorPosition, setIsWriting, setHasCursorMoved, setCurrentAction } from '../../store/slices/boardSlice';
-import { addItem, setDragSelectedItemIds, setDragOffset } from '../../store/slices/itemsSlice';
+import {
+    addItem,
+    setDragSelectedItemIds,
+    setDragOffset,
+    setSelectedPoint,
+    setSelectedItemId,
+} from '../../store/slices/itemsSlice';
 import { translateCanvas } from '../../store/slices/boardSlice';
 import {
     getBoardCoordinates,
     getTranslatedCoordinates,
     getResizedCoordinates,
     getMaxCoordinates,
+    getNewItem,
     isAreaInsideArea,
     isItemDraggable,
+    getItemAtPosition,
 } from '../../utils';
 
 import { store } from '../../store/store';
@@ -85,8 +93,27 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
                     updateLineConnections(updatedItem, true);
                     updatedItems.push(updatedItem);
                 } else {
-                    // resizing without selectedItem means the item gotta be created
-                    createItem(boardX, boardY, selectedTool);
+                    // resizing without selectedItem means the item's gotta be created first
+                    let newItem: BoardItem | undefined = undefined;
+                    if (selectedTool === 'SHAPE') {
+                        newItem = getNewItem(boardX, boardY, 0, 'shape');
+                        dispatch(setSelectedPoint('P2'));
+                        dispatch(setCurrentAction('RESIZE'));
+                    } else if (selectedTool === 'PEN') {
+                        newItem = getNewItem(boardX, boardY, 0, 'drawing');
+                        dispatch(setCurrentAction('DRAW'));
+                    } else if (selectedTool === 'LINE') {
+                        newItem = getNewItem(boardX, boardY, 0, 'line');
+                        // when creating a line it could be connected to an item right away
+                        const itemUnderCursor = getItemAtPosition(boardX, boardY, Object.values(items));
+                        if (itemUnderCursor) connectItem(itemUnderCursor, newItem, 'P0', boardX, boardY);
+                        dispatch(setSelectedPoint('P2'));
+                        dispatch(setCurrentAction('RESIZE'));
+                    }
+                    if (newItem) {
+                        dispatch(addItem({ ...newItem, inProgress: true }));
+                        dispatch(setSelectedItemId(newItem.id));
+                    }
                 }
                 dispatch(setCursorPosition([x, y]));
                 break;
@@ -109,6 +136,7 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
             dispatch(addItem({ ...item, inProgress: true }));
         });
     } else if (mouseButton === MouseButton.Middle || mouseButton === MouseButton.Right) {
+        // middle and right buttons always pan camera
         dispatch(translateCanvas([x - cursorPosition.x, y - cursorPosition.y]));
     }
 }

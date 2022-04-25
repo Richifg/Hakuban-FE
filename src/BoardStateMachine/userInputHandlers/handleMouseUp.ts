@@ -3,15 +3,15 @@ import { MouseButton, BoardItem } from '../../interfaces';
 import { setNoteStyle } from '../../store/slices/toolSlice';
 import { addItem, setDraggedItemId, setSelectedItemId, setDragSelectedItemIds } from '../../store/slices/itemsSlice';
 import { setCurrentAction, setCursorPosition, setIsWriting, setMouseButton } from '../../store/slices/boardSlice';
-import { isMainPoint, getBoardCoordinates, getRelativeDrawing, getItemAtPosition } from '../../utils';
-import { createItem, disconnectItem, connectItem, updateBoardLimits, updateLineConnections } from '../BoardStateMachineUtils';
+import { isMainPoint, getBoardCoordinates, getRelativeDrawing, getItemAtPosition, getNewItem } from '../../utils';
+import { disconnectItem, connectItem, updateBoardLimits, updateLineConnections } from '../BoardStateMachineUtils';
 
 import { store } from '../../store/store';
 const { dispatch, getState } = store;
 
 function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
     const { selectedTool } = getState().tools;
-    const { items, selectedItemId, selectedPoint, dragSelectedItemIds } = getState().items;
+    const { items, selectedItemId, selectedPoint, dragSelectedItemIds, draggedItemId } = getState().items;
     const { currentAction, canvasTransform, isWriting, hasCursorMoved } = getState().board;
     const selectedItem = selectedItemId ? items[selectedItemId] : undefined;
 
@@ -26,7 +26,11 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
     if (e.button === MouseButton.Left) {
         switch (currentAction) {
             case 'IDLE':
-                if (selectedTool === 'NOTE') createItem(boardX, boardY, selectedTool);
+                if (selectedTool === 'NOTE') {
+                    const note = getNewItem(boardX, boardY, 0, 'note');
+                    dispatch(setCurrentAction('EDIT'));
+                    editedItems.push(note);
+                }
                 break;
 
             case 'DRAW':
@@ -51,9 +55,10 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
                         dispatch(setCurrentAction('EDIT'));
                     } else {
                         // otherwise an item was dragged and could be editted
-                        itemUnderCursor && editedItems.push(itemUnderCursor);
-                        if (selectedItemId) dispatch(setCurrentAction('EDIT'));
-                        else dispatch(setCurrentAction('IDLE'));
+                        if (draggedItemId) {
+                            dispatch(setCurrentAction('EDIT'));
+                            editedItems.push(items[draggedItemId]);
+                        } else dispatch(setCurrentAction('IDLE'));
                     }
                 }
                 break;
