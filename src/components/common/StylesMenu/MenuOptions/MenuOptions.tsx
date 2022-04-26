@@ -11,7 +11,7 @@ import {
     ZIndexSelector,
 } from '.';
 import { Align, BoardItem, Shape, Line, Text } from '../../../../interfaces';
-import { updateItem, addItem, deleteItems } from '../../../../store/slices/itemsSlice';
+import { updateItems, addItem, deleteItems } from '../../../../store/slices/itemsSlice';
 import './MenuOptions.scss';
 import { setCurrentAction } from '../../../../store/slices/boardSlice';
 
@@ -30,12 +30,8 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
     }, [items]);
 
     const handleChange = (value: string | number, key: string) => {
-        items.forEach((item) => {
-            if (key in item) {
-                const { id } = item;
-                dispatch(updateItem({ id, key, value }));
-            }
-        });
+        const updateData = { keys: [key], data: items.map(({ id }) => ({ id, values: [value] })) };
+        dispatch(updateItems(updateData));
     };
 
     // nested change is only used for the text property of items

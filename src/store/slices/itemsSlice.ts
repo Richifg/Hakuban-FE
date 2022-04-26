@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { BoardItem, Point, MainPoint } from '../../interfaces/items';
-import websocket from '../../services/WebSocketService';
+import { BoardItem, Point, MainPoint, UpdateData } from '../../interfaces';
+import websocket from '../../services/WebSocket/WebSocket';
 
 interface ItemsState {
     items: { [id: string]: BoardItem };
@@ -30,33 +30,35 @@ const itemsSlice = createSlice({
         setItems: (state, action: PayloadAction<BoardItem[]>) => {
             action.payload.forEach((item) => (state.items[item.id] = item));
         },
-        addBEItem: (state, action: PayloadAction<BoardItem>) => {
-            const newItem = action.payload;
-            state.items[newItem.id] = newItem;
+        addItem: (state, action: PayloadAction<{ item: BoardItem; blockSync?: boolean } | BoardItem>) => {
+            const { item, blockSync } = 'item' in action.payload ? action.payload : { item: action.payload, blockSync: false };
+            state.items[item.id] = item;
+            if (!item.inProgress && !blockSync) websocket.addItem(item);
         },
-        addItem: (state, action: PayloadAction<BoardItem>) => {
-            const newItem = action.payload;
-            state.items[newItem.id] = newItem;
-            if (!newItem.inProgress) websocket.sendItem(newItem);
-        },
-        updateItem: (state, action: PayloadAction<{ id: string | undefined; key: string; value: string | number | boolean }>) => {
-            const { id, key, value } = action.payload;
-            if (id) {
+        updateItems: (state, action: PayloadAction<{ updateData: UpdateData; blockSync?: boolean } | UpdateData>) => {
+            const { updateData, blockSync } =
+                'updateData' in action.payload ? action.payload : { updateData: action.payload, blockSync: false };
+            const { keys, data } = updateData;
+            const cleanUpdateData: UpdateData = { keys, data: [] };
+            data.forEach(({ id, values }) => {
+                let error = false;
                 const oldItem = state.items[id];
-                if (key in oldItem) {
-                    const newItem = { ...oldItem, [key]: value };
-                    state.items[id] = newItem;
+                if (keys.length === values.length) {
+                    keys.forEach((key, index) => {
+                        if (key in oldItem) state.items[id] = { ...oldItem, [key]: values[index] };
+                        else error = true;
+                    });
+                    if (!error && !oldItem.inProgress) cleanUpdateData.data.push({ id, values });
                 }
-            }
-        },
-        deleteItems: (state, action: PayloadAction<string | string[]>) => {
-            const ids = Array.isArray(action.payload) ? action.payload : [action.payload];
-            ids.forEach((id) => {
-                delete state.items[id];
-                websocket.deleteItem(id);
             });
+            if (!blockSync) websocket.updateItems(cleanUpdateData);
+        },
+        deleteItems: (state, action: PayloadAction<{ ids: string[]; blockSync: boolean } | string[]>) => {
+            const { ids, blockSync } = 'ids' in action.payload ? action.payload : { ids: action.payload, blockSync: false };
+            ids.forEach((id) => delete state.items[id]);
             delete state.selectedItemId;
             state.dragSelectedItemIds = [];
+            if (!blockSync) websocket.deleteItems(ids);
         },
         setDragOffset: (state, action: PayloadAction<[x: number, y: number]>) => {
             const [x, y] = action.payload;
@@ -95,19 +97,20 @@ const itemsSlice = createSlice({
             }
         },
         setMaxZIndex: (state, action: PayloadAction<number>) => {
-            state.maxZIndex = action.payload;
+            const zIndex = action.payload;
+            if (zIndex > state.maxZIndex) state.maxZIndex = zIndex;
         },
         setMinZIndex: (state, action: PayloadAction<number>) => {
-            state.minZIndex = action.payload;
+            const zIndex = action.payload;
+            if (zIndex < state.minZIndex) state.minZIndex = zIndex;
         },
     },
 });
 
 export const {
     setItems,
-    addBEItem,
     addItem,
-    updateItem,
+    updateItems,
     deleteItems,
     setDragOffset,
     setDraggedItemId,

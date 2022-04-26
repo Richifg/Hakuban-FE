@@ -1,17 +1,18 @@
-import { store } from '../store/store';
+import { store } from '../../store/store';
 import {
     setItems,
+    addItem,
+    deleteItems,
     setLineConnections,
     addLineConnection,
     setMaxZIndex,
     setMinZIndex,
-    addBEItem,
-} from '../store/slices/itemsSlice';
-import { setId, setError } from '../store/slices/connectionSlice';
-import { setMessages, addMessage } from '../store/slices/chatSlice';
-import { WSMessage } from '../interfaces/webSocket';
-import { ChatMessage, BoardItem } from '../interfaces/items';
-import { updateBoardLimits } from '../BoardStateMachine/BoardStateMachineUtils';
+} from '../../store/slices/itemsSlice';
+import { setId, setError } from '../../store/slices/connectionSlice';
+import { setMessages, addMessage } from '../../store/slices/chatSlice';
+import { WSMessage } from '../../interfaces/webSocket';
+import { ChatMessage, BoardItem, UpdateData } from '../../interfaces';
+import { updateBoardLimits } from '../../BoardStateMachine/BoardStateMachineUtils';
 
 const url = process.env.REACT_APP_SERVER_URL;
 
@@ -26,7 +27,7 @@ class WebSocketService {
         const socket = new WebSocket(fullURL);
         this.socket = socket;
 
-        // connection with BE is now verified by the id message
+        // connection with BE is now verified by the id message <------ WHAT? it is not!
         const connectionPromise = new Promise<void>((resolve, reject) => {
             socket.addEventListener('open', () => {
                 console.log('ws connection openned');
@@ -37,7 +38,7 @@ class WebSocketService {
             });
             // TODO: this component should receive a callback, and maybe app shuold initialize a websocketservice with the callback
             // and also import store and form the callback setting stuff on store.
-            // also also, maybe APP APP is not the correct thingy but instead some setup function that is run and somehow setups up somenthing.... yes
+            // also also, maybe APP APP is not the correct thingy but instead some setup function that is run and somehow setups up somenthing.... yes... what?
             socket.addEventListener('message', (event) => {
                 const message = JSON.parse(event.data) as WSMessage;
                 switch (message.type) {
@@ -45,23 +46,8 @@ class WebSocketService {
                         store.dispatch(setError(message.content));
                         reject(message.content);
                         break;
-                    case 'item':
-                        if (message.content.type === 'chat') store.dispatch(addMessage(message.content));
-                        else {
-                            const item = message.content;
-                            store.dispatch(addBEItem(item));
-                            updateBoardLimits(item);
-                            if ('connections' in item)
-                                item.connections?.forEach(([lineId, point]) =>
-                                    store.dispatch(addLineConnection({ lineId, point, itemId: item.id })),
-                                );
-                            const { zIndex } = item;
-                            const { minZIndex, maxZIndex } = store.getState().items;
-                            if (zIndex > maxZIndex) store.dispatch(setMaxZIndex(zIndex));
-                            if (zIndex < minZIndex) store.dispatch(setMinZIndex(zIndex));
-                        }
-                        break;
-                    case 'collection':
+
+                    case 'init':
                         // separate items by type
                         const chatMessages = message.content.filter((item) => item.type === 'chat') as ChatMessage[];
                         const boardItems = message.content.filter((item) => item.type !== 'chat') as BoardItem[];
@@ -84,6 +70,29 @@ class WebSocketService {
                         store.dispatch(setMaxZIndex(maxZIndex));
                         store.dispatch(setMinZIndex(minZIndex));
                         break;
+
+                    case 'add':
+                        const item = message.content;
+                        if (item.type === 'chat') store.dispatch(addMessage(item));
+                        else {
+                            store.dispatch(addItem({ item, blockSync: true }));
+                            updateBoardLimits(item);
+                            if ('connections' in item)
+                                item.connections?.forEach(([lineId, point]) =>
+                                    store.dispatch(addLineConnection({ lineId, point, itemId: item.id })),
+                                );
+                            const { zIndex } = item;
+                            const { minZIndex, maxZIndex } = store.getState().items;
+                            if (zIndex > maxZIndex) store.dispatch(setMaxZIndex(zIndex));
+                            if (zIndex < minZIndex) store.dispatch(setMinZIndex(zIndex));
+                        }
+                        break;
+
+                    case 'delete':
+                        const ids = message.content;
+                        store.dispatch(deleteItems({ ids, blockSync: true }));
+                        break;
+
                     case 'id':
                         store.dispatch(setId(message.content));
                         this.id = message.content;
@@ -96,11 +105,10 @@ class WebSocketService {
         return connectionPromise;
     }
 
-    // TODO: remove id from the service, it should be a parameter of sendMessage
-    // what does this comment even mean?
-    sendMessage(text: string): void {
-        const message: WSMessage = {
-            type: 'item',
+    // TODO: figure out creation date/ id
+    addChatMessage(text: string): void {
+        this.sendMessage({
+            type: 'add',
             content: {
                 id: 'TEMP', // #TODO decide where ids are generated
                 type: 'chat',
@@ -108,28 +116,36 @@ class WebSocketService {
                 from: this.id,
                 creationDate: Date.now(),
             },
-        };
-        this.socket?.send(JSON.stringify(message));
+        });
     }
 
-    sendItem(item: BoardItem): void {
+    addItem(item: BoardItem): void {
         // clean up temporary properties on items
         const sanitizedItem = { ...item };
         delete sanitizedItem.inProgress;
         if ('text' in sanitizedItem) delete sanitizedItem.text?.skipRendering;
 
-        const message: WSMessage = {
-            type: 'item',
+        this.sendMessage({
+            type: 'add',
             content: sanitizedItem,
-        };
-        this.socket?.send(JSON.stringify(message));
+        });
     }
 
-    deleteItem(id: string): void {
-        const message: WSMessage = {
+    updateItems(updateData: UpdateData): void {
+        this.sendMessage({
+            type: 'update',
+            content: updateData,
+        });
+    }
+
+    deleteItems(ids: string[]): void {
+        this.sendMessage({
             type: 'delete',
-            content: id,
-        };
+            content: ids,
+        });
+    }
+
+    sendMessage(message: WSMessage): void {
         this.socket?.send(JSON.stringify(message));
     }
 

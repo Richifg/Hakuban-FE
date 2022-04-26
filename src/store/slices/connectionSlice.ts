@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk } from '../store';
-import WSService from '../../services/WebSocketService';
-import TestService from '../../services/testService';
+import { WSService, TestService } from '../../services';
 
 interface ConectionState {
     id: string;

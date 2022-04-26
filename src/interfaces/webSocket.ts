@@ -1,18 +1,26 @@
 import { Item } from './items';
 
-interface WSItemMessage {
-    type: 'item';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type UpdateData = { keys: string[]; data: { id: string; values: any[] }[] };
+
+interface WSInitMessage {
+    type: 'init';
+    content: Item[];
+}
+
+interface WSAddMessage {
+    type: 'add';
     content: Item;
 }
 
-interface WSCollectionMessage {
-    type: 'collection';
-    content: Item[];
+interface WSUpdateMessage {
+    type: 'update';
+    content: UpdateData;
 }
 
 interface WSDeleteMessage {
     type: 'delete';
-    content: string;
+    content: string[];
 }
 
 interface WSIdMessage {
@@ -26,4 +34,4 @@ interface WSErrorMessage {
 }
 
 // Messages sent via webSocket
-export type WSMessage = WSItemMessage | WSCollectionMessage | WSDeleteMessage | WSIdMessage | WSErrorMessage;
+export type WSMessage = WSInitMessage | WSAddMessage | WSUpdateMessage | WSDeleteMessage | WSIdMessage | WSErrorMessage;
