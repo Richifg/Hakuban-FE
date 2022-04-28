@@ -9,7 +9,7 @@ function drawDrawing(drawing: Drawing, ctx: CanvasRenderingContext2D): void {
         ctx.lineWidth = drawing.lineWidth;
 
         // new drawings have absolute coordinates up until they are finished
-        if (drawing.isNew) {
+        if (drawing.isAbsolute) {
             ctx.moveTo(points[0][0], points[0][1]);
             for (let i = 1; i < points.length; i++) {
                 ctx.lineTo(points[i][0], points[i][1]);

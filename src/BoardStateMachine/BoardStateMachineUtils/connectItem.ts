@@ -1,8 +1,8 @@
 import { store } from '../../store/store';
 import { BoardItem, Line, MainPoint } from '../../interfaces';
-import { updateItems, addLineConnection } from '../../store/slices/itemsSlice';
+import { addLineConnection } from '../../store/slices/itemsSlice';
 import { isConnectableItem } from '../../utils';
-import { disconnectItem } from './';
+import { disconnectItem, pushItemChanges } from './';
 
 // adds a Line connection to an item and returns the updated item
 
@@ -20,7 +20,7 @@ function connectItem(itemToConnect: BoardItem, line: Line, point: MainPoint, boa
         const [x, y] = [parseFloat(((boardX - minX) / width).toFixed(2)), parseFloat(((boardY - minY) / height).toFixed(2))];
         const connections = [...connectedItem.connections, [line.id, point, x, y]];
 
-        store.dispatch(updateItems([{ id, connections }]));
+        pushItemChanges({ id, connections });
         store.dispatch(addLineConnection({ lineId: line.id, point, itemId: connectedItem.id }));
     }
 }

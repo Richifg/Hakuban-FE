@@ -20,7 +20,7 @@ function getRelativeDrawing(drawing: Drawing): Drawing {
         parseFloat(((y - y0) / height).toFixed(4)),
     ]);
 
-    return { ...drawing, x0, x2, y0, y2, points };
+    return { ...drawing, x0, x2, y0, y2, points, isAbsolute: false };
 }
 
 export default getRelativeDrawing;

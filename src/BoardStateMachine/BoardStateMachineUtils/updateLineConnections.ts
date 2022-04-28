@@ -1,7 +1,7 @@
 import { store } from '../../store/store';
 import { BoardItem, UpdateData, Line } from '../../interfaces';
-import { updateItems } from '../../store/slices/itemsSlice';
 import { isConnectableItem } from '../../utils';
+import { pushItemChanges } from './';
 
 // updates the coordinates of the Lines to wich an item is connected
 
@@ -30,7 +30,7 @@ function updateLineConnections(item: BoardItem, inProgress = true): Line[] {
                 line.type === 'line' && updatedLines.push({ ...line, ...updateData });
             }
         });
-        updateDataArr.length && store.dispatch(updateItems(updateDataArr));
+        updateDataArr.length && pushItemChanges(updateDataArr);
     }
     return updatedLines;
 }

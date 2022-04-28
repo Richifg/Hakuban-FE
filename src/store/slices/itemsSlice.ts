@@ -1,27 +1,26 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { BoardItem, Point, MainPoint, UpdateData } from '../../interfaces';
 import websocket from '../../services/WebSocket/WebSocket';
-import { areKeysValid } from '../../utils';
 
 interface ItemsState {
     items: { [id: string]: BoardItem };
+    dataToSync: { [key: string]: BoardItem | UpdateData };
     dragOffset: { x: number; y: number };
     draggedItemId?: string;
     selectedItemId?: string;
     dragSelectedItemIds: string[];
     selectedPoint?: Point;
     lineConnections: { [lineId: string]: { [point: string]: string } };
-    maxZIndex: number;
-    minZIndex: number;
+    inProgress: boolean;
 }
 
 const initialState: ItemsState = {
     items: {},
+    dataToSync: {},
     dragOffset: { x: 0, y: 0 },
     dragSelectedItemIds: [],
     lineConnections: {},
-    maxZIndex: -Infinity,
-    minZIndex: Infinity,
+    inProgress: false,
 };
 
 const itemsSlice = createSlice({
@@ -31,26 +30,14 @@ const itemsSlice = createSlice({
         setItems: (state, action: PayloadAction<BoardItem[]>) => {
             action.payload.forEach((item) => (state.items[item.id] = item));
         },
-        addItem: (state, action: PayloadAction<{ item: BoardItem; blockSync?: boolean } | BoardItem>) => {
-            const { item, blockSync } = 'item' in action.payload ? action.payload : { item: action.payload, blockSync: false };
+        addItem: (state, action: PayloadAction<BoardItem>) => {
+            const item = action.payload;
             state.items[item.id] = item;
-            if (!item.isNew && !blockSync) websocket.addItem(item);
         },
-        updateItems: (state, action: PayloadAction<{ updateData: UpdateData[]; blockSync?: boolean } | UpdateData[]>) => {
-            const { updateData, blockSync } =
-                'updateData' in action.payload ? action.payload : { updateData: action.payload, blockSync: false };
-            const cleanUpdateData: UpdateData[] = [];
-            updateData.forEach(({ id, ...data }) => {
-                const oldItem = state.items[id];
-                let error = false;
-                if (areKeysValid(Object.keys(data), oldItem)) state.items[id] = { ...oldItem, ...data };
-                else error = true;
-                if (!error && !state.items[id].inProgress) {
-                    cleanUpdateData.push({ id, ...data });
-                }
-                if (error) console.log('something is wrong', data, id);
-            });
-            if (!blockSync && cleanUpdateData.length) websocket.updateItems(cleanUpdateData);
+        updateItem: (state, action: PayloadAction<UpdateData>) => {
+            const { id, ...data } = action.payload;
+            const oldItem = state.items[id];
+            state.items[id] = { ...oldItem, ...data };
         },
         deleteItems: (state, action: PayloadAction<{ ids: string[]; blockSync: boolean } | string[]>) => {
             const { ids, blockSync } = 'ids' in action.payload ? action.payload : { ids: action.payload, blockSync: false };
@@ -58,6 +45,27 @@ const itemsSlice = createSlice({
             delete state.selectedItemId;
             state.dragSelectedItemIds = [];
             if (!blockSync) websocket.deleteItems(ids);
+        },
+        addSyncData: (state, action: PayloadAction<BoardItem | UpdateData>) => {
+            const newData = action.payload;
+            const { id } = newData;
+            const oldData = state.dataToSync[id];
+            // full items replace whatever was stored
+            if (newData.creationDate || !oldData) state.dataToSync[id] = newData;
+            // updateData updates existing data
+            else state.dataToSync[id] = { ...oldData, ...newData };
+        },
+        syncData: (state) => {
+            const items: BoardItem[] = [];
+            const updates: UpdateData[] = [];
+            // first send new items and then updates
+            Object.values(state.dataToSync).forEach((data) => {
+                if (data.creationDate) items.push(data as BoardItem);
+                else updates.push(data);
+            });
+            items.length && websocket.addItems(items);
+            updates.length && websocket.updateItems(updates);
+            state.dataToSync = {};
         },
         setDragOffset: (state, action: PayloadAction<[x: number, y: number]>) => {
             const [x, y] = action.payload;
@@ -95,13 +103,8 @@ const itemsSlice = createSlice({
                 if (Object.values(state.lineConnections[lineId]).length === 0) delete state.lineConnections[lineId];
             }
         },
-        setMaxZIndex: (state, action: PayloadAction<number>) => {
-            const zIndex = action.payload;
-            if (zIndex > state.maxZIndex) state.maxZIndex = zIndex;
-        },
-        setMinZIndex: (state, action: PayloadAction<number>) => {
-            const zIndex = action.payload;
-            if (zIndex < state.minZIndex) state.minZIndex = zIndex;
+        setInProgress: (state, action: PayloadAction<boolean>) => {
+            state.inProgress = action.payload;
         },
     },
 });
@@ -109,8 +112,10 @@ const itemsSlice = createSlice({
 export const {
     setItems,
     addItem,
-    updateItems,
+    updateItem,
     deleteItems,
+    addSyncData,
+    syncData,
     setDragOffset,
     setDraggedItemId,
     setSelectedItemId,
@@ -119,8 +124,7 @@ export const {
     setLineConnections,
     addLineConnection,
     removeLineConnection,
-    setMaxZIndex,
-    setMinZIndex,
+    setInProgress,
 } = itemsSlice.actions;
 
 export default itemsSlice.reducer;

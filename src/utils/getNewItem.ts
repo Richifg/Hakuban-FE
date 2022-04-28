@@ -15,8 +15,6 @@ function getNewItem(x: number, y: number, zIndex: number, type: BoardItemType): 
         creationDate,
         zIndex,
         type,
-        isNew: true,
-        inProgress: true,
     };
     switch (type) {
         case 'line':
@@ -64,6 +62,7 @@ function getNewItem(x: number, y: number, zIndex: number, type: BoardItemType): 
                 y0: 0,
                 y2: 0,
                 points: [[x, y]],
+                isAbsolute: true,
                 ...drawingStyle,
             };
         case 'text':

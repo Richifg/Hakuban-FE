@@ -3,14 +3,9 @@ import { Item } from './items';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type UpdateData = { id: string; [key: string]: any };
 
-interface WSInitMessage {
-    type: 'init';
-    content: Item[];
-}
-
 interface WSAddMessage {
     type: 'add';
-    content: Item;
+    content: Item | Item[];
 }
 
 interface WSUpdateMessage {
@@ -34,4 +29,4 @@ interface WSErrorMessage {
 }
 
 // Messages sent via webSocket
-export type WSMessage = WSInitMessage | WSAddMessage | WSUpdateMessage | WSDeleteMessage | WSIdMessage | WSErrorMessage;
+export type WSMessage = WSAddMessage | WSUpdateMessage | WSDeleteMessage | WSIdMessage | WSErrorMessage;

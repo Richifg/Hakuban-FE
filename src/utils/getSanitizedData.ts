@@ -1,30 +1,31 @@
-import { UpdateData, BoardItem, TextData } from '../interfaces';
+import { UpdateData, BoardItem, TextData, Drawing } from '../interfaces';
+import { isTextItem } from '../utils';
 
-const PROGRESS_KEY: keyof BoardItem = 'inProgress'; // items are only inProgress when being edited
+const ABSOLUTE_KEY: keyof Drawing = 'isAbsolute'; // drawings are use absolute coordinates only while being drawn
 const SKIP_KEY: keyof TextData = 'skipRendering'; // text has skipRendering only when being written
-const NEW_KEY: keyof BoardItem = 'isNew'; // items are only new on their first edit
 
 // removes the optional properties of items that are only used locally on the FE
 
-function getSanitizedData(data: BoardItem): BoardItem;
+function getSanitizedData(data: BoardItem[]): BoardItem[];
 function getSanitizedData(data: UpdateData[]): UpdateData[];
-function getSanitizedData(data: BoardItem | UpdateData[]): BoardItem | UpdateData[] {
-    if (!Array.isArray(data)) {
-        const sanitizedItem = { ...data } as BoardItem;
-        delete sanitizedItem.inProgress;
-        delete sanitizedItem.isNew;
-        if ('text' in sanitizedItem) delete sanitizedItem.text?.skipRendering;
-        return sanitizedItem;
-    } else {
-        const sanitizedDataArray: UpdateData[] = [];
-        data.forEach((updateData) => {
-            const sanitizedData = { ...updateData };
-            delete sanitizedData[PROGRESS_KEY];
-            delete sanitizedData[NEW_KEY];
-            if ('text' in sanitizedData) delete sanitizedData.text[SKIP_KEY];
-            sanitizedDataArray.push(sanitizedData);
+function getSanitizedData(data: BoardItem[] | UpdateData[]): BoardItem[] | UpdateData[] {
+    if (!data.length) return [];
+    const firstItem = data[0];
+    if (firstItem.creationDate) {
+        const items = data as BoardItem[];
+        return items.map((item) => {
+            const sanitizedItem = { ...item };
+            if (sanitizedItem.type === 'drawing') delete sanitizedItem.isAbsolute;
+            if (isTextItem(sanitizedItem)) delete sanitizedItem.text?.skipRendering;
+            return sanitizedItem;
         });
-        return sanitizedDataArray;
+    } else {
+        return data.map((updateData) => {
+            const sanitizedData = { ...updateData } as UpdateData;
+            delete sanitizedData[ABSOLUTE_KEY];
+            if ('text' in sanitizedData) delete sanitizedData.text[SKIP_KEY];
+            return sanitizedData;
+        });
     }
 }
 

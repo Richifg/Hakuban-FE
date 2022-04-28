@@ -5,7 +5,7 @@ import { getMaxCoordinates } from '../../utils';
 
 const BOARD_PADDING = 200; //px
 
-// TODO: kinda weird how this function worth differently depending on which param is provided
+// TODO: kinda weird how this function works differently depending on which param is provided
 // break it up on two different functions
 
 function updateBoardLimits(item?: BoardItem, items?: BoardItem[]): void {

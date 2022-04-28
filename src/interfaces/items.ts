@@ -22,8 +22,6 @@ interface ItemBase {
 interface BoardItemBase extends ItemBase, Coordinates {
     type: BoardItemType;
     zIndex: number;
-    inProgress?: boolean;
-    isNew?: boolean;
 }
 
 export interface StrokeStyle {
@@ -83,6 +81,7 @@ export interface Drawing extends BoardItemBase, DrawingStyle {
     type: 'drawing';
     points: [number, number][];
     connections?: LineConnections;
+    isAbsolute?: boolean;
 }
 
 // --LINE

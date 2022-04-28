@@ -7,7 +7,13 @@ import {
     setIsWriting,
     setMouseButton,
 } from '../../store/slices/boardSlice';
-import { setDragOffset, setDraggedItemId, setSelectedItemId, setDragSelectedItemIds } from '../../store/slices/itemsSlice';
+import {
+    setDragOffset,
+    setDraggedItemId,
+    setSelectedItemId,
+    setDragSelectedItemIds,
+    setInProgress,
+} from '../../store/slices/itemsSlice';
 import { isPointInsideArea, getBoardCoordinates, getMaxCoordinates, isItemDraggable, getItemAtPosition } from '../../utils';
 
 import { store } from '../../store/store';
@@ -22,6 +28,7 @@ function handleMouseDown(e: MouseEvent<HTMLDivElement>): void {
     dispatch(setCursorPosition([screenX, screenY]));
     dispatch(setHasCursorMoved(false));
     dispatch(setMouseButton(e.button));
+    dispatch(setInProgress(true));
 
     if (e.button === MouseButton.Left) {
         switch (selectedTool) {

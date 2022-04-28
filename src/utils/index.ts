@@ -1,4 +1,4 @@
-import areKeysValid from './areKeyVsalid';
+import areKeysValid from './areKeysValid';
 import getBoardCoordinates from './getBoardCoordinates';
 import getCanvasCoordinates from './getCanvasCoordinates';
 import getDebouncedFunction from './getDebouncedFunction';

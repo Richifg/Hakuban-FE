@@ -1,7 +1,8 @@
 import React from 'react';
-import { useDispatch, useSelector } from '../../../../../hooks';
-import { updateItems, setMaxZIndex, setMinZIndex } from '../../../../../store/slices/itemsSlice';
 import { BoardItem } from '../../../../../interfaces';
+import { useDispatch, useSelector } from '../../../../../hooks';
+import { setMaxZIndex, setMinZIndex } from '../../../../../store/slices/boardSlice';
+import { pushItemChanges } from '../../../../../BoardStateMachine/BoardStateMachineUtils';
 import './ZIndexSelector.scss';
 
 const KEY: keyof BoardItem = 'zIndex';
@@ -12,11 +13,11 @@ interface ZIndexSelector {
 
 const ZIndexSelector = ({ items }: ZIndexSelector): React.ReactElement => {
     const dispatch = useDispatch();
-    const { maxZIndex, minZIndex } = useSelector((s) => s.items);
+    const { maxZIndex, minZIndex } = useSelector((s) => s.board);
 
     const handleChange = (zIndex: number, action: typeof setMaxZIndex) => () => {
         const updateData = items.map(({ id }) => ({ id, [KEY]: zIndex }));
-        dispatch(updateItems(updateData));
+        pushItemChanges(updateData);
         dispatch(action(zIndex));
     };
 

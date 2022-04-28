@@ -1,16 +1,9 @@
 import { store } from '../../store/store';
-import {
-    setItems,
-    addItem,
-    deleteItems,
-    setLineConnections,
-    addLineConnection,
-    setMaxZIndex,
-    setMinZIndex,
-} from '../../store/slices/itemsSlice';
+import { addItem, deleteItems, addLineConnection } from '../../store/slices/itemsSlice';
+import { setMaxZIndex, setMinZIndex } from '../../store/slices/boardSlice';
 import { setId, setError } from '../../store/slices/connectionSlice';
-import { setMessages, addMessage } from '../../store/slices/chatSlice';
-import { ChatMessage, BoardItem, UpdateData, WSMessage } from '../../interfaces';
+import { addMessage } from '../../store/slices/chatSlice';
+import { BoardItem, UpdateData, WSMessage } from '../../interfaces';
 import { updateBoardLimits } from '../../BoardStateMachine/BoardStateMachineUtils';
 import { getSanitizedData } from '../../utils';
 
@@ -40,6 +33,7 @@ class WebSocketService {
             // and also import store and form the callback setting stuff on store.
             // also also, maybe APP APP is not the correct thingy but instead some setup function that is run and somehow setups up somenthing.... yes... what?
             // do somenthing about this comment or just erase it >_<
+
             socket.addEventListener('message', (event) => {
                 const message = JSON.parse(event.data) as WSMessage;
                 switch (message.type) {
@@ -48,45 +42,24 @@ class WebSocketService {
                         reject(message.content);
                         break;
 
-                    case 'init':
-                        // separate items by type
-                        const chatMessages = message.content.filter((item) => item.type === 'chat') as ChatMessage[];
-                        const boardItems = message.content.filter((item) => item.type !== 'chat') as BoardItem[];
-                        store.dispatch(setItems(boardItems));
-                        store.dispatch(setMessages(chatMessages));
-                        updateBoardLimits(undefined, Object.values(boardItems));
-                        // set all line connections and find max/min zIndex
-                        let [maxZIndex, minZIndex] = [-Infinity, Infinity];
-                        const lineConnections: { [lineId: string]: { [point: string]: string } } = {};
-                        boardItems.forEach((item) => {
-                            if ('connections' in item)
-                                item.connections?.forEach(([lineId, point]) => {
-                                    if (!lineConnections[lineId]) lineConnections[lineId] = {};
-                                    lineConnections[lineId][point] = item.id;
-                                });
-                            maxZIndex = Math.max(maxZIndex, item.zIndex);
-                            minZIndex = Math.min(minZIndex, item.zIndex);
-                        });
-                        store.dispatch(setLineConnections(lineConnections));
-                        store.dispatch(setMaxZIndex(maxZIndex));
-                        store.dispatch(setMinZIndex(minZIndex));
-                        break;
-
                     case 'add':
-                        const item = message.content;
-                        if (item.type === 'chat') store.dispatch(addMessage(item));
-                        else {
-                            store.dispatch(addItem({ item, blockSync: true }));
-                            updateBoardLimits(item);
-                            if ('connections' in item)
-                                item.connections?.forEach(([lineId, point]) =>
-                                    store.dispatch(addLineConnection({ lineId, point, itemId: item.id })),
-                                );
-                            const { zIndex } = item;
-                            const { minZIndex, maxZIndex } = store.getState().items;
-                            if (zIndex > maxZIndex) store.dispatch(setMaxZIndex(zIndex));
-                            if (zIndex < minZIndex) store.dispatch(setMinZIndex(zIndex));
-                        }
+                        const { content } = message;
+                        const items = Array.isArray(content) ? content : [content];
+                        items.forEach((item) => {
+                            if (item.type === 'chat') store.dispatch(addMessage(item));
+                            else {
+                                store.dispatch(addItem(item));
+                                updateBoardLimits(item);
+                                if ('connections' in item)
+                                    item.connections?.forEach(([lineId, point]) =>
+                                        store.dispatch(addLineConnection({ lineId, point, itemId: item.id })),
+                                    );
+                                const { zIndex } = item;
+                                const { minZIndex, maxZIndex } = store.getState().board;
+                                if (zIndex > maxZIndex) store.dispatch(setMaxZIndex(zIndex));
+                                if (zIndex < minZIndex) store.dispatch(setMinZIndex(zIndex));
+                            }
+                        });
                         break;
 
                     case 'delete':
@@ -120,10 +93,10 @@ class WebSocketService {
         });
     }
 
-    addItem(item: BoardItem): void {
+    addItems(items: BoardItem[]): void {
         this.sendMessage({
             type: 'add',
-            content: getSanitizedData(item),
+            content: getSanitizedData(items),
         });
     }
 

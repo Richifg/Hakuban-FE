@@ -1,15 +1,8 @@
 import { MouseEvent } from 'react';
 import { MouseButton, BoardItem, UpdateData, Coordinates } from '../../interfaces';
-import { updateLineConnections, connectItem } from '../BoardStateMachineUtils';
+import { updateLineConnections, connectItem, pushItemChanges } from '../BoardStateMachineUtils';
 import { setCursorPosition, setIsWriting, setHasCursorMoved, setCurrentAction } from '../../store/slices/boardSlice';
-import {
-    updateItems,
-    addItem,
-    setDragSelectedItemIds,
-    setDragOffset,
-    setSelectedPoint,
-    setSelectedItemId,
-} from '../../store/slices/itemsSlice';
+import { setDragSelectedItemIds, setDragOffset, setSelectedPoint, setSelectedItemId } from '../../store/slices/itemsSlice';
 import { translateCanvas } from '../../store/slices/boardSlice';
 import {
     getBoardCoordinates,
@@ -25,7 +18,7 @@ import {
 import { store } from '../../store/store';
 const { dispatch, getState } = store;
 
-function handleMouseMove(e: MouseEvent<HTMLDivElement>, inProgress = true): void {
+function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
     const { selectedTool } = getState().tools;
     const { currentAction, cursorPosition, canvasTransform, isWriting, hasCursorMoved, mouseButton } = getState().board;
     const { items, selectedItemId, draggedItemId, dragSelectedItemIds, selectedPoint, dragOffset, lineConnections } =
@@ -37,8 +30,7 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>, inProgress = true): void
     const [boardX, boardY] = getBoardCoordinates(x, y, canvasTransform);
     !hasCursorMoved && mouseButton !== undefined && dispatch(setHasCursorMoved(true));
 
-    const updateDataArr: UpdateData[] = [];
-    const newItems: BoardItem[] = [];
+    const itemChanges: (UpdateData | BoardItem)[] = [];
 
     if (mouseButton === MouseButton.Left) {
         isWriting && dispatch(setIsWriting(false));
@@ -46,8 +38,7 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>, inProgress = true): void
             case 'DRAW':
                 if (selectedItem?.type === 'drawing') {
                     const points = [...selectedItem.points, [boardX, boardY]] as [number, number][];
-                    // mouseUp handles drawing convertion into relative coordinates
-                    if (inProgress) updateDataArr.push({ id: selectedItem.id, points, inProgress });
+                    itemChanges.push({ id: selectedItem.id, points });
                 }
                 break;
 
@@ -69,13 +60,10 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>, inProgress = true): void
                         const { id, x0, y0 } = item;
                         const offset = { x: dragOffset.x + minX - x0, y: dragOffset.y + minY - y0 };
                         const newCoordinates = getTranslatedCoordinates(item, offset, boardX, boardY);
-                        const newItem = { ...item, ...newCoordinates };
 
-                        updatedCoordinates.push(newItem);
-                        updatedLines.push(...updateLineConnections(newItem));
-
-                        if (!inProgress && item.isNew) newItems.push(newItem);
-                        else updateDataArr.push({ id, ...newCoordinates, inProgress });
+                        updatedCoordinates.push(newCoordinates);
+                        updatedLines.push(...updateLineConnections({ ...item, ...newCoordinates }));
+                        itemChanges.push({ id, ...newCoordinates });
                     });
 
                     // a selection with unmoveable items requires a new dragOffset for each update (lines grow when selection is moved)
@@ -92,12 +80,8 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>, inProgress = true): void
                     const { type, id } = selectedItem;
                     const maintainRatio = type === 'note' || type === 'drawing';
                     const coordinates = getResizedCoordinates(selectedItem, selectedPoint, boardX, boardY, maintainRatio);
-
-                    const newItem = { ...selectedItem, ...coordinates };
-                    if (!inProgress && newItem.isNew) newItems.push(newItem);
-                    else updateDataArr.push({ id, ...coordinates, inProgress });
-
                     updateLineConnections({ ...selectedItem, ...coordinates });
+                    itemChanges.push({ id, ...coordinates });
                 } else {
                     // resizing without selectedItem means the item's gotta be created first
                     let newItem: BoardItem | undefined = undefined;
@@ -117,7 +101,7 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>, inProgress = true): void
                         dispatch(setCurrentAction('RESIZE'));
                     }
                     if (newItem) {
-                        dispatch(addItem(newItem));
+                        pushItemChanges(newItem);
                         dispatch(setSelectedItemId(newItem.id));
                     }
                 }
@@ -134,11 +118,8 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>, inProgress = true): void
                 else if (coveredItemIds.length) dispatch(setDragSelectedItemIds(coveredItemIds));
                 break;
         }
-
         // update all items in bulk
-        if (updateDataArr.length) dispatch(updateItems(updateDataArr));
-        // remove isNew from newItems
-        newItems.forEach((item) => dispatch(addItem({ ...item, inProgress, isNew: false })));
+        if (itemChanges.length) pushItemChanges(itemChanges);
     } else if (mouseButton === MouseButton.Middle || mouseButton === MouseButton.Right) {
         // middle and right buttons always pan camera
         dispatch(translateCanvas([x - cursorPosition.x, y - cursorPosition.y]));

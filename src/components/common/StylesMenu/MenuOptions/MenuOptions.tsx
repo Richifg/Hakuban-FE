@@ -1,5 +1,9 @@
 import React, { useMemo, useLayoutEffect } from 'react';
 import { useDispatch, useSelector } from '../../../../hooks';
+import { deleteItems } from '../../../../store/slices/itemsSlice';
+import { setCurrentAction } from '../../../../store/slices/boardSlice';
+import { Align, BoardItem, Shape, Line, Text } from '../../../../interfaces';
+import { pushItemChanges } from '../../../../BoardStateMachine/BoardStateMachineUtils';
 import {
     AlignmentSelector,
     ColorSelector,
@@ -10,10 +14,7 @@ import {
     LineTypeSelector,
     ZIndexSelector,
 } from '.';
-import { Align, BoardItem, Shape, Line, Text } from '../../../../interfaces';
-import { updateItems, addItem, deleteItems } from '../../../../store/slices/itemsSlice';
 import './MenuOptions.scss';
-import { setCurrentAction } from '../../../../store/slices/boardSlice';
 
 interface MenuOptions {
     items: BoardItem[];
@@ -31,7 +32,7 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
 
     const handleChange = (value: string | number, key: string) => {
         const updateData = items.map(({ id }) => ({ id, [key]: value }));
-        dispatch(updateItems(updateData));
+        pushItemChanges(updateData);
     };
 
     // nested change is only used for the text property of items
@@ -40,7 +41,7 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
             if ('text' in item && key in textStyle) {
                 const text = item.text || { ...textStyle, content: '' };
                 const newItem = { ...item, text: { ...text, [key]: value } };
-                dispatch(addItem(newItem));
+                pushItemChanges(newItem);
             }
         });
     };
@@ -66,7 +67,6 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
     }, [items]);
 
     const item = items[0];
-
     return (
         <div className="menu-options" onMouseDown={stopMouseDown}>
             {showFillColor && <ColorSelector onChange={handleChange} styleKey="fillColor" color={(item as Shape).fillColor} />}
