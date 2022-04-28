@@ -10,9 +10,9 @@ import {
 } from '../../store/slices/itemsSlice';
 import { setId, setError } from '../../store/slices/connectionSlice';
 import { setMessages, addMessage } from '../../store/slices/chatSlice';
-import { WSMessage } from '../../interfaces/webSocket';
-import { ChatMessage, BoardItem, UpdateData } from '../../interfaces';
+import { ChatMessage, BoardItem, UpdateData, WSMessage } from '../../interfaces';
 import { updateBoardLimits } from '../../BoardStateMachine/BoardStateMachineUtils';
+import { getSanitizedData } from '../../utils';
 
 const url = process.env.REACT_APP_SERVER_URL;
 
@@ -39,6 +39,7 @@ class WebSocketService {
             // TODO: this component should receive a callback, and maybe app shuold initialize a websocketservice with the callback
             // and also import store and form the callback setting stuff on store.
             // also also, maybe APP APP is not the correct thingy but instead some setup function that is run and somehow setups up somenthing.... yes... what?
+            // do somenthing about this comment or just erase it >_<
             socket.addEventListener('message', (event) => {
                 const message = JSON.parse(event.data) as WSMessage;
                 switch (message.type) {
@@ -120,21 +121,16 @@ class WebSocketService {
     }
 
     addItem(item: BoardItem): void {
-        // clean up temporary properties on items
-        const sanitizedItem = { ...item };
-        delete sanitizedItem.inProgress;
-        if ('text' in sanitizedItem) delete sanitizedItem.text?.skipRendering;
-
         this.sendMessage({
             type: 'add',
-            content: sanitizedItem,
+            content: getSanitizedData(item),
         });
     }
 
-    updateItems(updateData: UpdateData): void {
+    updateItems(updateData: UpdateData[]): void {
         this.sendMessage({
             type: 'update',
-            content: updateData,
+            content: getSanitizedData(updateData),
         });
     }
 
@@ -146,7 +142,8 @@ class WebSocketService {
     }
 
     sendMessage(message: WSMessage): void {
-        this.socket?.send(JSON.stringify(message));
+        console.log(message.type, message.content);
+        // this.socket?.send(JSON.stringify(message));
     }
 
     disconnect(): void {

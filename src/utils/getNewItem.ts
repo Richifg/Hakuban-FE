@@ -15,6 +15,8 @@ function getNewItem(x: number, y: number, zIndex: number, type: BoardItemType): 
         creationDate,
         zIndex,
         type,
+        isNew: true,
+        inProgress: true,
     };
     switch (type) {
         case 'line':
@@ -63,7 +65,6 @@ function getNewItem(x: number, y: number, zIndex: number, type: BoardItemType): 
                 y2: 0,
                 points: [[x, y]],
                 ...drawingStyle,
-                inProgress: true,
             };
         case 'text':
             const { textStyle } = store.getState().tools;

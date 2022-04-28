@@ -1,6 +1,6 @@
 import { store } from '../../store/store';
 import { Line, MainPoint } from '../../interfaces';
-import { addItem, removeLineConnection } from '../../store/slices/itemsSlice';
+import { updateItems, removeLineConnection } from '../../store/slices/itemsSlice';
 import { isConnectableItem } from '../../utils';
 
 // removes an item connnection from the selected point of a Line
@@ -11,10 +11,10 @@ function disconnectItem(line: Line, point: MainPoint): void {
     if (connectedItemId) {
         const itemToDisconnect = { ...items[connectedItemId] };
         if (isConnectableItem(itemToDisconnect)) {
-            itemToDisconnect.connections = itemToDisconnect.connections?.filter(
+            const connections = itemToDisconnect.connections?.filter(
                 ([connId, connPoint]) => connId !== line.id || connPoint !== point,
             );
-            store.dispatch(addItem(itemToDisconnect));
+            store.dispatch(updateItems([{ id: itemToDisconnect.id, connections }]));
             store.dispatch(removeLineConnection({ lineId: line.id, point }));
         }
     }

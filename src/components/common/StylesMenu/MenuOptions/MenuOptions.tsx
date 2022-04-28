@@ -30,7 +30,7 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
     }, [items]);
 
     const handleChange = (value: string | number, key: string) => {
-        const updateData = { keys: [key], data: items.map(({ id }) => ({ id, values: [value] })) };
+        const updateData = items.map(({ id }) => ({ id, [key]: value }));
         dispatch(updateItems(updateData));
     };
 

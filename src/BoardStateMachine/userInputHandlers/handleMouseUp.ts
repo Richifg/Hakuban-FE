@@ -1,10 +1,12 @@
 import { MouseEvent } from 'react';
 import { MouseButton, BoardItem } from '../../interfaces';
 import { setNoteStyle } from '../../store/slices/toolSlice';
+import { setCurrentAction, setIsWriting, setMouseButton } from '../../store/slices/boardSlice';
 import { addItem, setDraggedItemId, setSelectedItemId, setDragSelectedItemIds } from '../../store/slices/itemsSlice';
-import { setCurrentAction, setCursorPosition, setIsWriting, setMouseButton } from '../../store/slices/boardSlice';
 import { isMainPoint, getBoardCoordinates, getRelativeDrawing, getItemAtPosition, getNewItem } from '../../utils';
-import { disconnectItem, connectItem, updateBoardLimits, updateLineConnections } from '../BoardStateMachineUtils';
+
+import { disconnectItem, connectItem, updateBoardLimits } from '../BoardStateMachineUtils';
+import { handleMouseMove } from './';
 
 import { store } from '../../store/store';
 const { dispatch, getState } = store;
@@ -15,21 +17,25 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
     const { currentAction, canvasTransform, isWriting, hasCursorMoved } = getState().board;
     const selectedItem = selectedItemId ? items[selectedItemId] : undefined;
 
-    const [screenX, screenY] = [e.clientX, e.clientY];
-    dispatch(setCursorPosition([screenX, screenY]));
-    dispatch(setMouseButton());
+    // excute an extra mouseMove where progress is now set to false
+    const inProgress = false;
+    if (hasCursorMoved) handleMouseMove(e, inProgress);
 
-    const [boardX, boardY] = getBoardCoordinates(screenX, screenY, canvasTransform);
+    // then mouseUp will clean up
+    dispatch(setMouseButton());
+    const [boardX, boardY] = getBoardCoordinates(e.clientX, e.clientY, canvasTransform);
     const itemUnderCursor = getItemAtPosition(boardX, boardY, Object.values(items), [selectedItem]);
 
     const editedItems: BoardItem[] = [];
+
     if (e.button === MouseButton.Left) {
         switch (currentAction) {
             case 'IDLE':
                 if (selectedTool === 'NOTE') {
                     const note = getNewItem(boardX, boardY, 0, 'note');
-                    dispatch(setCurrentAction('EDIT'));
                     editedItems.push(note);
+                    dispatch(addItem({ ...note, inProgress, isNew: false }));
+                    dispatch(setCurrentAction('EDIT'));
                 }
                 break;
 
@@ -37,6 +43,7 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
                 if (selectedItem?.type === 'drawing') {
                     // transformed in-progress drawing into relative coordinates drawing
                     const finishedDrawing = getRelativeDrawing(selectedItem);
+                    dispatch(addItem({ ...finishedDrawing, inProgress, isNew: false }));
                     editedItems.push(finishedDrawing);
                     dispatch(setCurrentAction('IDLE'));
                 }
@@ -108,12 +115,7 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
             dispatch(setCurrentAction('SLIDE'));
         }
     }
-
-    editedItems.forEach((item) => {
-        updateBoardLimits(item);
-        updateLineConnections(item, false);
-        dispatch(addItem({ ...item, inProgress: false }));
-    });
+    editedItems.forEach((item) => updateBoardLimits(item));
 }
 
 export default handleMouseUp;

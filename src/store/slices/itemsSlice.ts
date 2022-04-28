@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { BoardItem, Point, MainPoint, UpdateData } from '../../interfaces';
 import websocket from '../../services/WebSocket/WebSocket';
+import { areKeysValid } from '../../utils';
 
 interface ItemsState {
     items: { [id: string]: BoardItem };
@@ -33,25 +34,23 @@ const itemsSlice = createSlice({
         addItem: (state, action: PayloadAction<{ item: BoardItem; blockSync?: boolean } | BoardItem>) => {
             const { item, blockSync } = 'item' in action.payload ? action.payload : { item: action.payload, blockSync: false };
             state.items[item.id] = item;
-            if (!item.inProgress && !blockSync) websocket.addItem(item);
+            if (!item.isNew && !blockSync) websocket.addItem(item);
         },
-        updateItems: (state, action: PayloadAction<{ updateData: UpdateData; blockSync?: boolean } | UpdateData>) => {
+        updateItems: (state, action: PayloadAction<{ updateData: UpdateData[]; blockSync?: boolean } | UpdateData[]>) => {
             const { updateData, blockSync } =
                 'updateData' in action.payload ? action.payload : { updateData: action.payload, blockSync: false };
-            const { keys, data } = updateData;
-            const cleanUpdateData: UpdateData = { keys, data: [] };
-            data.forEach(({ id, values }) => {
-                let error = false;
+            const cleanUpdateData: UpdateData[] = [];
+            updateData.forEach(({ id, ...data }) => {
                 const oldItem = state.items[id];
-                if (keys.length === values.length) {
-                    keys.forEach((key, index) => {
-                        if (key in oldItem) state.items[id] = { ...oldItem, [key]: values[index] };
-                        else error = true;
-                    });
-                    if (!error && !oldItem.inProgress) cleanUpdateData.data.push({ id, values });
+                let error = false;
+                if (areKeysValid(Object.keys(data), oldItem)) state.items[id] = { ...oldItem, ...data };
+                else error = true;
+                if (!error && !state.items[id].inProgress) {
+                    cleanUpdateData.push({ id, ...data });
                 }
+                if (error) console.log('something is wrong', data, id);
             });
-            if (!blockSync) websocket.updateItems(cleanUpdateData);
+            if (!blockSync && cleanUpdateData.length) websocket.updateItems(cleanUpdateData);
         },
         deleteItems: (state, action: PayloadAction<{ ids: string[]; blockSync: boolean } | string[]>) => {
             const { ids, blockSync } = 'ids' in action.payload ? action.payload : { ids: action.payload, blockSync: false };

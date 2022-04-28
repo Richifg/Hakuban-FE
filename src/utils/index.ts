@@ -1,3 +1,4 @@
+import areKeysValid from './areKeyVsalid';
 import getBoardCoordinates from './getBoardCoordinates';
 import getCanvasCoordinates from './getCanvasCoordinates';
 import getDebouncedFunction from './getDebouncedFunction';
@@ -5,6 +6,7 @@ import getItemAtPosition from './getItemAtPosition';
 import getPositionCSSVars from './getPositionCSSVars';
 import getRelativeDrawing from './getRelativeDrawing';
 import getResizedCoordinates from './getResizedCoordinates';
+import getSanitizedData from './getSanitizedData';
 import getTranslatedCoordinates from './getTranslatedCoordinates';
 import getMaxCoordinates from './getMaxCoordinates';
 import getNewId from './getNewId';
@@ -20,6 +22,7 @@ import isPointInsideLine from './isPointInsideLine';
 import isTextItem from './isTextItem';
 
 export {
+    areKeysValid,
     getBoardCoordinates,
     getCanvasCoordinates,
     getDebouncedFunction,
@@ -27,6 +30,7 @@ export {
     getPositionCSSVars,
     getRelativeDrawing,
     getResizedCoordinates,
+    getSanitizedData,
     getTranslatedCoordinates,
     getMaxCoordinates,
     getNewId,

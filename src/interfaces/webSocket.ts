@@ -1,7 +1,7 @@
 import { Item } from './items';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type UpdateData = { keys: string[]; data: { id: string; values: any[] }[] };
+export type UpdateData = { id: string; [key: string]: any };
 
 interface WSInitMessage {
     type: 'init';
@@ -15,7 +15,7 @@ interface WSAddMessage {
 
 interface WSUpdateMessage {
     type: 'update';
-    content: UpdateData;
+    content: UpdateData[];
 }
 
 interface WSDeleteMessage {

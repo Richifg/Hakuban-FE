@@ -1,6 +1,6 @@
 import { store } from '../../store/store';
 import { BoardItem, Line, MainPoint } from '../../interfaces';
-import { addItem, addLineConnection } from '../../store/slices/itemsSlice';
+import { updateItems, addLineConnection } from '../../store/slices/itemsSlice';
 import { isConnectableItem } from '../../utils';
 import { disconnectItem } from './';
 
@@ -14,13 +14,13 @@ function connectItem(itemToConnect: BoardItem, line: Line, point: MainPoint, boa
         // get relative connection coordinate
         const connectedItem = { ...itemToConnect };
         if (!connectedItem.connections) connectedItem.connections = [];
-        const { x0, y0, x2, y2 } = connectedItem;
+        const { id, x0, y0, x2, y2 } = connectedItem;
         const [minX, minY] = [Math.min(x0, x2), Math.min(y0, y2)];
         const [width, height] = [Math.abs(x2 - x0), Math.abs(y2 - y0)];
         const [x, y] = [parseFloat(((boardX - minX) / width).toFixed(2)), parseFloat(((boardY - minY) / height).toFixed(2))];
-        connectedItem.connections = [...connectedItem.connections, [line.id, point, x, y]];
+        const connections = [...connectedItem.connections, [line.id, point, x, y]];
 
-        store.dispatch(addItem(connectedItem));
+        store.dispatch(updateItems([{ id, connections }]));
         store.dispatch(addLineConnection({ lineId: line.id, point, itemId: connectedItem.id }));
     }
 }

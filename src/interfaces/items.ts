@@ -23,6 +23,7 @@ interface BoardItemBase extends ItemBase, Coordinates {
     type: BoardItemType;
     zIndex: number;
     inProgress?: boolean;
+    isNew?: boolean;
 }
 
 export interface StrokeStyle {

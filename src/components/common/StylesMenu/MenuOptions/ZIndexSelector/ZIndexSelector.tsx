@@ -15,7 +15,7 @@ const ZIndexSelector = ({ items }: ZIndexSelector): React.ReactElement => {
     const { maxZIndex, minZIndex } = useSelector((s) => s.items);
 
     const handleChange = (zIndex: number, action: typeof setMaxZIndex) => () => {
-        const updateData = { keys: [KEY], data: items.map(({ id }) => ({ id, values: [zIndex] })) };
+        const updateData = items.map(({ id }) => ({ id, [KEY]: zIndex }));
         dispatch(updateItems(updateData));
         dispatch(action(zIndex));
     };

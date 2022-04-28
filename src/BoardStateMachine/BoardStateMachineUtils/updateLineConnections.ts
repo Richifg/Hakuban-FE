@@ -1,34 +1,36 @@
 import { store } from '../../store/store';
-import { BoardItem } from '../../interfaces';
-import { addItem } from '../../store/slices/itemsSlice';
+import { BoardItem, UpdateData, Line } from '../../interfaces';
+import { updateItems } from '../../store/slices/itemsSlice';
+import { isConnectableItem } from '../../utils';
 
 // updates the coordinates of the Lines to wich an item is connected
 
-function updateLineConnections(item: BoardItem, inProgress = true): BoardItem[] {
-    const updatedLines: BoardItem[] = [];
-    if ('connections' in item) {
+function updateLineConnections(item: BoardItem, inProgress = true): Line[] {
+    const updatedLines: Line[] = [];
+    if (isConnectableItem(item)) {
+        const updateDataArr: UpdateData[] = [];
         const { items } = store.getState().items;
         item.connections?.forEach(([id, point, pX, pY]) => {
+            const line = items[id];
             const { x0, x2, y0, y2 } = item;
             const [width, height] = [Math.abs(x2 - x0), Math.abs(y2 - y0)];
-            const line = items[id];
-            if (line.type === 'line') {
-                const updatedLine = { ...line };
-                const x = Math.min(x0, x2) + width * pX;
-                const y = Math.min(y0, y2) + height * pY;
+            const x = Math.min(x0, x2) + width * pX;
+            const y = Math.min(y0, y2) + height * pY;
+            {
+                const { x0, x2, y0, y2 } = line;
+                const updateData: UpdateData = { id, x0, x2, y0, y2, inProgress };
                 if (point === 'P0') {
-                    updatedLine.x0 = x;
-                    updatedLine.y0 = y;
+                    updateData.x0 = x;
+                    updateData.y0 = y;
                 } else {
-                    updatedLine.x2 = x;
-                    updatedLine.y2 = y;
+                    updateData.x2 = x;
+                    updateData.y2 = y;
                 }
-                updatedLine.inProgress = inProgress;
-
-                store.dispatch(addItem(updatedLine));
-                updatedLines.push(updatedLine);
+                updateDataArr.push(updateData);
+                line.type === 'line' && updatedLines.push({ ...line, ...updateData });
             }
         });
+        updateDataArr.length && store.dispatch(updateItems(updateDataArr));
     }
     return updatedLines;
 }
