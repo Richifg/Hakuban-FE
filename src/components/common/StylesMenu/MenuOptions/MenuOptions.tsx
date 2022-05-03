@@ -1,9 +1,8 @@
 import React, { useMemo, useLayoutEffect } from 'react';
 import { useDispatch, useSelector } from '../../../../hooks';
-import { deleteItems } from '../../../../store/slices/itemsSlice';
 import { setCurrentAction } from '../../../../store/slices/boardSlice';
 import { Align, BoardItem, Shape, Line, Text } from '../../../../interfaces';
-import { processItemUpdates } from '../../../../BoardStateMachine/BoardStateMachineUtils';
+import { processItemDeletions, processItemUpdates } from '../../../../BoardStateMachine/BoardStateMachineUtils';
 import {
     AlignmentSelector,
     ColorSelector,
@@ -49,7 +48,8 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
     };
 
     const handleDelete = () => {
-        dispatch(deleteItems(items.map((item) => item.id)));
+        const ids = items.map((item) => item.id);
+        processItemDeletions(ids);
         dispatch(setCurrentAction('IDLE'));
     };
 

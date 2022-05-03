@@ -52,7 +52,7 @@ class WebSocketService {
 
                     case 'delete':
                         const ids = message.content;
-                        processItemDeletions(ids);
+                        processItemDeletions(ids, true);
                         break;
 
                     case 'chat':
@@ -108,8 +108,8 @@ class WebSocketService {
     }
 
     sendMessage(message: WSMessage): void {
-        // console.log(message.type, message.content);
-        // this.socket?.send(JSON.stringify(message));
+        console.log(message.type, message.content);
+        this.socket?.send(JSON.stringify(message));
     }
 
     disconnect(): void {
