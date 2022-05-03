@@ -15,10 +15,10 @@ function updateLineConnections(oldItems: BoardItem[], newItems: BoardItem[] = []
         if (isConnectableItem(oldItem)) {
             const { connections, id } = oldItem;
             if (connections) {
+                hasUpdated = true;
                 connections.forEach(([lineId, point]) => {
                     if (newLineConnections?.[lineId]?.[point] === id) {
                         delete newLineConnections[lineId][point];
-                        hasUpdated = true;
                     }
                 });
             }
@@ -29,10 +29,10 @@ function updateLineConnections(oldItems: BoardItem[], newItems: BoardItem[] = []
         if (isConnectableItem(newItem)) {
             const { connections, id } = newItem;
             if (connections) {
+                hasUpdated = true;
                 connections.forEach(([lineId, point]) => {
                     if (newLineConnections[lineId]) newLineConnections[lineId][point] = id;
                     else newLineConnections[lineId] = { [point]: id };
-                    hasUpdated = true;
                 });
             }
         }

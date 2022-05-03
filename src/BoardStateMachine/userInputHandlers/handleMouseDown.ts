@@ -20,13 +20,13 @@ import { store } from '../../store/store';
 const { dispatch, getState } = store;
 
 function handleMouseDown(e: MouseEvent<HTMLDivElement>): void {
-    const { canvasTransform, isWriting } = getState().board;
+    const { canvasTransform, isWriting, hasCursorMoved } = getState().board;
     const { items, selectedItemId, lineConnections, draggedItemId, dragSelectedItemIds } = getState().items;
     const { selectedTool } = getState().tools;
 
     const [screenX, screenY] = [e.clientX, e.clientY];
     dispatch(setCursorPosition([screenX, screenY]));
-    dispatch(setHasCursorMoved(false));
+    hasCursorMoved && dispatch(setHasCursorMoved(false));
     dispatch(setMouseButton(e.button));
     dispatch(setInProgress(true));
 

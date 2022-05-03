@@ -41,7 +41,7 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
         if (key in textStyle) {
             const updateData = items.filter(isTextItem).map((item) => {
                 const oldText = item.text || { ...textStyle, content: '' };
-                const newText = { ...oldText, key: [value] };
+                const newText = { ...oldText, [key]: value };
                 return { id: item.id, text: newText };
             });
             processItemUpdates(updateData);

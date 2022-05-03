@@ -41,22 +41,23 @@ class WebSocketService {
                         break;
 
                     case 'add':
-                        const { content } = message;
-                        const items = Array.isArray(content) ? content : [content];
-                        items.forEach((item) => {
-                            if (item.type === 'chat') store.dispatch(addMessage(item));
-                            else processItemUpdates(item);
-                        });
+                        const items = message.content;
+                        processItemUpdates(items, true);
                         break;
 
                     case 'update':
                         const updateData = message.content;
-                        processItemUpdates(updateData);
+                        processItemUpdates(updateData, true);
                         break;
 
                     case 'delete':
                         const ids = message.content;
                         processItemDeletions(ids);
+                        break;
+
+                    case 'chat':
+                        const chatMessage = message.content;
+                        store.dispatch(addMessage(chatMessage));
                         break;
 
                     case 'id':
@@ -74,7 +75,7 @@ class WebSocketService {
     // TODO: figure out creation date/ id
     addChatMessage(text: string): void {
         this.sendMessage({
-            type: 'add',
+            type: 'chat',
             content: {
                 id: 'TEMP', // #TODO decide where ids are generated
                 type: 'chat',
@@ -107,7 +108,7 @@ class WebSocketService {
     }
 
     sendMessage(message: WSMessage): void {
-        console.log(message.type, message.content);
+        // console.log(message.type, message.content);
         // this.socket?.send(JSON.stringify(message));
     }
 

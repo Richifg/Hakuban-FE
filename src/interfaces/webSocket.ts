@@ -1,11 +1,11 @@
-import { Item } from './items';
+import { BoardItem, ChatMessage } from './items';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type UpdateData = { id: string; [key: string]: any };
 
 interface WSAddMessage {
     type: 'add';
-    content: Item | Item[];
+    content: BoardItem[];
 }
 
 interface WSUpdateMessage {
@@ -23,10 +23,15 @@ interface WSIdMessage {
     content: string;
 }
 
+interface WSChatMessage {
+    type: 'chat';
+    content: ChatMessage;
+}
+
 interface WSErrorMessage {
     type: 'error';
     content: string;
 }
 
 // Messages sent via webSocket
-export type WSMessage = WSAddMessage | WSUpdateMessage | WSDeleteMessage | WSIdMessage | WSErrorMessage;
+export type WSMessage = WSAddMessage | WSUpdateMessage | WSDeleteMessage | WSIdMessage | WSChatMessage | WSErrorMessage;

@@ -34,17 +34,18 @@ function processItemUpdates(data: BoardItem | UpdateData | (BoardItem | UpdateDa
     updateLineConnections(oldItems, updatedItems);
 
     // queue data for later sync if needed
-    !blockSync && addSyncData(validUpdates);
+    !blockSync && validUpdates.length && store.dispatch(addSyncData(validUpdates));
 
     // on final update,
     if (!inProgress) {
         // also update store boardLimits and max/min zIndex
         const updates = Object.values(store.getState().items.dataToSync);
-        updateBoardLimits(updates);
-        updateMaxZIndices(updates.map((i) => i.zIndex).filter((i) => !!i));
+        updates.length && updateBoardLimits(updates);
+        const zIndices = updates.map<number>((i) => i.zIndex).filter((i) => !!i);
+        zIndices.length && updateMaxZIndices(zIndices);
 
         // sync data with BE
-        !inProgress && !blockSync && store.dispatch(syncData());
+        !blockSync && updates.length && store.dispatch(syncData());
     }
 }
 

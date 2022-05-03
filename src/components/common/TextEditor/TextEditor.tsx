@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useLayoutEffect, useRef } from 'react';
 import { getPositionCSSVars, getTextAreaCoordinates, isTextItem } from '../../../utils';
 import { useSelector, useDebouncedCallback } from '../../../hooks';
-import { Align, BoardItem, BoardTextItem, TextData } from '../../../interfaces';
+import { BoardItem, BoardTextItem, TextData } from '../../../interfaces';
 import { processItemUpdates } from '../../../BoardStateMachine/BoardStateMachineUtils';
 
 import './TextEditor.scss';
@@ -19,37 +19,36 @@ const TextEditor = (): React.ReactElement => {
     const textBoxRef = useRef<HTMLDivElement>(null);
     const selectedItem = selectedItemId ? items[selectedItemId] : undefined;
 
-    // keep last selected item on ref so it can be used inside debounce callback below
+    // keep last selected item on ref so it can be used inside debounce callback
     const lastSelectedItemRef = useRef<BoardItem>();
+    useEffect(() => {
+        lastSelectedItemRef.current = selectedItem;
+    }, [selectedItem]);
 
     // updates initial display text when selected item id changes
     useLayoutEffect(() => {
-        if (selectedItem && 'text' in selectedItem) {
-            const text = selectedItem?.text?.content || '';
+        if (isTextItem(selectedItem) && selectedItem.text) {
+            const text = selectedItem.text.content;
             const htmlText = text.replaceAll(/\/n/g, '<br/>');
             setInitText(htmlText);
         } else {
             setInitText('');
         }
+        // also cleanup text from lastSelectedItem if it was a textItem
+        const lastItem = lastSelectedItemRef.current;
+        if (isTextItem(lastItem) && lastItem.text) {
+            // cleans unerasable final enter when writing into content editable html
+            let content = lastItem.text.content;
+            if (content.slice(-2) === '/n') content = content.substring(0, content.length - 2);
+            processTextUpdate(lastItem, { content, skipRendering: false });
+        }
     }, [selectedItem?.id]);
-
-    // keeps track of last selectedItem with every change of item
-    useEffect(() => {
-        lastSelectedItemRef.current = selectedItem;
-    }, [selectedItem]);
 
     // update skip rendering so canvas doesnt double render text of edited item
     useEffect(() => {
         // if selected item had text, it needs to be skipped
         if (isWriting && isTextItem(selectedItem) && selectedItem.text) {
             processTextUpdate(selectedItem, { skipRendering: true });
-        }
-        const lastItem = lastSelectedItemRef.current;
-        if (!isWriting && isTextItem(lastItem) && lastItem.text) {
-            // cleans unerasable final enter when writing into content editable html
-            let content = lastItem.text.content;
-            if (content.slice(-2) === '/n') content = content.substring(0, content.length - 2);
-            processTextUpdate(lastItem, { content, skipRendering: false });
         }
     }, [isWriting]);
 
@@ -61,12 +60,12 @@ const TextEditor = (): React.ReactElement => {
             const content = e.target.innerHTML.replace(/\<br\/?\>/g, '/n').replace(/\&nbsp;/g, ' ');
             // add new text content to item
             if (lastItem.text) processTextUpdate(lastItem, { content });
-            else processTextUpdate({ ...lastItem, text: { ...textStyle, content } }, {});
+            else processTextUpdate({ ...lastItem, text: { ...textStyle, content, skipRendering: true } }, {});
         }
-    }, 100);
+    }, 200);
 
     // css style vars for texteditor
-    const [color, font, textAlign, verticalAlign]: [string, string, Align, string] = useMemo(() => {
+    const [color, font, textAlign, verticalAlign] = useMemo(() => {
         const source = (isTextItem(selectedItem) && selectedItem?.text) || textStyle;
         const { textColor, fontSize, fontFamily, hAlign, vAlign, bold, italic } = source;
         const verticalAlign = vAlign == 'start' ? ' top' : vAlign == 'end' ? 'bottom' : 'middle';
