@@ -1,5 +1,6 @@
 import { store } from '../../store/store';
-import { addItems, syncData, addSyncData } from '../../store/slices/itemsSlice';
+import { addItems } from '../../store/slices/itemsSlice';
+import { syncData, addSyncData } from '../../store/slices/connectionSlice';
 import { updateBoardLimits, updateLineConnections, updateMaxZIndices } from '.';
 import { BoardItem, UpdateData } from '../../interfaces';
 import { isUpdateDataValid } from '../../utils';
@@ -37,15 +38,15 @@ function processItemUpdates(data: BoardItem | UpdateData | (BoardItem | UpdateDa
     !blockSync && validUpdates.length && store.dispatch(addSyncData(validUpdates));
 
     // on final update,
-    if (!inProgress) {
+    const updates = Object.values(store.getState().connection.dataToSync);
+    if (!inProgress && updates.length) {
         // also update store boardLimits and max/min zIndex
-        const updates = Object.values(store.getState().items.dataToSync);
         updates.length && updateBoardLimits(updates);
         const zIndices = updates.map<number>((i) => i.zIndex).filter((i) => !!i);
         zIndices.length && updateMaxZIndices(zIndices);
 
         // sync data with BE
-        !blockSync && updates.length && store.dispatch(syncData());
+        !blockSync && store.dispatch(syncData());
     }
 }
 

@@ -18,7 +18,6 @@ class WebSocketService {
         const socket = new WebSocket(fullURL);
         this.socket = socket;
 
-        // connection with BE is now verified by the id message <------ WHAT? it is not!
         const connectionPromise = new Promise<void>((resolve, reject) => {
             socket.addEventListener('open', () => {
                 console.log('ws connection openned');
@@ -27,44 +26,44 @@ class WebSocketService {
                 console.log('error!', event);
                 reject('unkown error');
             });
-            // TODO: this component should receive a callback, and maybe app shuold initialize a websocketservice with the callback
-            // and also import store and form the callback setting stuff on store.
-            // also also, maybe APP APP is not the correct thingy but instead some setup function that is run and somehow setups up somenthing.... yes... what?
-            // do somenthing about this comment or just erase it >_<
 
             socket.addEventListener('message', (event) => {
                 const message = JSON.parse(event.data) as WSMessage;
-                switch (message.type) {
-                    case 'error':
-                        store.dispatch(setError(message.content));
-                        reject(message.content);
-                        break;
+                const { type, userId } = message;
+                if (userId !== this.id || userId === 'admin') {
+                    switch (type) {
+                        case 'error':
+                            store.dispatch(setError(message.content));
+                            reject(message.content);
+                            break;
 
-                    case 'add':
-                        const items = message.content;
-                        processItemUpdates(items, true);
-                        break;
+                        case 'add':
+                            const items = message.content;
+                            processItemUpdates(items, true);
+                            break;
 
-                    case 'update':
-                        const updateData = message.content;
-                        processItemUpdates(updateData, true);
-                        break;
+                        case 'update':
+                            const updateData = message.content;
+                            processItemUpdates(updateData, true);
+                            break;
 
-                    case 'delete':
-                        const ids = message.content;
-                        processItemDeletions(ids, true);
-                        break;
+                        case 'delete':
+                            const ids = message.content;
+                            processItemDeletions(ids, true);
+                            break;
 
-                    case 'chat':
-                        const chatMessage = message.content;
-                        store.dispatch(addMessage(chatMessage));
-                        break;
+                        case 'chat':
+                            const chatMessage = message.content;
+                            store.dispatch(addMessage(chatMessage));
+                            break;
 
-                    case 'id':
-                        store.dispatch(setId(message.content));
-                        this.id = message.content;
-                        resolve();
-                        break;
+                        case 'id':
+                            store.dispatch(setId(message.content));
+                            this.id = message.content;
+                            // resolve promise to indicate successfull connect
+                            resolve();
+                            break;
+                    }
                 }
             });
         });
@@ -75,6 +74,7 @@ class WebSocketService {
     // TODO: figure out creation date/ id
     addChatMessage(text: string): void {
         this.sendMessage({
+            userId: this.id,
             type: 'chat',
             content: {
                 id: 'TEMP', // #TODO decide where ids are generated
@@ -88,6 +88,7 @@ class WebSocketService {
 
     addItems(items: BoardItem[]): void {
         this.sendMessage({
+            userId: this.id,
             type: 'add',
             content: getSanitizedData(items),
         });
@@ -95,6 +96,7 @@ class WebSocketService {
 
     updateItems(updateData: UpdateData[]): void {
         this.sendMessage({
+            userId: this.id,
             type: 'update',
             content: getSanitizedData(updateData),
         });
@@ -102,13 +104,14 @@ class WebSocketService {
 
     deleteItems(ids: string[]): void {
         this.sendMessage({
+            userId: this.id,
             type: 'delete',
             content: ids,
         });
     }
 
     sendMessage(message: WSMessage): void {
-        console.log(message.type, message.content);
+        // console.log(message.type, message.content);
         this.socket?.send(JSON.stringify(message));
     }
 

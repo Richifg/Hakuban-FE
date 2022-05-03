@@ -1,10 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { BoardItem, Point, MainPoint, UpdateData } from '../../interfaces';
-import websocket from '../../services/WebSocket/WebSocket';
 
 interface ItemsState {
     items: { [id: string]: BoardItem };
-    dataToSync: { [key: string]: BoardItem | UpdateData };
     dragOffset: { x: number; y: number };
     draggedItemId?: string;
     selectedItemId?: string;
@@ -16,7 +14,6 @@ interface ItemsState {
 
 const initialState: ItemsState = {
     items: {},
-    dataToSync: {},
     dragOffset: { x: 0, y: 0 },
     dragSelectedItemIds: [],
     lineConnections: {},
@@ -47,28 +44,6 @@ const itemsSlice = createSlice({
                 if (state.selectedItemId === id) delete state.selectedItemId;
             });
             state.dragSelectedItemIds = state.dragSelectedItemIds.filter((id) => !ids.includes(id));
-        },
-        addSyncData: (state, action: PayloadAction<(BoardItem | UpdateData)[]>) => {
-            action.payload.forEach((newData) => {
-                const { id } = newData;
-                const oldData = state.dataToSync[id];
-                // full items replace whatever was stored for sync
-                if (newData.creationDate || !oldData) state.dataToSync[id] = newData;
-                // updateData updates existing sync data
-                else state.dataToSync[id] = { ...oldData, ...newData };
-            });
-        },
-        syncData: (state) => {
-            const items: BoardItem[] = [];
-            const updates: UpdateData[] = [];
-            // first send new items and then updates
-            Object.values(state.dataToSync).forEach((data) => {
-                if (data.creationDate) items.push(data as BoardItem);
-                else updates.push(data);
-            });
-            items.length && websocket.addItems(items);
-            updates.length && websocket.updateItems(updates);
-            state.dataToSync = {};
         },
         setDragOffset: (state, action: PayloadAction<[x: number, y: number]>) => {
             const [x, y] = action.payload;
@@ -117,8 +92,6 @@ export const {
     addItems,
     updateItem,
     deleteItems,
-    addSyncData,
-    syncData,
     setDragOffset,
     setDraggedItemId,
     setSelectedItemId,
