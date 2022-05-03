@@ -1,10 +1,8 @@
 import { Line } from '../interfaces';
 import { isPointInsideArea } from './';
+import { LINE_CLICK_TOLERNACE } from '../constants';
 
-// clicking exactly on a 1px line is not easy
-const TOLERANCE = 10; //px
-
-function isPointInsideLine(boardX: number, boardY: number, line: Line, tolerance = TOLERANCE): boolean {
+function isPointInsideLine(boardX: number, boardY: number, line: Line, tolerance = LINE_CLICK_TOLERNACE): boolean {
     const { x0, x2, y0, y2, lineWidth } = line;
     let distance = Infinity;
 

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from '../../../../hooks';
 import { deleteItems } from '../../../../store/slices/itemsSlice';
 import { setCurrentAction } from '../../../../store/slices/boardSlice';
 import { Align, BoardItem, Shape, Line, Text } from '../../../../interfaces';
-import { pushItemChanges } from '../../../../BoardStateMachine/BoardStateMachineUtils';
+import { processItemUpdates } from '../../../../BoardStateMachine/BoardStateMachineUtils';
 import {
     AlignmentSelector,
     ColorSelector,
@@ -15,6 +15,7 @@ import {
     ZIndexSelector,
 } from '.';
 import './MenuOptions.scss';
+import { isTextItem } from '../../../../utils';
 
 interface MenuOptions {
     items: BoardItem[];
@@ -32,18 +33,19 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
 
     const handleChange = (value: string | number, key: string) => {
         const updateData = items.map(({ id }) => ({ id, [key]: value }));
-        pushItemChanges(updateData);
+        processItemUpdates(updateData);
     };
 
     // nested change is only used for the text property of items
     const handleNestedChange = (value: string | Align | number | boolean, key: string) => {
-        items.forEach((item) => {
-            if ('text' in item && key in textStyle) {
-                const text = item.text || { ...textStyle, content: '' };
-                const newItem = { ...item, text: { ...text, [key]: value } };
-                pushItemChanges(newItem);
-            }
-        });
+        if (key in textStyle) {
+            const updateData = items.filter(isTextItem).map((item) => {
+                const oldText = item.text || { ...textStyle, content: '' };
+                const newText = { ...oldText, key: [value] };
+                return { id: item.id, text: newText };
+            });
+            processItemUpdates(updateData);
+        }
     };
 
     const handleDelete = () => {
@@ -95,7 +97,7 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
                     />
                 </>
             )}
-            <ZIndexSelector items={items} />
+            <ZIndexSelector onChange={handleChange} />
             <button onClick={handleDelete}>DEL</button>
         </div>
     );

@@ -1,13 +1,17 @@
 import React, { useState, useMemo, useEffect, useLayoutEffect, useRef } from 'react';
 import { getPositionCSSVars, getTextAreaCoordinates, isTextItem } from '../../../utils';
-import { useSelector, useDispatch, useDebouncedCallback } from '../../../hooks';
-import { addItem } from '../../../store/slices/itemsSlice';
-import { Align, BoardItem } from '../../../interfaces';
+import { useSelector, useDebouncedCallback } from '../../../hooks';
+import { Align, BoardItem, BoardTextItem, TextData } from '../../../interfaces';
+import { processItemUpdates } from '../../../BoardStateMachine/BoardStateMachineUtils';
 
 import './TextEditor.scss';
 
+function processTextUpdate(item: BoardTextItem, data: Partial<TextData>) {
+    const updateData = { id: item.id, text: { ...item.text, ...data } };
+    processItemUpdates(updateData);
+}
+
 const TextEditor = (): React.ReactElement => {
-    const dispatch = useDispatch();
     const { canvasTransform, isWriting } = useSelector((s) => s.board);
     const { textStyle } = useSelector((s) => s.tools);
     const { items, selectedItemId } = useSelector((s) => s.items);
@@ -38,14 +42,14 @@ const TextEditor = (): React.ReactElement => {
     useEffect(() => {
         // if selected item had text, it needs to be skipped
         if (isWriting && isTextItem(selectedItem) && selectedItem.text) {
-            dispatch(addItem({ ...selectedItem, text: { ...selectedItem.text, skipRendering: true } }));
+            processTextUpdate(selectedItem, { skipRendering: true });
         }
         const lastItem = lastSelectedItemRef.current;
         if (!isWriting && isTextItem(lastItem) && lastItem.text) {
             // cleans unerasable final enter when writing into content editable html
             let content = lastItem.text.content;
             if (content.slice(-2) === '/n') content = content.substring(0, content.length - 2);
-            dispatch(addItem({ ...lastItem, text: { ...lastItem.text, content, skipRendering: false } }));
+            processTextUpdate(lastItem, { content, skipRendering: false });
         }
     }, [isWriting]);
 
@@ -55,11 +59,9 @@ const TextEditor = (): React.ReactElement => {
         if (!isWriting && isTextItem(lastItem)) {
             // clean html from textbox
             const content = e.target.innerHTML.replace(/\<br\/?\>/g, '/n').replace(/\&nbsp;/g, ' ');
-            let newItem: BoardItem;
             // add new text content to item
-            if (lastItem.text) newItem = { ...lastItem, text: { ...lastItem.text, content } };
-            else newItem = { ...lastItem, text: { ...textStyle, content } };
-            dispatch(addItem(newItem));
+            if (lastItem.text) processTextUpdate(lastItem, { content });
+            else processTextUpdate({ ...lastItem, text: { ...textStyle, content } }, {});
         }
     }, 100);
 

@@ -1,6 +1,6 @@
 import { Line } from '../interfaces';
+import { ARROW_SIZE } from '../constants';
 
-const ARROW_SIZE = 4; // px
 const NINETY_DEG = Math.PI / 2;
 
 function drawArrows(line: Line, ctx: CanvasRenderingContext2D): void {

@@ -1,11 +1,9 @@
 import { store } from '../../store/store';
-import { addItem, deleteItems, addLineConnection } from '../../store/slices/itemsSlice';
-import { setMaxZIndex, setMinZIndex } from '../../store/slices/boardSlice';
 import { setId, setError } from '../../store/slices/connectionSlice';
 import { addMessage } from '../../store/slices/chatSlice';
 import { BoardItem, UpdateData, WSMessage } from '../../interfaces';
-import { updateBoardLimits } from '../../BoardStateMachine/BoardStateMachineUtils';
 import { getSanitizedData } from '../../utils';
+import { processItemDeletions, processItemUpdates } from '../../BoardStateMachine/BoardStateMachineUtils';
 
 const url = process.env.REACT_APP_SERVER_URL;
 
@@ -47,24 +45,18 @@ class WebSocketService {
                         const items = Array.isArray(content) ? content : [content];
                         items.forEach((item) => {
                             if (item.type === 'chat') store.dispatch(addMessage(item));
-                            else {
-                                store.dispatch(addItem(item));
-                                updateBoardLimits(item);
-                                if ('connections' in item)
-                                    item.connections?.forEach(([lineId, point]) =>
-                                        store.dispatch(addLineConnection({ lineId, point, itemId: item.id })),
-                                    );
-                                const { zIndex } = item;
-                                const { minZIndex, maxZIndex } = store.getState().board;
-                                if (zIndex > maxZIndex) store.dispatch(setMaxZIndex(zIndex));
-                                if (zIndex < minZIndex) store.dispatch(setMinZIndex(zIndex));
-                            }
+                            else processItemUpdates(item);
                         });
+                        break;
+
+                    case 'update':
+                        const updateData = message.content;
+                        processItemUpdates(updateData);
                         break;
 
                     case 'delete':
                         const ids = message.content;
-                        store.dispatch(deleteItems({ ids, blockSync: true }));
+                        processItemDeletions(ids);
                         break;
 
                     case 'id':

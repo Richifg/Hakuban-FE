@@ -30,30 +30,33 @@ const itemsSlice = createSlice({
         setItems: (state, action: PayloadAction<BoardItem[]>) => {
             action.payload.forEach((item) => (state.items[item.id] = item));
         },
-        addItem: (state, action: PayloadAction<BoardItem>) => {
-            const item = action.payload;
-            state.items[item.id] = item;
+        addItems: (state, action: PayloadAction<BoardItem[]>) => {
+            action.payload.forEach((item) => {
+                state.items[item.id] = item;
+            });
         },
         updateItem: (state, action: PayloadAction<UpdateData>) => {
             const { id, ...data } = action.payload;
             const oldItem = state.items[id];
-            state.items[id] = { ...oldItem, ...data };
+            if (oldItem) state.items[id] = { ...oldItem, ...data };
         },
-        deleteItems: (state, action: PayloadAction<{ ids: string[]; blockSync: boolean } | string[]>) => {
-            const { ids, blockSync } = 'ids' in action.payload ? action.payload : { ids: action.payload, blockSync: false };
-            ids.forEach((id) => delete state.items[id]);
-            delete state.selectedItemId;
-            state.dragSelectedItemIds = [];
-            if (!blockSync) websocket.deleteItems(ids);
+        deleteItems: (state, action: PayloadAction<string[]>) => {
+            const ids = action.payload;
+            ids.forEach((id) => {
+                delete state.items[id];
+                if (state.selectedItemId === id) delete state.selectedItemId;
+            });
+            state.dragSelectedItemIds = state.dragSelectedItemIds.filter((id) => !ids.includes(id));
         },
-        addSyncData: (state, action: PayloadAction<BoardItem | UpdateData>) => {
-            const newData = action.payload;
-            const { id } = newData;
-            const oldData = state.dataToSync[id];
-            // full items replace whatever was stored
-            if (newData.creationDate || !oldData) state.dataToSync[id] = newData;
-            // updateData updates existing data
-            else state.dataToSync[id] = { ...oldData, ...newData };
+        addSyncData: (state, action: PayloadAction<(BoardItem | UpdateData)[]>) => {
+            action.payload.forEach((newData) => {
+                const { id } = newData;
+                const oldData = state.dataToSync[id];
+                // full items replace whatever was stored for sync
+                if (newData.creationDate || !oldData) state.dataToSync[id] = newData;
+                // updateData updates existing sync data
+                else state.dataToSync[id] = { ...oldData, ...newData };
+            });
         },
         syncData: (state) => {
             const items: BoardItem[] = [];
@@ -111,7 +114,7 @@ const itemsSlice = createSlice({
 
 export const {
     setItems,
-    addItem,
+    addItems,
     updateItem,
     deleteItems,
     addSyncData,

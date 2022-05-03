@@ -1,6 +1,6 @@
 import { MouseEvent } from 'react';
 import { MouseButton, BoardItem, UpdateData, Coordinates } from '../../interfaces';
-import { updateLineConnections, connectItem, pushItemChanges } from '../BoardStateMachineUtils';
+import { connectItem, processItemUpdates, updateConnectedLines } from '../BoardStateMachineUtils';
 import { setCursorPosition, setIsWriting, setHasCursorMoved, setCurrentAction } from '../../store/slices/boardSlice';
 import { setDragSelectedItemIds, setDragOffset, setSelectedPoint, setSelectedItemId } from '../../store/slices/itemsSlice';
 import { translateCanvas } from '../../store/slices/boardSlice';
@@ -30,15 +30,13 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
     const [boardX, boardY] = getBoardCoordinates(x, y, canvasTransform);
     !hasCursorMoved && mouseButton !== undefined && dispatch(setHasCursorMoved(true));
 
-    const itemChanges: (UpdateData | BoardItem)[] = [];
-
     if (mouseButton === MouseButton.Left) {
         isWriting && dispatch(setIsWriting(false));
         switch (currentAction) {
             case 'DRAW':
                 if (selectedItem?.type === 'drawing') {
                     const points = [...selectedItem.points, [boardX, boardY]] as [number, number][];
-                    itemChanges.push({ id: selectedItem.id, points });
+                    processItemUpdates({ id: selectedItem.id, points });
                 }
                 break;
 
@@ -62,8 +60,8 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
                         const newCoordinates = getTranslatedCoordinates(item, offset, boardX, boardY);
 
                         updatedCoordinates.push(newCoordinates);
-                        updatedLines.push(...updateLineConnections({ ...item, ...newCoordinates }));
-                        itemChanges.push({ id, ...newCoordinates });
+                        updatedLines.push(...updateConnectedLines({ ...item, ...newCoordinates }));
+                        processItemUpdates({ id, ...newCoordinates });
                     });
 
                     // a selection with unmoveable items requires a new dragOffset for each update (lines grow when selection is moved)
@@ -80,28 +78,31 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
                     const { type, id } = selectedItem;
                     const maintainRatio = type === 'note' || type === 'drawing';
                     const coordinates = getResizedCoordinates(selectedItem, selectedPoint, boardX, boardY, maintainRatio);
-                    updateLineConnections({ ...selectedItem, ...coordinates });
-                    itemChanges.push({ id, ...coordinates });
+                    updateConnectedLines({ ...selectedItem, ...coordinates });
+                    processItemUpdates({ id, ...coordinates });
                 } else {
+                    const itemUpdates: (BoardItem | UpdateData)[] = [];
+
                     // resizing without selectedItem means the item's gotta be created first
                     let newItem: BoardItem | undefined = undefined;
                     if (selectedTool === 'SHAPE') {
-                        newItem = getNewItem(boardX, boardY, 0, 'shape');
+                        newItem = getNewItem(boardX, boardY, 'shape');
                         dispatch(setSelectedPoint('P2'));
                         dispatch(setCurrentAction('RESIZE'));
                     } else if (selectedTool === 'PEN') {
-                        newItem = getNewItem(boardX, boardY, 0, 'drawing');
+                        newItem = getNewItem(boardX, boardY, 'drawing');
                         dispatch(setCurrentAction('DRAW'));
                     } else if (selectedTool === 'LINE') {
-                        newItem = getNewItem(boardX, boardY, 0, 'line');
+                        newItem = getNewItem(boardX, boardY, 'line');
                         // when creating a line it could be connected to an item right away
                         const itemUnderCursor = getItemAtPosition(boardX, boardY, Object.values(items));
-                        if (itemUnderCursor) connectItem(itemUnderCursor, newItem, 'P0', boardX, boardY);
+                        if (itemUnderCursor) itemUpdates.push(...connectItem(itemUnderCursor, newItem, 'P0', boardX, boardY));
                         dispatch(setSelectedPoint('P2'));
                         dispatch(setCurrentAction('RESIZE'));
                     }
                     if (newItem) {
-                        pushItemChanges(newItem);
+                        itemUpdates.push(newItem);
+                        processItemUpdates(itemUpdates);
                         dispatch(setSelectedItemId(newItem.id));
                     }
                 }
@@ -119,7 +120,6 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
                 break;
         }
         // update all items in bulk
-        if (itemChanges.length) pushItemChanges(itemChanges);
     } else if (mouseButton === MouseButton.Middle || mouseButton === MouseButton.Right) {
         // middle and right buttons always pan camera
         dispatch(translateCanvas([x - cursorPosition.x, y - cursorPosition.y]));

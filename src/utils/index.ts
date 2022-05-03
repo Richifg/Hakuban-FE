@@ -1,7 +1,7 @@
-import areKeysValid from './areKeysValid';
 import getBoardCoordinates from './getBoardCoordinates';
 import getCanvasCoordinates from './getCanvasCoordinates';
 import getDebouncedFunction from './getDebouncedFunction';
+import getFarthestLimitFromItems from './getFarthestLimitFromItems';
 import getItemAtPosition from './getItemAtPosition';
 import getPositionCSSVars from './getPositionCSSVars';
 import getRelativeDrawing from './getRelativeDrawing';
@@ -20,12 +20,13 @@ import isMainPoint from './isMainPoint';
 import isPointInsideArea from './isPointInsideArea';
 import isPointInsideLine from './isPointInsideLine';
 import isTextItem from './isTextItem';
+import isUpdateDataValid from './isUpdateDataValid';
 
 export {
-    areKeysValid,
     getBoardCoordinates,
     getCanvasCoordinates,
     getDebouncedFunction,
+    getFarthestLimitFromItems,
     getItemAtPosition,
     getPositionCSSVars,
     getRelativeDrawing,
@@ -44,4 +45,5 @@ export {
     isPointInsideArea,
     isPointInsideLine,
     isTextItem,
+    isUpdateDataValid,
 };
