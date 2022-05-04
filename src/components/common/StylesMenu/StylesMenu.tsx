@@ -1,6 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { useSelector } from '../../../hooks';
-import { BoardItem } from '../../../interfaces';
 import { getPositionCSSVars, getMaxCoordinates } from '../../../utils';
 import { MENU_ITEM_OFFSET, MENU_BOARD_OFFSET } from '../../../constants';
 import MenuOptions from './MenuOptions/MenuOptions';
@@ -9,7 +8,7 @@ import './StylesMenu.scss';
 const StylesMenu = (): React.ReactElement => {
     const menuRef = useRef<HTMLDivElement>(null);
     const { canvasTransform, canvasSize, currentAction } = useSelector((s) => s.board);
-    const { items, selectedItemId, dragSelectedItemIds } = useSelector((s) => s.items);
+    const { items, selectedItemIds } = useSelector((s) => s.items);
     // flag to avoid calculating menu position without menu having full size
     const [calculatePosition, setCalculatePosition] = useState(false);
 
@@ -19,12 +18,10 @@ const StylesMenu = (): React.ReactElement => {
     };
 
     const selectedItems = useMemo(() => {
-        const selectedItems: BoardItem[] = [];
-        if (selectedItemId) selectedItems.push(items[selectedItemId]);
-        else selectedItems.push(...dragSelectedItemIds.map((id) => items[id]));
+        const selectedItems = selectedItemIds.map((id) => items[id]);
         setCalculatePosition(false);
         return selectedItems;
-    }, [items, selectedItemId, dragSelectedItemIds]);
+    }, [items, selectedItemIds]);
 
     const [top, left]: [number, number] = useMemo(() => {
         // defualt position outside screen

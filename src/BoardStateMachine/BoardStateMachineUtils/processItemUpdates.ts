@@ -10,7 +10,7 @@ function processItemUpdates(data: BoardItem | UpdateData | (BoardItem | UpdateDa
     const updatedItems: BoardItem[] = []; // items after applying valid updates
     const oldItems: BoardItem[] = []; // items as they were before updates
 
-    const { items, inProgress } = store.getState().items;
+    const { items, isEditting } = store.getState().items;
 
     const itemOrUpdates = Array.isArray(data) ? data : [data];
     itemOrUpdates.forEach((data) => {
@@ -34,17 +34,12 @@ function processItemUpdates(data: BoardItem | UpdateData | (BoardItem | UpdateDa
     updatedItems.length && store.dispatch(addItems(updatedItems));
     updateLineConnections(oldItems, updatedItems);
 
-    // TODO START HERE
-    // somenthing is going on with the way boardLimits and ZIndices are updated
-    // only data on dataToSync is used which means only data made by the user is considered
-    // have to considered incoming messages from WS.....
-
     // queue data for later sync if needed
     !blockSync && validUpdates.length && store.dispatch(addSyncData(validUpdates));
 
     // on final update,
     const updates = Object.values(store.getState().connection.dataToSync);
-    if (!inProgress && updates.length) {
+    if (!isEditting && updates.length) {
         // also update store boardLimits and max/min zIndex
         updates.length && updateBoardLimits(updates);
         const zIndices = updates.map<number>((i) => i.zIndex).filter((i) => !!i);

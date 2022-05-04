@@ -2,7 +2,7 @@ import { MouseEvent } from 'react';
 import { MouseButton, BoardItem, UpdateData, Coordinates } from '../../interfaces';
 import { connectItem, processItemUpdates, updateConnectedLines } from '../BoardStateMachineUtils';
 import { setCursorPosition, setIsWriting, setHasCursorMoved, setCurrentAction } from '../../store/slices/boardSlice';
-import { setDragSelectedItemIds, setDragOffset, setSelectedPoint, setSelectedItemId } from '../../store/slices/itemsSlice';
+import { setDragOffset, setSelectedPoint, setSelectedItemIds } from '../../store/slices/itemsSlice';
 import { translateCanvas } from '../../store/slices/boardSlice';
 import {
     getBoardCoordinates,
@@ -21,9 +21,9 @@ const { dispatch, getState } = store;
 function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
     const { selectedTool } = getState().tools;
     const { currentAction, cursorPosition, canvasTransform, isWriting, hasCursorMoved, mouseButton } = getState().board;
-    const { items, selectedItemId, draggedItemId, dragSelectedItemIds, selectedPoint, dragOffset, lineConnections } =
-        getState().items;
-    const selectedItem = selectedItemId ? items[selectedItemId] : undefined;
+    const { items, selectedItemIds, draggedItemId, selectedPoint, dragOffset, lineConnections } = getState().items;
+
+    const selectedItem = selectedItemIds.length === 1 ? items[selectedItemIds[0]] : undefined;
 
     const [x, y] = [e.clientX, e.clientY];
     dispatch(setCursorPosition([x, y]));
@@ -41,7 +41,7 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
                 break;
 
             case 'DRAG':
-                const ids = draggedItemId ? [draggedItemId] : dragSelectedItemIds;
+                const ids = draggedItemId ? [draggedItemId] : selectedItemIds;
                 const selectedItems = ids.map((id) => items[id]);
                 const draggableItems = selectedItems.filter((item) => isItemDraggable(item, lineConnections));
                 const updatedCoordinates: Coordinates[] = [];
@@ -103,7 +103,7 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
                     if (newItem) {
                         itemUpdates.push(newItem);
                         processItemUpdates(itemUpdates);
-                        dispatch(setSelectedItemId(newItem.id));
+                        dispatch(setSelectedItemIds([newItem.id]));
                     }
                 }
                 break;
@@ -115,8 +115,8 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
                     const insideItems = Object.values(items).filter((item) => isAreaInsideArea(item, areaCoordinates));
                     coveredItemIds = insideItems.map((item) => item.id);
                 }
-                if (dragSelectedItemIds.length > 0 && coveredItemIds.length === 0) dispatch(setDragSelectedItemIds());
-                else if (coveredItemIds.length) dispatch(setDragSelectedItemIds(coveredItemIds));
+                if (selectedItemIds.length > 0 && coveredItemIds.length === 0) dispatch(setSelectedItemIds([]));
+                else if (coveredItemIds.length) dispatch(setSelectedItemIds(coveredItemIds));
                 break;
         }
         // update all items in bulk

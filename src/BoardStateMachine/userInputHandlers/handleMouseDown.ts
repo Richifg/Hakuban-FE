@@ -7,13 +7,7 @@ import {
     setIsWriting,
     setMouseButton,
 } from '../../store/slices/boardSlice';
-import {
-    setDragOffset,
-    setDraggedItemId,
-    setSelectedItemId,
-    setDragSelectedItemIds,
-    setInProgress,
-} from '../../store/slices/itemsSlice';
+import { setDragOffset, setDraggedItemId, setSelectedItemIds, setIsEditting } from '../../store/slices/itemsSlice';
 import { isPointInsideArea, getBoardCoordinates, getMaxCoordinates, isItemDraggable, getItemAtPosition } from '../../utils';
 
 import { store } from '../../store/store';
@@ -21,22 +15,22 @@ const { dispatch, getState } = store;
 
 function handleMouseDown(e: MouseEvent<HTMLDivElement>): void {
     const { canvasTransform, isWriting, hasCursorMoved } = getState().board;
-    const { items, selectedItemId, lineConnections, draggedItemId, dragSelectedItemIds } = getState().items;
+    const { items, lineConnections, draggedItemId, selectedItemIds } = getState().items;
     const { selectedTool } = getState().tools;
 
     const [screenX, screenY] = [e.clientX, e.clientY];
     dispatch(setCursorPosition([screenX, screenY]));
     hasCursorMoved && dispatch(setHasCursorMoved(false));
     dispatch(setMouseButton(e.button));
-    dispatch(setInProgress(true));
+    dispatch(setIsEditting(true));
 
     if (e.button === MouseButton.Left) {
         switch (selectedTool) {
             case 'POINTER':
                 const [boardX, boardY] = getBoardCoordinates(screenX, screenY, canvasTransform);
 
-                if (dragSelectedItemIds.length) {
-                    const selectedItems = dragSelectedItemIds.map((id) => items[id]);
+                if (selectedItemIds.length > 1) {
+                    const selectedItems = selectedItemIds.map((id) => items[id]);
                     const { minX, maxX, minY, maxY } = getMaxCoordinates(selectedItems);
                     if (isPointInsideArea(boardX, boardY, { x0: minX, x2: maxX, y0: minY, y2: maxY })) {
                         // has group of selected items and clicked within the the group
@@ -45,7 +39,7 @@ function handleMouseDown(e: MouseEvent<HTMLDivElement>): void {
                     } else {
                         // has a group of selected items but clicked outside
                         dispatch(setCurrentAction('IDLE'));
-                        dispatch(setDragSelectedItemIds());
+                        dispatch(setSelectedItemIds([]));
                     }
                 } else {
                     const clickedItem = getItemAtPosition(boardX, boardY, Object.values(items));
@@ -59,8 +53,8 @@ function handleMouseDown(e: MouseEvent<HTMLDivElement>): void {
                             draggedItemId && dispatch(setDraggedItemId());
                         }
                         // deselect item if dragging a different item
-                        if (clickedItem.id !== selectedItemId) {
-                            dispatch(setSelectedItemId());
+                        if (selectedItemIds.length === 1 && clickedItem.id !== selectedItemIds[0]) {
+                            dispatch(setSelectedItemIds([]));
                             isWriting && dispatch(setIsWriting(false));
                         }
                         dispatch(setCurrentAction('DRAG'));
@@ -75,13 +69,13 @@ function handleMouseDown(e: MouseEvent<HTMLDivElement>): void {
 
             case 'NOTE':
                 // notes are created on mouseUp
-                selectedItemId && dispatch(setSelectedItemId());
+                selectedItemIds.length && dispatch(setSelectedItemIds([]));
                 dispatch(setCurrentAction('IDLE'));
                 break;
 
             default:
                 // all other tools make items that need resize on creation
-                selectedItemId && dispatch(setSelectedItemId());
+                selectedItemIds.length && dispatch(setSelectedItemIds([]));
                 dispatch(setCurrentAction('RESIZE'));
         }
     } else if (e.button === MouseButton.Middle || e.button === MouseButton.Right) {

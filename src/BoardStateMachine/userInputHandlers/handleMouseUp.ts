@@ -2,7 +2,7 @@ import { MouseEvent } from 'react';
 import { MouseButton, BoardItem, UpdateData } from '../../interfaces';
 import { setNoteStyle } from '../../store/slices/toolSlice';
 import { setCurrentAction, setIsWriting, setMouseButton } from '../../store/slices/boardSlice';
-import { setDraggedItemId, setSelectedItemId, setDragSelectedItemIds, setInProgress } from '../../store/slices/itemsSlice';
+import { setDraggedItemId, setSelectedItemIds, setIsEditting } from '../../store/slices/itemsSlice';
 import { isMainPoint, getBoardCoordinates, getRelativeDrawing, getItemAtPosition, getNewItem } from '../../utils';
 
 import { disconnectItem, connectItem, processItemUpdates } from '../BoardStateMachineUtils';
@@ -12,9 +12,10 @@ const { dispatch, getState } = store;
 
 function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
     const { selectedTool } = getState().tools;
-    const { items, selectedItemId, selectedPoint, dragSelectedItemIds, draggedItemId } = getState().items;
+    const { items, selectedItemIds, selectedPoint, draggedItemId } = getState().items;
     const { currentAction, canvasTransform, isWriting, hasCursorMoved } = getState().board;
-    const selectedItem = selectedItemId ? items[selectedItemId] : undefined;
+
+    const selectedItem = selectedItemIds.length === 1 ? items[selectedItemIds[0]] : undefined;
 
     // then mouseUp will clean up
     dispatch(setMouseButton());
@@ -43,20 +44,19 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
                 break;
 
             case 'DRAG':
-                if (dragSelectedItemIds.length) {
+                if (selectedItemIds.length) {
                     dispatch(setCurrentAction('EDIT'));
                 } else {
-                    dispatch(setDraggedItemId());
+                    draggedItemId && dispatch(setDraggedItemId());
                     if (!hasCursorMoved) {
                         // click on top of an item without moving cursor means the item has to be selected
-                        if (itemUnderCursor) dispatch(setSelectedItemId(itemUnderCursor.id));
+                        if (itemUnderCursor) dispatch(setSelectedItemIds([itemUnderCursor.id]));
                         else !isWriting && dispatch(setIsWriting(true));
                         dispatch(setCurrentAction('EDIT'));
                     } else {
                         // otherwise an item was dragged and could be editted
-                        if (draggedItemId) {
-                            dispatch(setCurrentAction('EDIT'));
-                        } else dispatch(setCurrentAction('IDLE'));
+                        if (draggedItemId) dispatch(setCurrentAction('EDIT'));
+                        else dispatch(setCurrentAction('IDLE'));
                     }
                 }
                 break;
@@ -82,18 +82,13 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
                 // if cursor moved then multiple items might have been selected
                 if (hasCursorMoved) {
                     isWriting && dispatch(setIsWriting(false));
-                    if (dragSelectedItemIds.length) {
-                        dragSelectedItemIds.length === 1 && dispatch(setSelectedItemId(dragSelectedItemIds[0]));
-                        dispatch(setCurrentAction('EDIT'));
-                    } else {
-                        selectedItem && dispatch(setSelectedItemId());
-                        dispatch(setCurrentAction('IDLE'));
-                    }
+                    if (selectedItemIds.length) dispatch(setCurrentAction('EDIT'));
+                    else dispatch(setCurrentAction('IDLE'));
                 } else if (itemUnderCursor) {
-                    dispatch(setSelectedItemId(itemUnderCursor.id));
+                    dispatch(setSelectedItemIds([itemUnderCursor.id]));
                     dispatch(setCurrentAction('EDIT'));
-                } else if (dragSelectedItemIds) {
-                    dispatch(setDragSelectedItemIds());
+                } else {
+                    selectedItemIds.length && dispatch(setSelectedItemIds([]));
                     dispatch(setCurrentAction('IDLE'));
                 }
                 break;
@@ -109,7 +104,7 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
     }
 
     // apply last item changes before sync
-    dispatch(setInProgress(false));
+    dispatch(setIsEditting(false));
     processItemUpdates(itemUpdates);
 }
 

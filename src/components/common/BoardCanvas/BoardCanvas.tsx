@@ -6,7 +6,7 @@ import './BoardCanvas.scss';
 const BoardCanvas = (): React.ReactElement => {
     const dispatch = useDispatch();
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const { items, selectedItemId, dragSelectedItemIds } = useSelector((s) => s.items);
+    const { items, selectedItemIds } = useSelector((s) => s.items);
     const { canvasSize, canvasTransform, lastTranslate, currentAction, showGrid } = useSelector((s) => s.board);
     const { width, height } = canvasSize;
 
@@ -27,7 +27,7 @@ const BoardCanvas = (): React.ReactElement => {
         lastTranslate,
         currentAction === 'SLIDE',
         (x: number, y: number) => dispatch(translateCanvas([x, y])),
-        () => dispatch(setCurrentAction(selectedItemId || dragSelectedItemIds.length ? 'EDIT' : 'IDLE')),
+        () => dispatch(setCurrentAction(selectedItemIds.length ? 'EDIT' : 'IDLE')),
     );
 
     return (
