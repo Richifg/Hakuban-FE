@@ -1,9 +1,10 @@
 import { Coordinates } from '../interfaces/items';
+import { SHAPE_CLICK_TOLERANCE } from '../constants';
 
-function isPointInsideArea(pointX: number, pointY: number, area: Coordinates): boolean {
+function isPointInsideArea(pointX: number, pointY: number, area: Coordinates, tolerance = SHAPE_CLICK_TOLERANCE): boolean {
     const { x0, y0, x2, y2 } = area;
-    if ((pointX >= x0 && pointX <= x2) || (pointX <= x0 && pointX >= x2)) {
-        if ((pointY >= y0 && pointY <= y2) || (pointY <= y0 && pointY >= y2)) {
+    if ((pointX + tolerance >= x0 && pointX - tolerance <= x2) || (pointX - tolerance <= x0 && pointX + tolerance >= x2)) {
+        if ((pointY + tolerance >= y0 && pointY - tolerance <= y2) || (pointY - tolerance <= y0 && pointY + tolerance >= y2)) {
             return true;
         }
     }

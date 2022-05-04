@@ -1,13 +1,17 @@
 import React, { useState, useMemo, useEffect, useLayoutEffect, useRef } from 'react';
 import { getPositionCSSVars, getTextAreaCoordinates, isTextItem } from '../../../utils';
-import { useSelector, useDispatch, useDebouncedCallback } from '../../../hooks';
-import { addItem } from '../../../store/slices/itemsSlice';
-import { Align, BoardItem } from '../../../interfaces';
+import { useSelector, useDebouncedCallback } from '../../../hooks';
+import { BoardItem, BoardTextItem, TextData } from '../../../interfaces';
+import { processItemUpdates } from '../../../BoardStateMachine/BoardStateMachineUtils';
 
 import './TextEditor.scss';
 
+function processTextUpdate(item: BoardTextItem, data: Partial<TextData>) {
+    const updateData = { id: item.id, text: { ...item.text, ...data } };
+    processItemUpdates(updateData);
+}
+
 const TextEditor = (): React.ReactElement => {
-    const dispatch = useDispatch();
     const { canvasTransform, isWriting } = useSelector((s) => s.board);
     const { textStyle } = useSelector((s) => s.tools);
     const { items, selectedItemId } = useSelector((s) => s.items);
@@ -15,17 +19,28 @@ const TextEditor = (): React.ReactElement => {
     const textBoxRef = useRef<HTMLDivElement>(null);
     const selectedItem = selectedItemId ? items[selectedItemId] : undefined;
 
-    // keep last selected item on ref so it can be used inside debounce callback below
+    // keep last selected item on ref so it can be used inside debounce callback
     const lastSelectedItemRef = useRef<BoardItem>();
+    useEffect(() => {
+        lastSelectedItemRef.current = selectedItem;
+    }, [selectedItem]);
 
     // updates initial display text when selected item id changes
     useLayoutEffect(() => {
-        if (selectedItem && 'text' in selectedItem) {
-            const text = selectedItem?.text?.content || '';
+        if (isTextItem(selectedItem) && selectedItem.text) {
+            const text = selectedItem.text.content;
             const htmlText = text.replaceAll(/\/n/g, '<br/>');
             setInitText(htmlText);
         } else {
             setInitText('');
+        }
+        // also cleanup text from lastSelectedItem if it was a textItem
+        const lastItem = lastSelectedItemRef.current;
+        if (isTextItem(lastItem) && lastItem.text) {
+            // cleans unerasable final enter when writing into content editable html
+            let content = lastItem.text.content;
+            if (content.slice(-2) === '/n') content = content.substring(0, content.length - 2);
+            processTextUpdate(lastItem, { content, skipRendering: false });
         }
     }, [selectedItem?.id]);
 
@@ -33,21 +48,9 @@ const TextEditor = (): React.ReactElement => {
     useEffect(() => {
         // if selected item had text, it needs to be skipped
         if (isWriting && isTextItem(selectedItem) && selectedItem.text) {
-            dispatch(addItem({ ...selectedItem, text: { ...selectedItem.text, skipRendering: true } }));
-        }
-        const lastItem = lastSelectedItemRef.current;
-        if (!isWriting && isTextItem(lastItem) && lastItem.text) {
-            // cleans unerasable final enter when writing into content editable html
-            let content = lastItem.text.content;
-            if (content.slice(-2) === '/n') content = content.substring(0, content.length - 2);
-            dispatch(addItem({ ...lastItem, text: { ...lastItem.text, content, skipRendering: false } }));
+            processTextUpdate(selectedItem, { skipRendering: true });
         }
     }, [isWriting]);
-
-    // keeps track of last selectedItem with every change of item
-    useEffect(() => {
-        lastSelectedItemRef.current = selectedItem;
-    }, [selectedItem]);
 
     // handles update of item's text
     const handleTextChange = useDebouncedCallback((e: React.ChangeEvent<HTMLDivElement>) => {
@@ -55,16 +58,14 @@ const TextEditor = (): React.ReactElement => {
         if (!isWriting && isTextItem(lastItem)) {
             // clean html from textbox
             const content = e.target.innerHTML.replace(/\<br\/?\>/g, '/n').replace(/\&nbsp;/g, ' ');
-            let newItem: BoardItem;
             // add new text content to item
-            if (lastItem.text) newItem = { ...lastItem, text: { ...lastItem.text, content } };
-            else newItem = { ...lastItem, text: { ...textStyle, content } };
-            dispatch(addItem(newItem));
+            if (lastItem.text) processTextUpdate(lastItem, { content });
+            else processTextUpdate({ ...lastItem, text: { ...textStyle, content, skipRendering: true } }, {});
         }
-    }, 100);
+    }, 200);
 
     // css style vars for texteditor
-    const [color, font, textAlign, verticalAlign]: [string, string, Align, string] = useMemo(() => {
+    const [color, font, textAlign, verticalAlign] = useMemo(() => {
         const source = (isTextItem(selectedItem) && selectedItem?.text) || textStyle;
         const { textColor, fontSize, fontFamily, hAlign, vAlign, bold, italic } = source;
         const verticalAlign = vAlign == 'start' ? ' top' : vAlign == 'end' ? 'bottom' : 'middle';

@@ -1,24 +1,20 @@
-import type { BoardItem, Point, Coordinates } from '../interfaces/items';
-import type { CanvasTransform } from '../interfaces/board';
-import { getBoardCoordinates } from '.';
+import { BoardItem, Point, Coordinates } from '../interfaces/items';
 
 // return new points for item based on cursor position and selectedPoint
-// if resizeOffset is provided, resize will mantain aspect ratio
+// aspect ratio can be mantained when requested
 
 function getResizedCoordinates(
     item: BoardItem,
     selectedPoint: Point,
-    cursorX: number,
-    cursorY: number,
-    transform: CanvasTransform,
+    cursorBoardX: number,
+    cursorBoardY: number,
     maintainRatio = false,
 ): Coordinates {
     let newX: number;
     let newY: number;
     const { x0, y0, x2, y2 } = item;
-    const [boardX, boardY] = getBoardCoordinates(cursorX, cursorY, transform);
     if (!maintainRatio) {
-        [newX, newY] = [boardX, boardY];
+        [newX, newY] = [cursorBoardX, cursorBoardY];
     } else {
         // gets the resize anchor point
         let staticX: number;
@@ -29,14 +25,15 @@ function getResizedCoordinates(
         else [staticX, staticY] = [x2, y0];
 
         // checks on which axis the resize point grew more
-        const deltaX = boardX - staticX;
-        const deltaY = boardY - staticY;
+        const deltaX = cursorBoardX - staticX;
+        const deltaY = cursorBoardY - staticY;
         const deltaDirection = Math.sign(deltaX | 1) * Math.sign(deltaY | 1); // avoid Math.sign(0) as it returns 0
 
         // calculates the other axis maintaining the item size ratio
         const ratio = Math.abs((x2 - x0) / (y2 - y0));
-        if (Math.abs(deltaX) > Math.abs(deltaY * ratio)) [newX, newY] = [boardX, staticY + (deltaX / ratio) * deltaDirection];
-        else [newX, newY] = [staticX + deltaY * ratio * deltaDirection, boardY];
+        if (Math.abs(deltaX) > Math.abs(deltaY * ratio))
+            [newX, newY] = [cursorBoardX, staticY + (deltaX / ratio) * deltaDirection];
+        else [newX, newY] = [staticX + deltaY * ratio * deltaDirection, cursorBoardY];
     }
 
     if (selectedPoint === 'P0') return { x0: newX, y0: newY, x2, y2 };

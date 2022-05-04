@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { BoardItem, Point, MainPoint } from '../../interfaces/items';
+import { BoardItem, Point, MainPoint, UpdateData } from '../../interfaces';
 
 interface ItemsState {
     items: { [id: string]: BoardItem };
@@ -9,8 +9,7 @@ interface ItemsState {
     dragSelectedItemIds: string[];
     selectedPoint?: Point;
     lineConnections: { [lineId: string]: { [point: string]: string } };
-    maxZIndex: number;
-    minZIndex: number;
+    inProgress: boolean;
 }
 
 const initialState: ItemsState = {
@@ -18,8 +17,7 @@ const initialState: ItemsState = {
     dragOffset: { x: 0, y: 0 },
     dragSelectedItemIds: [],
     lineConnections: {},
-    maxZIndex: -Infinity,
-    minZIndex: Infinity,
+    inProgress: false,
 };
 
 const itemsSlice = createSlice({
@@ -29,25 +27,23 @@ const itemsSlice = createSlice({
         setItems: (state, action: PayloadAction<BoardItem[]>) => {
             action.payload.forEach((item) => (state.items[item.id] = item));
         },
-        addItem: (state, action: PayloadAction<BoardItem>) => {
-            const newItem = action.payload;
-            state.items[newItem.id] = newItem;
+        addItems: (state, action: PayloadAction<BoardItem[]>) => {
+            action.payload.forEach((item) => {
+                state.items[item.id] = item;
+            });
         },
-        updateItem: (state, action: PayloadAction<{ id: string | undefined; key: string; value: string | number | boolean }>) => {
-            const { id, key, value } = action.payload;
-            if (id) {
-                const oldItem = state.items[id];
-                if (key in oldItem) {
-                    const newItem = { ...oldItem, [key]: value };
-                    state.items[id] = newItem;
-                }
-            }
+        updateItem: (state, action: PayloadAction<UpdateData>) => {
+            const { id, ...data } = action.payload;
+            const oldItem = state.items[id];
+            if (oldItem) state.items[id] = { ...oldItem, ...data };
         },
-        deleteItems: (state, action: PayloadAction<string | string[]>) => {
-            const ids = Array.isArray(action.payload) ? action.payload : [action.payload];
-            ids.forEach((id) => delete state.items[id]);
-            delete state.selectedItemId;
-            state.dragSelectedItemIds = [];
+        deleteItems: (state, action: PayloadAction<string[]>) => {
+            const ids = action.payload;
+            ids.forEach((id) => {
+                delete state.items[id];
+                if (state.selectedItemId === id) delete state.selectedItemId;
+            });
+            state.dragSelectedItemIds = state.dragSelectedItemIds.filter((id) => !ids.includes(id));
         },
         setDragOffset: (state, action: PayloadAction<[x: number, y: number]>) => {
             const [x, y] = action.payload;
@@ -85,18 +81,15 @@ const itemsSlice = createSlice({
                 if (Object.values(state.lineConnections[lineId]).length === 0) delete state.lineConnections[lineId];
             }
         },
-        setMaxZIndex: (state, action: PayloadAction<number>) => {
-            state.maxZIndex = action.payload;
-        },
-        setMinZIndex: (state, action: PayloadAction<number>) => {
-            state.minZIndex = action.payload;
+        setInProgress: (state, action: PayloadAction<boolean>) => {
+            state.inProgress = action.payload;
         },
     },
 });
 
 export const {
     setItems,
-    addItem,
+    addItems,
     updateItem,
     deleteItems,
     setDragOffset,
@@ -107,8 +100,7 @@ export const {
     setLineConnections,
     addLineConnection,
     removeLineConnection,
-    setMaxZIndex,
-    setMinZIndex,
+    setInProgress,
 } = itemsSlice.actions;
 
 export default itemsSlice.reducer;

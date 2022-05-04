@@ -1,6 +1,6 @@
 import React, { useState, useRef, useLayoutEffect } from 'react';
 import { useSelector } from '../../../hooks';
-import webSocket from '../../../services/WebSocketService';
+import webSocket from '../../../services/WebSocket/WebSocket';
 
 import avatarImg from './avatar.png';
 
@@ -13,7 +13,7 @@ const TestChat = (): React.ReactElement => {
     const chatBoxRef = useRef<HTMLUListElement>(null);
     const handleSendMessage = () => {
         setText('');
-        webSocket.sendMessage(text);
+        webSocket.addChatMessage(text);
     };
 
     // scroll after change in messages has been rendered

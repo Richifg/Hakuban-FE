@@ -1,5 +1,8 @@
 import React, { useMemo, useLayoutEffect } from 'react';
 import { useDispatch, useSelector } from '../../../../hooks';
+import { setCurrentAction } from '../../../../store/slices/boardSlice';
+import { Align, BoardItem, Shape, Line, Text } from '../../../../interfaces';
+import { processItemDeletions, processItemUpdates } from '../../../../BoardStateMachine/BoardStateMachineUtils';
 import {
     AlignmentSelector,
     ColorSelector,
@@ -10,10 +13,8 @@ import {
     LineTypeSelector,
     ZIndexSelector,
 } from '.';
-import { Align, BoardItem, Shape, Line, Text } from '../../../../interfaces';
-import { updateItem, addItem, deleteItems } from '../../../../store/slices/itemsSlice';
 import './MenuOptions.scss';
-import { setCurrentAction } from '../../../../store/slices/boardSlice';
+import { isTextItem } from '../../../../utils';
 
 interface MenuOptions {
     items: BoardItem[];
@@ -30,27 +31,25 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
     }, [items]);
 
     const handleChange = (value: string | number, key: string) => {
-        items.forEach((item) => {
-            if (key in item) {
-                const { id } = item;
-                dispatch(updateItem({ id, key, value }));
-            }
-        });
+        const updateData = items.map(({ id }) => ({ id, [key]: value }));
+        processItemUpdates(updateData);
     };
 
     // nested change is only used for the text property of items
     const handleNestedChange = (value: string | Align | number | boolean, key: string) => {
-        items.forEach((item) => {
-            if ('text' in item && key in textStyle) {
-                const text = item.text || { ...textStyle, content: '' };
-                const newItem = { ...item, text: { ...text, [key]: value } };
-                dispatch(addItem(newItem));
-            }
-        });
+        if (key in textStyle) {
+            const updateData = items.filter(isTextItem).map((item) => {
+                const oldText = item.text || { ...textStyle, content: '' };
+                const newText = { ...oldText, [key]: value };
+                return { id: item.id, text: newText };
+            });
+            processItemUpdates(updateData);
+        }
     };
 
     const handleDelete = () => {
-        dispatch(deleteItems(items.map((item) => item.id)));
+        const ids = items.map((item) => item.id);
+        processItemDeletions(ids);
         dispatch(setCurrentAction('IDLE'));
     };
 
@@ -70,7 +69,6 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
     }, [items]);
 
     const item = items[0];
-
     return (
         <div className="menu-options" onMouseDown={stopMouseDown}>
             {showFillColor && <ColorSelector onChange={handleChange} styleKey="fillColor" color={(item as Shape).fillColor} />}
@@ -99,7 +97,7 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
                     />
                 </>
             )}
-            <ZIndexSelector items={items} />
+            <ZIndexSelector onChange={handleChange} />
             <button onClick={handleDelete}>DEL</button>
         </div>
     );

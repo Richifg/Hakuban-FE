@@ -1,6 +1,6 @@
 import { Drawing } from '../interfaces';
 
-function getFinishedDrawing(drawing: Drawing): Drawing {
+function getRelativeDrawing(drawing: Drawing): Drawing {
     let [x0, y0, x2, y2] = [Infinity, Infinity, -Infinity, -Infinity];
 
     // find maximun and minimun points
@@ -20,7 +20,7 @@ function getFinishedDrawing(drawing: Drawing): Drawing {
         parseFloat(((y - y0) / height).toFixed(4)),
     ]);
 
-    return { ...drawing, x0, x2, y0, y2, points, inProgress: false };
+    return { ...drawing, x0, x2, y0, y2, points, isAbsolute: false };
 }
 
-export default getFinishedDrawing;
+export default getRelativeDrawing;

@@ -1,10 +1,11 @@
 import { MouseEvent } from 'react';
-import { MouseButton, BoardItem } from '../../interfaces';
+import { MouseButton, BoardItem, UpdateData } from '../../interfaces';
 import { setNoteStyle } from '../../store/slices/toolSlice';
-import { addItem, setDraggedItemId, setSelectedItemId, setDragSelectedItemIds } from '../../store/slices/itemsSlice';
-import { setCurrentAction, setCursorPosition, setIsWriting, setBoardLimits, setMouseButton } from '../../store/slices/boardSlice';
-import { isPointInsideArea, isMainPoint, getBoardCoordinates, getFinishedDrawing, getUpdatedBoardLimits } from '../../utils';
-import { createItem, disconnectItem, connectItem } from '../BoardStateMachineUtils';
+import { setCurrentAction, setIsWriting, setMouseButton } from '../../store/slices/boardSlice';
+import { setDraggedItemId, setSelectedItemId, setDragSelectedItemIds, setInProgress } from '../../store/slices/itemsSlice';
+import { isMainPoint, getBoardCoordinates, getRelativeDrawing, getItemAtPosition, getNewItem } from '../../utils';
+
+import { disconnectItem, connectItem, processItemUpdates } from '../BoardStateMachineUtils';
 
 import { store } from '../../store/store';
 const { dispatch, getState } = store;
@@ -15,61 +16,64 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
     const { currentAction, canvasTransform, isWriting, hasCursorMoved } = getState().board;
     const selectedItem = selectedItemId ? items[selectedItemId] : undefined;
 
-    const [screenX, screenY] = [e.clientX, e.clientY];
-    dispatch(setCursorPosition([screenX, screenY]));
+    // then mouseUp will clean up
     dispatch(setMouseButton());
+    const [boardX, boardY] = getBoardCoordinates(e.clientX, e.clientY, canvasTransform);
+    const itemUnderCursor = getItemAtPosition(boardX, boardY, Object.values(items), [selectedItem]);
 
-    const [boardX, boardY] = getBoardCoordinates(screenX, screenY, canvasTransform);
-    const clickedItem = Object.values(items).find((item) => isPointInsideArea(boardX, boardY, item));
+    const itemUpdates: (BoardItem | UpdateData)[] = [];
 
-    let editedItem: BoardItem | undefined = undefined;
     if (e.button === MouseButton.Left) {
         switch (currentAction) {
             case 'IDLE':
-                if (selectedTool === 'NOTE') createItem(screenX, screenY);
+                if (selectedTool === 'NOTE') {
+                    const note = getNewItem(boardX, boardY, 'note');
+                    itemUpdates.push(note);
+                    dispatch(setCurrentAction('EDIT'));
+                }
                 break;
 
             case 'DRAW':
                 if (selectedItem?.type === 'drawing') {
                     // transformed in-progress drawing into relative coordinates drawing
-                    const finishedDrawing = getFinishedDrawing(selectedItem);
-                    editedItem = finishedDrawing;
-                    dispatch(addItem(finishedDrawing));
-                    dispatch(setBoardLimits(getUpdatedBoardLimits(finishedDrawing)));
+                    const finishedDrawing = getRelativeDrawing(selectedItem);
+                    itemUpdates.push(finishedDrawing);
                     dispatch(setCurrentAction('IDLE'));
                 }
                 break;
 
             case 'DRAG':
-                if (dragSelectedItemIds.length) dispatch(setCurrentAction('EDIT'));
-                else {
+                if (dragSelectedItemIds.length) {
+                    dispatch(setCurrentAction('EDIT'));
+                } else {
                     dispatch(setDraggedItemId());
                     if (!hasCursorMoved) {
                         // click on top of an item without moving cursor means the item has to be selected
-                        if (clickedItem && clickedItem !== selectedItem) dispatch(setSelectedItemId(clickedItem.id));
+                        if (itemUnderCursor) dispatch(setSelectedItemId(itemUnderCursor.id));
                         else !isWriting && dispatch(setIsWriting(true));
                         dispatch(setCurrentAction('EDIT'));
                     } else {
                         // otherwise an item was dragged and could be editted
-                        editedItem = clickedItem;
-                        if (selectedItemId) dispatch(setCurrentAction('EDIT'));
-                        else dispatch(setCurrentAction('IDLE'));
+                        if (draggedItemId) {
+                            dispatch(setCurrentAction('EDIT'));
+                        } else dispatch(setCurrentAction('IDLE'));
                     }
                 }
                 break;
 
             case 'RESIZE':
-                editedItem = selectedItem;
-                if (selectedTool === 'NOTE' && selectedItem?.type === 'note') {
+                if (selectedItem?.type === 'note') {
                     // resizing an Note involves updating preffered Note size
                     const { fillColor } = selectedItem;
                     const size = Math.abs(selectedItem.x2 - selectedItem.x0);
                     dispatch(setNoteStyle({ fillColor, size }));
                 } else if (selectedItem?.type === 'line' && isMainPoint(selectedPoint)) {
                     // only connect Lines to other non-Line items
-                    if (clickedItem && clickedItem.type !== 'line')
-                        connectItem(clickedItem, selectedItem, selectedPoint, boardX, boardY);
-                    else disconnectItem(selectedItem, selectedPoint);
+                    const connectionUpdates: (UpdateData | undefined)[] = [];
+                    if (itemUnderCursor && itemUnderCursor.type !== 'line') {
+                        connectionUpdates.push(...connectItem(itemUnderCursor, selectedItem, selectedPoint, boardX, boardY));
+                    } else connectionUpdates.push(disconnectItem(selectedItem, selectedPoint));
+                    connectionUpdates.length && itemUpdates.push(...(connectionUpdates.filter((i) => !!i) as UpdateData[]));
                 }
                 dispatch(setCurrentAction('EDIT'));
                 break;
@@ -85,8 +89,8 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
                         selectedItem && dispatch(setSelectedItemId());
                         dispatch(setCurrentAction('IDLE'));
                     }
-                } else if (clickedItem) {
-                    dispatch(setSelectedItemId(clickedItem.id));
+                } else if (itemUnderCursor) {
+                    dispatch(setSelectedItemId(itemUnderCursor.id));
                     dispatch(setCurrentAction('EDIT'));
                 } else if (dragSelectedItemIds) {
                     dispatch(setDragSelectedItemIds());
@@ -103,8 +107,10 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
             dispatch(setCurrentAction('SLIDE'));
         }
     }
-    // board limits are not updated until user mouseUp
-    if (editedItem) dispatch(setBoardLimits(getUpdatedBoardLimits(editedItem)));
+
+    // apply last item changes before sync
+    dispatch(setInProgress(false));
+    processItemUpdates(itemUpdates);
 }
 
 export default handleMouseUp;

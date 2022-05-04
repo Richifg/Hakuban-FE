@@ -1,31 +1,43 @@
 import { store } from '../../store/store';
 import { BoardItem } from '../../interfaces';
-import { addItem } from '../../store/slices/itemsSlice';
+import { setLineConnections } from '../../store/slices/itemsSlice';
+import { isConnectableItem } from '../../utils';
 
-// updates the coordinates of the Lines to wich an item is connected
-
-function updateLineConnections(item: BoardItem): void {
-    if ('connections' in item) {
-        const { items } = store.getState().items;
-        item.connections?.forEach(([id, point, pX, pY]) => {
-            const { x0, x2, y0, y2 } = item;
-            const [width, height] = [Math.abs(x2 - x0), Math.abs(y2 - y0)];
-            const line = items[id];
-            if (line.type === 'line') {
-                const updatedLine = { ...line };
-                const x = Math.min(x0, x2) + width * pX;
-                const y = Math.min(y0, y2) + height * pY;
-                if (point === 'P0') {
-                    updatedLine.x0 = x;
-                    updatedLine.y0 = y;
-                } else {
-                    updatedLine.x2 = x;
-                    updatedLine.y2 = y;
-                }
-                store.dispatch(addItem(updatedLine));
+// updates line connections on store
+function updateLineConnections(oldItems: BoardItem[], newItems: BoardItem[] = []): void {
+    let hasUpdated = false;
+    // deep copy store line connections
+    const { lineConnections } = store.getState().items;
+    const newLineConnections: typeof lineConnections = {};
+    Object.entries(lineConnections).forEach(([key, value]) => (newLineConnections[key] = { ...value }));
+    // delete any connection on old Items
+    oldItems.forEach((oldItem) => {
+        if (isConnectableItem(oldItem)) {
+            const { connections, id } = oldItem;
+            if (connections) {
+                hasUpdated = true;
+                connections.forEach(([lineId, point]) => {
+                    if (newLineConnections?.[lineId]?.[point] === id) {
+                        delete newLineConnections[lineId][point];
+                    }
+                });
             }
-        });
-    }
+        }
+    });
+    // then add all connections on new Items
+    newItems.forEach((newItem) => {
+        if (isConnectableItem(newItem)) {
+            const { connections, id } = newItem;
+            if (connections) {
+                hasUpdated = true;
+                connections.forEach(([lineId, point]) => {
+                    if (newLineConnections[lineId]) newLineConnections[lineId][point] = id;
+                    else newLineConnections[lineId] = { [point]: id };
+                });
+            }
+        }
+    });
+    if (hasUpdated) store.dispatch(setLineConnections(newLineConnections));
 }
 
 export default updateLineConnections;

@@ -2,11 +2,9 @@ import React, { useMemo, useRef, useState } from 'react';
 import { useSelector } from '../../../hooks';
 import { BoardItem } from '../../../interfaces';
 import { getPositionCSSVars, getMaxCoordinates } from '../../../utils';
+import { MENU_ITEM_OFFSET, MENU_BOARD_OFFSET } from '../../../constants';
 import MenuOptions from './MenuOptions/MenuOptions';
 import './StylesMenu.scss';
-
-const ITEM_OFFSET = 20; //px ditance to item
-const CANVAS_OFFSET = 10; //px min distance to edge of canvas
 
 const StylesMenu = (): React.ReactElement => {
     const menuRef = useRef<HTMLDivElement>(null);
@@ -47,14 +45,14 @@ const StylesMenu = (): React.ReactElement => {
             const menuWidth = menuRef.current?.clientWidth || 0;
 
             // try to have menu above item and centered horizontally
-            menuTop = top - ITEM_OFFSET - menuHeight;
+            menuTop = top - MENU_ITEM_OFFSET - menuHeight;
             menuLeft = left + (width - menuWidth) / 2;
 
             // avoid a position where menu goes off screen
-            if (menuTop < CANVAS_OFFSET) menuTop = top + ITEM_OFFSET + height;
-            if (menuLeft < CANVAS_OFFSET) menuLeft = CANVAS_OFFSET;
-            else if (menuLeft + menuWidth > canvasSize.width - CANVAS_OFFSET)
-                menuLeft = canvasSize.width - CANVAS_OFFSET - menuWidth;
+            if (menuTop < MENU_BOARD_OFFSET) menuTop = top + MENU_ITEM_OFFSET + height;
+            if (menuLeft < MENU_BOARD_OFFSET) menuLeft = MENU_BOARD_OFFSET;
+            else if (menuLeft + menuWidth > canvasSize.width - MENU_BOARD_OFFSET)
+                menuLeft = canvasSize.width - MENU_BOARD_OFFSET - menuWidth;
         }
 
         return [menuTop, menuLeft];

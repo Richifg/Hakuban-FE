@@ -2,18 +2,17 @@ import { store } from '../store/store';
 import { BoardItem, BoardItemType, Note, Line, Drawing, Shape, Text } from '../interfaces';
 import { getNewId } from '../utils';
 
-function getNewItem(x: number, y: number, zIndex: number, type: 'note'): Note;
-function getNewItem(x: number, y: number, zIndex: number, type: 'line'): Line;
-function getNewItem(x: number, y: number, zIndex: number, type: 'drawing'): Drawing;
-function getNewItem(x: number, y: number, zIndex: number, type: 'shape'): Shape;
-function getNewItem(x: number, y: number, zIndex: number, type: 'text'): Text;
-function getNewItem(x: number, y: number, zIndex: number, type: BoardItemType): BoardItem {
-    const id = getNewId();
-    const creationDate = Date.now();
+function getNewItem(x: number, y: number, type: 'note'): Note;
+function getNewItem(x: number, y: number, type: 'line'): Line;
+function getNewItem(x: number, y: number, type: 'drawing'): Drawing;
+function getNewItem(x: number, y: number, type: 'shape'): Shape;
+function getNewItem(x: number, y: number, type: 'text'): Text;
+function getNewItem(x: number, y: number, type: BoardItemType): BoardItem {
+    const { maxZIndex } = store.getState().board;
     const itemBase = {
-        id,
-        creationDate,
-        zIndex,
+        id: getNewId(),
+        creationDate: Date.now(),
+        zIndex: maxZIndex,
         type,
     };
     switch (type) {
@@ -62,8 +61,8 @@ function getNewItem(x: number, y: number, zIndex: number, type: BoardItemType): 
                 y0: 0,
                 y2: 0,
                 points: [[x, y]],
+                isAbsolute: true,
                 ...drawingStyle,
-                inProgress: true,
             };
         case 'text':
             const { textStyle } = store.getState().tools;

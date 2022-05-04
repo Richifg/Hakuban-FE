@@ -22,6 +22,7 @@ const CanvasUI = (): React.ReactElement => {
 
     // handle user with BoardStateMachine
     const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+        e.preventDefault(); // stop native drag behaviour
         e.persist();
         SM.mouseDown(e);
     };

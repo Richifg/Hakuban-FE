@@ -12,11 +12,11 @@ import { handleMouseDown, handleMouseMove, handleMouseUp, handleMouseWheel, hand
 */
 
 const BoardStateMachine = {
-    mouseDown: handleMouseDown,
+    mouseDown: handleMouseDown, // sets initial vars
 
-    mouseMove: handleMouseMove,
+    mouseMove: handleMouseMove, // modifies items as mouse moves
 
-    mouseUp: handleMouseUp,
+    mouseUp: handleMouseUp, // wraps up and syncs items with BE
 
     wheelScroll: handleMouseWheel,
 

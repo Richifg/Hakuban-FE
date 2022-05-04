@@ -8,10 +8,12 @@ interface BoardState {
     lastTranslate: { dX: number; dY: number };
     canvasSize: { width: number; height: number };
     boardLimits: BoardLimits;
+    maxZIndex: number;
+    minZIndex: number;
     showGrid: boolean;
     isWriting: boolean;
-    mouseButton?: MouseButton;
     hasCursorMoved: boolean;
+    mouseButton?: MouseButton;
 }
 
 const initialState: BoardState = {
@@ -26,6 +28,8 @@ const initialState: BoardState = {
         bottom: { extent: -Infinity },
         left: { extent: Infinity },
     },
+    maxZIndex: 0,
+    minZIndex: 0,
     showGrid: true,
     isWriting: false,
     hasCursorMoved: false,
@@ -64,17 +68,25 @@ export const boardSlice = createSlice({
         setBoardLimits: (state, action: PayloadAction<BoardLimits>) => {
             state.boardLimits = action.payload;
         },
+        setMaxZIndex: (state, action: PayloadAction<number>) => {
+            const zIndex = action.payload;
+            if (zIndex > state.maxZIndex) state.maxZIndex = zIndex;
+        },
+        setMinZIndex: (state, action: PayloadAction<number>) => {
+            const zIndex = action.payload;
+            if (zIndex < state.minZIndex) state.minZIndex = zIndex;
+        },
         toggleGrid: (state) => {
             state.showGrid = !state.showGrid;
         },
         setIsWriting: (state, action: PayloadAction<boolean>) => {
             state.isWriting = action.payload;
         },
-        setMouseButton: (state, action: PayloadAction<MouseButton | undefined>) => {
-            state.mouseButton = action.payload;
-        },
         setHasCursorMoved: (state, action: PayloadAction<boolean>) => {
             state.hasCursorMoved = action.payload;
+        },
+        setMouseButton: (state, action: PayloadAction<MouseButton | undefined>) => {
+            state.mouseButton = action.payload;
         },
     },
 });
@@ -87,6 +99,8 @@ export const {
     centerCanvasAt,
     setCanvasSize,
     setBoardLimits,
+    setMaxZIndex,
+    setMinZIndex,
     toggleGrid,
     setIsWriting,
     setMouseButton,

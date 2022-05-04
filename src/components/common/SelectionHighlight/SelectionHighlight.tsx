@@ -9,11 +9,14 @@ const SelectionHighlight = (): React.ReactElement => {
 
     const cssVars = useMemo(() => {
         if (!dragSelectedItemIds.length) return [];
+        const vars: ReturnType<typeof getPositionCSSVars>[] = [];
         const itemsToHighlight = dragSelectedItemIds.map((id) => items[id]);
-        const itemVars = itemsToHighlight.map((item) => getPositionCSSVars(canvasTransform, item, true));
+        if (itemsToHighlight.length < 5) {
+            vars.push(...itemsToHighlight.map((item) => getPositionCSSVars(canvasTransform, item, true)));
+        }
         const { maxX, maxY, minX, minY } = getMaxCoordinates(itemsToHighlight);
-        itemVars.push(getPositionCSSVars(canvasTransform, { x0: minX, y0: minY, x2: maxX, y2: maxY }, true));
-        return itemVars;
+        vars.push(getPositionCSSVars(canvasTransform, { x0: minX, y0: minY, x2: maxX, y2: maxY }, true));
+        return vars;
     }, [items, dragSelectedItemIds, canvasTransform]);
 
     return (

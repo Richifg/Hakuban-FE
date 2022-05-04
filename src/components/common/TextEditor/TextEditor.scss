@@ -5,12 +5,12 @@
     transform-origin: top left;
     box-sizing: border-box;
     overflow: hidden;
-    user-select: none;
 
     .text-box {
         height: inherit;
         display: table-cell;
         word-break: break-word;
         outline: none;
+        cursor: text;
     }
 }

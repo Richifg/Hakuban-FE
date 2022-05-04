@@ -1,32 +1,24 @@
-// ZIndexSelector
-
 import React from 'react';
-import { useDispatch, useSelector } from '../../../../../hooks';
-import { updateItem, setMaxZIndex, setMinZIndex } from '../../../../../store/slices/itemsSlice';
 import { BoardItem } from '../../../../../interfaces';
-import './ZIndexSelector.scss';
+import { useSelector } from '../../../../../hooks';
 
-const key: keyof BoardItem = 'zIndex';
+const KEY: keyof BoardItem = 'zIndex';
 
 interface ZIndexSelector {
-    items: BoardItem[];
+    onChange(value: number, key: string): void;
 }
 
-const ZIndexSelector = ({ items }: ZIndexSelector): React.ReactElement => {
-    const dispatch = useDispatch();
-    const { maxZIndex, minZIndex } = useSelector((s) => s.items);
+const ZIndexSelector = ({ onChange }: ZIndexSelector): React.ReactElement => {
+    const { maxZIndex, minZIndex } = useSelector((s) => s.board);
 
-    const handleChange = (zIndex: number, action: typeof setMaxZIndex) => () => {
-        items.forEach((item) => {
-            dispatch(updateItem({ id: item?.id, key, value: zIndex }));
-            dispatch(action(zIndex));
-        });
+    const handleChange = (zIndex: number) => () => {
+        onChange(zIndex, KEY);
     };
 
     return (
         <div className="z-index-selector">
-            <button onClick={handleChange(minZIndex - 1, setMinZIndex)}>back</button>
-            <button onClick={handleChange(maxZIndex + 1, setMaxZIndex)}>front</button>
+            <button onClick={handleChange(minZIndex - 1)}>back</button>
+            <button onClick={handleChange(maxZIndex + 1)}>front</button>
         </div>
     );
 };

@@ -1,21 +1,34 @@
 import { MouseEvent } from 'react';
 import { MouseButton } from '../../interfaces';
-import { setCurrentAction, setCursorPosition, setHasCursorMoved, setMouseButton } from '../../store/slices/boardSlice';
-import { setDragOffset, setDraggedItemId, setSelectedItemId, setDragSelectedItemIds } from '../../store/slices/itemsSlice';
-import { isPointInsideArea, getBoardCoordinates, getMaxCoordinates, isItemDraggable } from '../../utils';
+import {
+    setCurrentAction,
+    setCursorPosition,
+    setHasCursorMoved,
+    setIsWriting,
+    setMouseButton,
+} from '../../store/slices/boardSlice';
+import {
+    setDragOffset,
+    setDraggedItemId,
+    setSelectedItemId,
+    setDragSelectedItemIds,
+    setInProgress,
+} from '../../store/slices/itemsSlice';
+import { isPointInsideArea, getBoardCoordinates, getMaxCoordinates, isItemDraggable, getItemAtPosition } from '../../utils';
 
 import { store } from '../../store/store';
 const { dispatch, getState } = store;
 
 function handleMouseDown(e: MouseEvent<HTMLDivElement>): void {
-    const { canvasTransform } = getState().board;
+    const { canvasTransform, isWriting, hasCursorMoved } = getState().board;
     const { items, selectedItemId, lineConnections, draggedItemId, dragSelectedItemIds } = getState().items;
     const { selectedTool } = getState().tools;
 
     const [screenX, screenY] = [e.clientX, e.clientY];
     dispatch(setCursorPosition([screenX, screenY]));
-    dispatch(setHasCursorMoved(false));
+    hasCursorMoved && dispatch(setHasCursorMoved(false));
     dispatch(setMouseButton(e.button));
+    dispatch(setInProgress(true));
 
     if (e.button === MouseButton.Left) {
         switch (selectedTool) {
@@ -23,10 +36,8 @@ function handleMouseDown(e: MouseEvent<HTMLDivElement>): void {
                 const [boardX, boardY] = getBoardCoordinates(screenX, screenY, canvasTransform);
 
                 if (dragSelectedItemIds.length) {
-                    const draggableItems = dragSelectedItemIds
-                        .map((id) => items[id])
-                        .filter((item) => isItemDraggable(item, lineConnections));
-                    const { minX, maxX, minY, maxY } = getMaxCoordinates(draggableItems);
+                    const selectedItems = dragSelectedItemIds.map((id) => items[id]);
+                    const { minX, maxX, minY, maxY } = getMaxCoordinates(selectedItems);
                     if (isPointInsideArea(boardX, boardY, { x0: minX, x2: maxX, y0: minY, y2: maxY })) {
                         // has group of selected items and clicked within the the group
                         dispatch(setDragOffset([boardX - minX, boardY - minY]));
@@ -37,7 +48,7 @@ function handleMouseDown(e: MouseEvent<HTMLDivElement>): void {
                         dispatch(setDragSelectedItemIds());
                     }
                 } else {
-                    const clickedItem = Object.values(items).find((item) => isPointInsideArea(boardX, boardY, item));
+                    const clickedItem = getItemAtPosition(boardX, boardY, Object.values(items));
                     if (clickedItem) {
                         if (isItemDraggable(clickedItem, lineConnections)) {
                             dispatch(setDragOffset([boardX - clickedItem.x0, boardY - clickedItem.y0]));
@@ -48,12 +59,16 @@ function handleMouseDown(e: MouseEvent<HTMLDivElement>): void {
                             draggedItemId && dispatch(setDraggedItemId());
                         }
                         // deselect item if dragging a different item
-                        if (clickedItem.id !== selectedItemId) dispatch(setSelectedItemId());
+                        if (clickedItem.id !== selectedItemId) {
+                            dispatch(setSelectedItemId());
+                            isWriting && dispatch(setIsWriting(false));
+                        }
                         dispatch(setCurrentAction('DRAG'));
                     } else {
                         // nothing was clicked and there was no previous group selection
                         dispatch(setDragOffset([boardX, boardY]));
                         dispatch(setCurrentAction('DRAGSELECT'));
+                        isWriting && dispatch(setIsWriting(false));
                     }
                 }
                 break;
