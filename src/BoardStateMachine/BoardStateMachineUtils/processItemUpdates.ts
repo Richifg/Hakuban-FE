@@ -34,6 +34,11 @@ function processItemUpdates(data: BoardItem | UpdateData | (BoardItem | UpdateDa
     updatedItems.length && store.dispatch(addItems(updatedItems));
     updateLineConnections(oldItems, updatedItems);
 
+    // TODO START HERE
+    // somenthing is going on with the way boardLimits and ZIndices are updated
+    // only data on dataToSync is used which means only data made by the user is considered
+    // have to considered incoming messages from WS.....
+
     // queue data for later sync if needed
     !blockSync && validUpdates.length && store.dispatch(addSyncData(validUpdates));
 
