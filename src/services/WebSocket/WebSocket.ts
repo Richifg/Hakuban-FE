@@ -1,9 +1,9 @@
 import { store } from '../../store/store';
-import { setId, setError } from '../../store/slices/connectionSlice';
+import { setUserId, setError } from '../../store/slices/connectionSlice';
 import { addMessage } from '../../store/slices/chatSlice';
-import { BoardItem, UpdateData, WSMessage } from '../../interfaces';
+import { BoardItem, UpdateData, WSMessage, LockData } from '../../interfaces';
 import { getSanitizedData } from '../../utils';
-import { processItemDeletions, processItemUpdates } from '../../BoardStateMachine/BoardStateMachineUtils';
+import { processItemDeletions, processItemLocks, processItemUpdates } from '../../BoardStateMachine/BoardStateMachineUtils';
 
 const url = process.env.REACT_APP_SERVER_URL;
 
@@ -30,7 +30,9 @@ class WebSocketService {
             socket.addEventListener('message', (event) => {
                 const message = JSON.parse(event.data) as WSMessage;
                 const { type, userId } = message;
-                if (userId !== this.id || userId === 'admin') {
+                // only process broadcasts from other user or of type lock
+                // own locks need to be confirmed before data can be synced
+                if (userId !== this.id || type === 'lock') {
                     switch (type) {
                         case 'error':
                             store.dispatch(setError(message.content));
@@ -57,8 +59,13 @@ class WebSocketService {
                             store.dispatch(addMessage(chatMessage));
                             break;
 
+                        case 'lock':
+                            const lockData = message.content;
+                            processItemLocks(lockData, userId);
+                            break;
+
                         case 'id':
-                            store.dispatch(setId(message.content));
+                            store.dispatch(setUserId(message.content));
                             this.id = message.content;
                             // resolve promise to indicate successfull connect
                             resolve();
@@ -71,7 +78,7 @@ class WebSocketService {
         return connectionPromise;
     }
 
-    // TODO: figure out creation date/ id
+    // TODO: figure out creation date/ id TODO TODO
     addChatMessage(text: string): void {
         this.sendMessage({
             userId: this.id,
@@ -110,8 +117,16 @@ class WebSocketService {
         });
     }
 
+    lockItems(lockData: LockData): void {
+        this.sendMessage({
+            userId: this.id,
+            type: 'lock',
+            content: lockData,
+        });
+    }
+
     sendMessage(message: WSMessage): void {
-        // console.log(message.type, message.content);
+        console.log(message.type, message.content);
         this.socket?.send(JSON.stringify(message));
     }
 

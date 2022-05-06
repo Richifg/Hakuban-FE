@@ -1,6 +1,7 @@
 import connectItem from './connectItem';
 import disconnectItem from './disconnectItem';
 import processItemDeletions from './processItemDeletions';
+import processItemLocks from './processItemLocks';
 import processItemUpdates from './processItemUpdates';
 import updateBoardLimits from './updateBoardLimits';
 import updateConnectedLines from './updateConnectedLines';
@@ -14,6 +15,7 @@ export {
     connectItem,
     disconnectItem,
     processItemDeletions,
+    processItemLocks,
     processItemUpdates,
     updateBoardLimits,
     updateConnectedLines,

@@ -16,6 +16,7 @@ const EditPoints = (): React.ReactElement => {
 
     const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
         e.stopPropagation();
+        e.preventDefault();
         const point = e.currentTarget.id as Point;
         dispatch(setMouseButton(e.button));
         dispatch(setSelectedPoint(point));
