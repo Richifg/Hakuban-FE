@@ -3,6 +3,8 @@ import disconnectItem from './disconnectItem';
 import processItemDeletions from './processItemDeletions';
 import processItemLocks from './processItemLocks';
 import processItemUpdates from './processItemUpdates';
+import selectItems from './selectItems';
+import selectQuickDragItem from './selectQuickDragItem';
 import updateBoardLimits from './updateBoardLimits';
 import updateConnectedLines from './updateConnectedLines';
 import updateLineConnections from './updateLineConnections';
@@ -17,6 +19,8 @@ export {
     processItemDeletions,
     processItemLocks,
     processItemUpdates,
+    selectItems,
+    selectQuickDragItem,
     updateBoardLimits,
     updateConnectedLines,
     updateLineConnections,

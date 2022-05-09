@@ -6,7 +6,7 @@ import { isConnectableItem } from '../../utils';
 // updates line connections on store
 function updateLineConnections(oldItems: BoardItem[], newItems: BoardItem[] = []): void {
     let hasUpdated = false;
-    // deep copy store line connections
+    // deep copy store's line connections
     const { lineConnections } = store.getState().items;
     const newLineConnections: typeof lineConnections = {};
     Object.entries(lineConnections).forEach(([key, value]) => (newLineConnections[key] = { ...value }));

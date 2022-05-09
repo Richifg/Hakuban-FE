@@ -1,8 +1,8 @@
 import { MouseEvent } from 'react';
 import { MouseButton, BoardItem, UpdateData, Coordinates } from '../../interfaces';
-import { connectItem, processItemUpdates, updateConnectedLines } from '../BoardStateMachineUtils';
+import { connectItem, processItemUpdates, updateConnectedLines, selectItems } from '../BoardStateMachineUtils';
 import { setCursorPosition, setIsWriting, setHasCursorMoved, setCurrentAction } from '../../store/slices/boardSlice';
-import { setDragOffset, setSelectedPoint, setSelectedItemIds } from '../../store/slices/itemsSlice';
+import { setDragOffset, setSelectedPoint } from '../../store/slices/itemsSlice';
 import { translateCanvas } from '../../store/slices/boardSlice';
 import {
     getBoardCoordinates,
@@ -44,14 +44,15 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
                 const ids = draggedItemId ? [draggedItemId] : selectedItemIds;
                 const selectedItems = ids.map((id) => items[id]);
                 const draggableItems = selectedItems.filter((item) => isItemDraggable(item, lineConnections));
-                const updatedCoordinates: Coordinates[] = [];
-                const updatedLines: BoardItem[] = [];
                 if (draggableItems.length) {
                     // draggOffset is relative to the whole group of items
                     const { minX, minY } =
                         selectedItems.length > 1
                             ? getMaxCoordinates(selectedItems)
                             : { minX: selectedItems[0].x0, minY: selectedItems[0].y0 };
+
+                    const updatedCoordinates: Coordinates[] = [];
+                    const updatedLines: BoardItem[] = [];
 
                     // update coordinates of draggable items and their line connections
                     draggableItems.forEach((item) => {
@@ -103,7 +104,7 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
                     if (newItem) {
                         itemUpdates.push(newItem);
                         processItemUpdates(itemUpdates);
-                        dispatch(setSelectedItemIds([newItem.id]));
+                        selectItems(newItem.id);
                     }
                 }
                 break;
@@ -115,8 +116,8 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
                     const insideItems = Object.values(items).filter((item) => isAreaInsideArea(item, areaCoordinates));
                     coveredItemIds = insideItems.map((item) => item.id);
                 }
-                if (selectedItemIds.length > 0 && coveredItemIds.length === 0) dispatch(setSelectedItemIds([]));
-                else if (coveredItemIds.length) dispatch(setSelectedItemIds(coveredItemIds));
+                // clear selection or select covered items
+                selectItems(coveredItemIds);
                 break;
         }
         // update all items in bulk

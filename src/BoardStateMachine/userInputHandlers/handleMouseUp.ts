@@ -1,11 +1,11 @@
 import { MouseEvent } from 'react';
-import { MouseButton, BoardItem, UpdateData } from '../../interfaces';
 import { setNoteStyle } from '../../store/slices/toolSlice';
+import { setInProgress } from '../../store/slices/itemsSlice';
 import { setCurrentAction, setIsWriting, setMouseButton } from '../../store/slices/boardSlice';
-import { setDraggedItemId, setSelectedItemIds, setIsEditting } from '../../store/slices/itemsSlice';
 import { isMainPoint, getBoardCoordinates, getRelativeDrawing, getItemAtPosition, getNewItem } from '../../utils';
+import { MouseButton, BoardItem, UpdateData } from '../../interfaces';
 
-import { disconnectItem, connectItem, processItemUpdates } from '../BoardStateMachineUtils';
+import { disconnectItem, connectItem, processItemUpdates, selectItems, selectQuickDragItem } from '../BoardStateMachineUtils';
 
 import { store } from '../../store/store';
 const { dispatch, getState } = store;
@@ -23,6 +23,8 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
     const itemUnderCursor = getItemAtPosition(boardX, boardY, Object.values(items), [selectedItem]);
 
     const itemUpdates: (BoardItem | UpdateData)[] = [];
+    let idsToSelect: string[] = [];
+    let hasSelectionChanged = false;
 
     if (e.button === MouseButton.Left) {
         switch (currentAction) {
@@ -44,20 +46,24 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
                 break;
 
             case 'DRAG':
+                // edit the selected item
                 if (selectedItemIds.length) {
                     dispatch(setCurrentAction('EDIT'));
                 } else {
-                    draggedItemId && dispatch(setDraggedItemId());
                     if (!hasCursorMoved) {
                         // click on top of an item without moving cursor means the item has to be selected
-                        if (itemUnderCursor) dispatch(setSelectedItemIds([itemUnderCursor.id]));
-                        else !isWriting && dispatch(setIsWriting(true));
+                        if (itemUnderCursor) {
+                            idsToSelect = [itemUnderCursor.id];
+                            hasSelectionChanged = true;
+                        } else !isWriting && dispatch(setIsWriting(true));
                         dispatch(setCurrentAction('EDIT'));
                     } else {
                         // otherwise an item was dragged and could be editted
+                        // TODO TODO not sure if this can happen
                         if (draggedItemId) dispatch(setCurrentAction('EDIT'));
                         else dispatch(setCurrentAction('IDLE'));
                     }
+                    selectQuickDragItem();
                 }
                 break;
 
@@ -84,11 +90,9 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
                     isWriting && dispatch(setIsWriting(false));
                     if (selectedItemIds.length) dispatch(setCurrentAction('EDIT'));
                     else dispatch(setCurrentAction('IDLE'));
-                } else if (itemUnderCursor) {
-                    dispatch(setSelectedItemIds([itemUnderCursor.id]));
-                    dispatch(setCurrentAction('EDIT'));
                 } else {
-                    selectedItemIds.length && dispatch(setSelectedItemIds([]));
+                    idsToSelect = [];
+                    hasSelectionChanged = true;
                     dispatch(setCurrentAction('IDLE'));
                 }
                 break;
@@ -97,15 +101,18 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
                 dispatch(setCurrentAction('IDLE'));
                 break;
         }
+        // allow BE sync
+        dispatch(setInProgress(false));
+        // select items again for syncing lock
+        if (!hasSelectionChanged) idsToSelect = selectedItemIds;
+        selectItems(idsToSelect);
+        // process last updates before syncing items
+        processItemUpdates(itemUpdates);
     } else if (e.button === MouseButton.Middle || e.button === MouseButton.Right) {
         if (currentAction === 'PAN') {
             dispatch(setCurrentAction('SLIDE'));
         }
     }
-
-    // apply last item changes before sync
-    dispatch(setIsEditting(false));
-    processItemUpdates(itemUpdates);
 }
 
 export default handleMouseUp;

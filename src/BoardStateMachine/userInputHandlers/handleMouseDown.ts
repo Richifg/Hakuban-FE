@@ -7,29 +7,30 @@ import {
     setIsWriting,
     setMouseButton,
 } from '../../store/slices/boardSlice';
-import { setDragOffset, setDraggedItemId, setSelectedItemIds, setIsEditting } from '../../store/slices/itemsSlice';
+import { setDragOffset, setInProgress } from '../../store/slices/itemsSlice';
 import { isPointInsideArea, getBoardCoordinates, getMaxCoordinates, isItemDraggable, getItemAtPosition } from '../../utils';
+import { selectItems, selectQuickDragItem } from '../BoardStateMachineUtils';
 
 import { store } from '../../store/store';
 const { dispatch, getState } = store;
 
 function handleMouseDown(e: MouseEvent<HTMLDivElement>): void {
     const { canvasTransform, isWriting, hasCursorMoved } = getState().board;
-    const { items, lineConnections, draggedItemId, selectedItemIds } = getState().items;
+    const { items, lineConnections, selectedItemIds } = getState().items;
     const { selectedTool } = getState().tools;
 
     const [screenX, screenY] = [e.clientX, e.clientY];
     dispatch(setCursorPosition([screenX, screenY]));
     hasCursorMoved && dispatch(setHasCursorMoved(false));
     dispatch(setMouseButton(e.button));
-    dispatch(setIsEditting(true));
+    dispatch(setInProgress(true));
 
     if (e.button === MouseButton.Left) {
         switch (selectedTool) {
             case 'POINTER':
                 const [boardX, boardY] = getBoardCoordinates(screenX, screenY, canvasTransform);
 
-                if (selectedItemIds.length > 1) {
+                if (selectedItemIds.length) {
                     const selectedItems = selectedItemIds.map((id) => items[id]);
                     const { minX, maxX, minY, maxY } = getMaxCoordinates(selectedItems);
                     if (isPointInsideArea(boardX, boardY, { x0: minX, x2: maxX, y0: minY, y2: maxY })) {
@@ -38,28 +39,29 @@ function handleMouseDown(e: MouseEvent<HTMLDivElement>): void {
                         dispatch(setCurrentAction('DRAG'));
                     } else {
                         // has a group of selected items but clicked outside
+                        selectItems();
                         dispatch(setCurrentAction('IDLE'));
-                        dispatch(setSelectedItemIds([]));
                     }
                 } else {
+                    // nothing selected, check if starting a quick drag (dragging item without selecting it first)
                     const clickedItem = getItemAtPosition(boardX, boardY, Object.values(items));
                     if (clickedItem) {
                         if (isItemDraggable(clickedItem, lineConnections)) {
                             dispatch(setDragOffset([boardX - clickedItem.x0, boardY - clickedItem.y0]));
-                            dispatch(setDraggedItemId(clickedItem.id));
+                            selectQuickDragItem(clickedItem.id);
                         } else {
                             // dont set draggedItemId if not draggable
                             // a mouse move attempt will result in BLOCKED action
-                            draggedItemId && dispatch(setDraggedItemId());
+                            selectQuickDragItem();
                         }
                         // deselect item if dragging a different item
                         if (selectedItemIds.length === 1 && clickedItem.id !== selectedItemIds[0]) {
-                            dispatch(setSelectedItemIds([]));
+                            selectItems();
                             isWriting && dispatch(setIsWriting(false));
                         }
                         dispatch(setCurrentAction('DRAG'));
                     } else {
-                        // nothing was clicked and there was no previous group selection
+                        // nothing was clicked, starting a drag select
                         dispatch(setDragOffset([boardX, boardY]));
                         dispatch(setCurrentAction('DRAGSELECT'));
                         isWriting && dispatch(setIsWriting(false));
@@ -69,13 +71,13 @@ function handleMouseDown(e: MouseEvent<HTMLDivElement>): void {
 
             case 'NOTE':
                 // notes are created on mouseUp
-                selectedItemIds.length && dispatch(setSelectedItemIds([]));
+                selectItems();
                 dispatch(setCurrentAction('IDLE'));
                 break;
 
             default:
                 // all other tools make items that need resize on creation
-                selectedItemIds.length && dispatch(setSelectedItemIds([]));
+                selectItems();
                 dispatch(setCurrentAction('RESIZE'));
         }
     } else if (e.button === MouseButton.Middle || e.button === MouseButton.Right) {

@@ -8,7 +8,7 @@ interface ItemsState {
     draggedItemId?: string;
     selectedPoint?: Point;
     lineConnections: { [lineId: string]: { [point: string]: string } };
-    isEditting: boolean;
+    inProgress: boolean;
 }
 
 const initialState: ItemsState = {
@@ -16,7 +16,7 @@ const initialState: ItemsState = {
     dragOffset: { x: 0, y: 0 },
     selectedItemIds: [],
     lineConnections: {},
-    isEditting: false,
+    inProgress: false,
 };
 
 const itemsSlice = createSlice({
@@ -60,8 +60,8 @@ const itemsSlice = createSlice({
         setLineConnections: (state, action: PayloadAction<{ [id: string]: { [point: string]: string } }>) => {
             state.lineConnections = action.payload;
         },
-        setIsEditting: (state, action: PayloadAction<boolean>) => {
-            state.isEditting = action.payload;
+        setInProgress: (state, action: PayloadAction<boolean>) => {
+            state.inProgress = action.payload;
         },
     },
 });
@@ -76,7 +76,7 @@ export const {
     setSelectedItemIds,
     setSelectedPoint,
     setLineConnections,
-    setIsEditting,
+    setInProgress,
 } = itemsSlice.actions;
 
 export default itemsSlice.reducer;

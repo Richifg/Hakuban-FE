@@ -3,13 +3,15 @@ import { AppThunk } from '../store';
 import { WSService, TestService } from '../../services';
 import { BoardItem, UpdateData } from '../../interfaces';
 
+type ItemsLock = { [itemId: string]: string };
+
 interface ConectionState {
     userId: string;
     roomId: string;
     isLoading: boolean;
     isConnected: boolean;
     dataToSync: { [key: string]: BoardItem | UpdateData };
-    itemsLock: { [itemId: string]: string };
+    itemsLock: ItemsLock;
     error: string;
 }
 
@@ -39,7 +41,7 @@ const connectionSlice = createSlice({
         setIsConnected(state, action: PayloadAction<boolean>) {
             state.isConnected = action.payload;
         },
-        addSyncData: (state, action: PayloadAction<(BoardItem | UpdateData)[]>) => {
+        addSyncData(state, action: PayloadAction<(BoardItem | UpdateData)[]>) {
             action.payload.forEach((newData) => {
                 const { id } = newData;
                 const oldData = state.dataToSync[id];
@@ -49,18 +51,18 @@ const connectionSlice = createSlice({
                 else state.dataToSync[id] = { ...oldData, ...newData };
             });
         },
-        removeSyncData: (state, action: PayloadAction<string[]>) => {
+        removeSyncData(state, action: PayloadAction<string[]>) {
             const ids = action.payload;
             ids.forEach((id) => {
                 delete state.dataToSync[id];
             });
         },
-        syncData: (state) => {
+        syncData(state) {
             const items: BoardItem[] = [];
             const updates: UpdateData[] = [];
             const { userId, itemsLock, dataToSync } = state;
             const newDataToSync: typeof dataToSync = {};
-            // only syncData that is confirmed to be lock by user can be synced
+            // only sync syncData from items confirmed to be locked by user
             Object.values(dataToSync).forEach((data) => {
                 const { id } = data;
                 if (itemsLock[id] === userId) {
@@ -77,7 +79,7 @@ const connectionSlice = createSlice({
             updates.length && WSService.updateItems(updates);
             state.dataToSync = newDataToSync;
         },
-        setItemsLock: (state, action: PayloadAction<{ [key: string]: string }>) => {
+        setItemsLock(state, action: PayloadAction<ItemsLock>) {
             state.itemsLock = action.payload;
         },
         setError(state, action: PayloadAction<string>) {

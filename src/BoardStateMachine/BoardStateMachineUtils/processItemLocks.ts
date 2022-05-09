@@ -2,7 +2,9 @@ import { store } from '../../store/store';
 import { LockData } from '../../interfaces';
 import { setItemsLock, removeSyncData, syncData } from '../../store/slices/connectionSlice';
 import { setCurrentAction } from '../../store/slices/boardSlice';
-import { setSelectedItemIds } from '../../store/slices/itemsSlice';
+import { selectItems } from '../../BoardStateMachine/BoardStateMachineUtils';
+
+// process incoming WSLockMessages from BE to make sure user has not selected somenthing locked by someone else
 
 function processItemLock(data: LockData, userId: string): void {
     const { getState, dispatch } = store;
@@ -23,10 +25,10 @@ function processItemLock(data: LockData, userId: string): void {
                 else newSelectedIds.push(id);
             });
             if (newSelectedIds.length !== selectedItemIds.length) {
-                dispatch(setSelectedItemIds(newSelectedIds));
+                selectItems();
                 newSelectedIds.length === 0 && dispatch(setCurrentAction('IDLE'));
             }
-            // dataToSync accumlated for those items is now invalid
+            // dataToSync accumulated for those items is now invalid
             removedIds.length && dispatch(removeSyncData(removedIds));
         }
     } else {
@@ -35,8 +37,8 @@ function processItemLock(data: LockData, userId: string): void {
     dispatch(setItemsLock(newItemsLock));
 
     // sync data for new confirmed locks
-    const { isEditting } = getState().items;
-    if (!isEditting && ownLock) dispatch(syncData());
+    const { inProgress } = getState().items;
+    if (!inProgress && ownLock) dispatch(syncData());
 }
 
 export default processItemLock;

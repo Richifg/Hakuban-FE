@@ -1,8 +1,8 @@
 import React from 'react';
 import { useDispatch, useSelector } from '../../../hooks';
-import { setSelectedItemIds } from '../../../store/slices/itemsSlice';
 import { setSelectedTool } from '../../../store/slices/toolSlice';
 import { setCurrentAction } from '../../../store/slices/boardSlice';
+import { selectItems } from '../../../BoardStateMachine/BoardStateMachineUtils';
 import type { Tool } from '../../../interfaces/board';
 import tools from './tools';
 
@@ -17,7 +17,7 @@ const ToolsMenu = (): React.ReactElement => {
         if (selectedTool !== tool) {
             dispatch(setSelectedTool(tool));
             dispatch(setCurrentAction('IDLE'));
-            dispatch(setSelectedItemIds([]));
+            selectItems();
         }
     };
 

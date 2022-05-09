@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Point, Action } from '../../../interfaces';
 import { useSelector, useDispatch } from '../../../hooks';
-import { setSelectedPoint, setIsEditting } from '../../../store/slices/itemsSlice';
+import { setSelectedPoint, setInProgress } from '../../../store/slices/itemsSlice';
 import { setCurrentAction, setIsWriting, setMouseButton } from '../../../store/slices/boardSlice';
 import getEditPoints from './getEditPoints';
 import './EditPoints.scss';
@@ -21,7 +21,7 @@ const EditPoints = (): React.ReactElement => {
         dispatch(setMouseButton(e.button));
         dispatch(setSelectedPoint(point));
         dispatch(setCurrentAction('RESIZE'));
-        dispatch(setIsEditting(true));
+        dispatch(setInProgress(true));
         isWriting && dispatch(setIsWriting(false));
     };
 

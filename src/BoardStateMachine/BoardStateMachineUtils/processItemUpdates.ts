@@ -5,12 +5,15 @@ import { updateBoardLimits, updateLineConnections, updateMaxZIndices } from '.';
 import { BoardItem, UpdateData } from '../../interfaces';
 import { isUpdateDataValid } from '../../utils';
 
+// process item updates both from user and from BE
+// keeps items, lineConnections and BoardLimits updated
+
 function processItemUpdates(data: BoardItem | UpdateData | (BoardItem | UpdateData)[], blockSync = false): void {
     const validUpdates: UpdateData[] = []; // updates that can be synced
     const updatedItems: BoardItem[] = []; // items after applying valid updates
     const oldItems: BoardItem[] = []; // items as they were before updates
 
-    const { items, isEditting } = store.getState().items;
+    const { items, inProgress } = store.getState().items;
 
     const itemOrUpdates = Array.isArray(data) ? data : [data];
     itemOrUpdates.forEach((data) => {
@@ -39,7 +42,7 @@ function processItemUpdates(data: BoardItem | UpdateData | (BoardItem | UpdateDa
 
     // on final update,
     const updates = Object.values(store.getState().connection.dataToSync);
-    if (!isEditting && updates.length) {
+    if (!inProgress && updates.length) {
         // also update store boardLimits and max/min zIndex
         updates.length && updateBoardLimits(updates);
         const zIndices = updates.map<number>((i) => i.zIndex).filter((i) => !!i);
