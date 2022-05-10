@@ -1,6 +1,6 @@
 import { MouseEvent } from 'react';
 import { setNoteStyle } from '../../store/slices/toolSlice';
-import { setInProgress } from '../../store/slices/itemsSlice';
+import { setDraggedItemId, setInProgress } from '../../store/slices/itemsSlice';
 import { setCurrentAction, setIsWriting, setMouseButton } from '../../store/slices/boardSlice';
 import { isMainPoint, getBoardCoordinates, getRelativeDrawing, getItemAtPosition, getNewItem } from '../../utils';
 import { MouseButton, BoardItem, UpdateData } from '../../interfaces';
@@ -12,7 +12,7 @@ const { dispatch, getState } = store;
 
 function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
     const { selectedTool } = getState().tools;
-    const { items, selectedItemIds, selectedPoint, draggedItemId } = getState().items;
+    const { items, selectedItemIds, selectedPoint } = getState().items;
     const { currentAction, canvasTransform, isWriting, hasCursorMoved } = getState().board;
 
     const selectedItem = selectedItemIds.length === 1 ? items[selectedItemIds[0]] : undefined;
@@ -25,6 +25,7 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
     const itemUpdates: (BoardItem | UpdateData)[] = [];
     let idsToSelect: string[] = [];
     let hasSelectionChanged = false;
+    let shouldCleanQuickDrag = false;
 
     if (e.button === MouseButton.Left) {
         switch (currentAction) {
@@ -50,20 +51,20 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
                 if (selectedItemIds.length) {
                     dispatch(setCurrentAction('EDIT'));
                 } else {
-                    if (!hasCursorMoved) {
+                    if (hasCursorMoved) {
+                        // finish the quick drag but hold unlock after item is updated
+                        shouldCleanQuickDrag = true;
+                        dispatch(setCurrentAction('IDLE'));
+                    } else {
                         // click on top of an item without moving cursor means the item has to be selected
                         if (itemUnderCursor) {
                             idsToSelect = [itemUnderCursor.id];
                             hasSelectionChanged = true;
-                        } else !isWriting && dispatch(setIsWriting(true));
+                            // manually deselected quick drag item without unlocking (it will now be selected)
+                            dispatch(setDraggedItemId());
+                        }
                         dispatch(setCurrentAction('EDIT'));
-                    } else {
-                        // otherwise an item was dragged and could be editted
-                        // TODO TODO not sure if this can happen
-                        if (draggedItemId) dispatch(setCurrentAction('EDIT'));
-                        else dispatch(setCurrentAction('IDLE'));
                     }
-                    selectQuickDragItem();
                 }
                 break;
 
@@ -85,16 +86,16 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
                 break;
 
             case 'DRAGSELECT':
+                hasSelectionChanged = true;
                 // if cursor moved then multiple items might have been selected
                 if (hasCursorMoved) {
-                    isWriting && dispatch(setIsWriting(false));
-                    if (selectedItemIds.length) dispatch(setCurrentAction('EDIT'));
-                    else dispatch(setCurrentAction('IDLE'));
+                    idsToSelect = selectedItemIds;
+                    dispatch(setCurrentAction(selectedItemIds.length ? 'IDLE' : 'IDLE'));
                 } else {
                     idsToSelect = [];
-                    hasSelectionChanged = true;
                     dispatch(setCurrentAction('IDLE'));
                 }
+                isWriting && dispatch(setIsWriting(false));
                 break;
 
             case 'BLOCKED':
@@ -103,11 +104,12 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
         }
         // allow BE sync
         dispatch(setInProgress(false));
-        // select items again for syncing lock
-        if (!hasSelectionChanged) idsToSelect = selectedItemIds;
-        selectItems(idsToSelect);
-        // process last updates before syncing items
+
+        // lock items before updating them
+        if (hasSelectionChanged) selectItems(idsToSelect);
         processItemUpdates(itemUpdates);
+        // unlock quick drag after updating it
+        if (shouldCleanQuickDrag) selectQuickDragItem();
     } else if (e.button === MouseButton.Middle || e.button === MouseButton.Right) {
         if (currentAction === 'PAN') {
             dispatch(setCurrentAction('SLIDE'));

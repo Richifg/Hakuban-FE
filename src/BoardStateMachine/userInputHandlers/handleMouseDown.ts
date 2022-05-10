@@ -29,23 +29,26 @@ function handleMouseDown(e: MouseEvent<HTMLDivElement>): void {
         switch (selectedTool) {
             case 'POINTER':
                 const [boardX, boardY] = getBoardCoordinates(screenX, screenY, canvasTransform);
+                const clickedItem = getItemAtPosition(boardX, boardY, Object.values(items));
+                let clickedOutside = true;
 
                 if (selectedItemIds.length) {
                     const selectedItems = selectedItemIds.map((id) => items[id]);
                     const { minX, maxX, minY, maxY } = getMaxCoordinates(selectedItems);
                     if (isPointInsideArea(boardX, boardY, { x0: minX, x2: maxX, y0: minY, y2: maxY })) {
-                        // has group of selected items and clicked within the the group
+                        // has selected items and clicked within the the group
+                        clickedOutside = false;
                         dispatch(setDragOffset([boardX - minX, boardY - minY]));
                         dispatch(setCurrentAction('DRAG'));
                     } else {
-                        // has a group of selected items but clicked outside
+                        // deselect previously selected items
                         selectItems();
-                        dispatch(setCurrentAction('IDLE'));
+                        isWriting && dispatch(setIsWriting(false));
                     }
-                } else {
-                    // nothing selected, check if starting a quick drag (dragging item without selecting it first)
-                    const clickedItem = getItemAtPosition(boardX, boardY, Object.values(items));
+                }
+                if (!selectedItemIds.length || clickedOutside) {
                     if (clickedItem) {
+                        // clicked an item so might be starting a quick drag
                         if (isItemDraggable(clickedItem, lineConnections)) {
                             const { minX, minY } = getMaxCoordinates(clickedItem);
                             dispatch(setDragOffset([boardX - minX, boardY - minY]));
@@ -54,11 +57,6 @@ function handleMouseDown(e: MouseEvent<HTMLDivElement>): void {
                             // dont set draggedItemId if not draggable
                             // a mouse move attempt will result in BLOCKED action
                             selectQuickDragItem();
-                        }
-                        // deselect item if dragging a different item
-                        if (selectedItemIds.length === 1 && clickedItem.id !== selectedItemIds[0]) {
-                            selectItems();
-                            isWriting && dispatch(setIsWriting(false));
                         }
                         dispatch(setCurrentAction('DRAG'));
                     } else {
