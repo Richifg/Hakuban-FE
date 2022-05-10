@@ -45,12 +45,8 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
                 const selectedItems = ids.map((id) => items[id]);
                 const draggableItems = selectedItems.filter((item) => isItemDraggable(item, lineConnections));
                 if (draggableItems.length) {
-                    // draggOffset is relative to the whole group of items
-                    const { minX, minY } =
-                        selectedItems.length > 1
-                            ? getMaxCoordinates(selectedItems)
-                            : { minX: selectedItems[0].x0, minY: selectedItems[0].y0 };
-
+                    // dragOffset is relative to minX and minY of the group of items
+                    const { minX, minY } = getMaxCoordinates(selectedItems);
                     const updatedCoordinates: Coordinates[] = [];
                     const updatedLines: BoardItem[] = [];
 

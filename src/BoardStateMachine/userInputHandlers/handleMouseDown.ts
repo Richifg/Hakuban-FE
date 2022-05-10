@@ -47,7 +47,8 @@ function handleMouseDown(e: MouseEvent<HTMLDivElement>): void {
                     const clickedItem = getItemAtPosition(boardX, boardY, Object.values(items));
                     if (clickedItem) {
                         if (isItemDraggable(clickedItem, lineConnections)) {
-                            dispatch(setDragOffset([boardX - clickedItem.x0, boardY - clickedItem.y0]));
+                            const { minX, minY } = getMaxCoordinates(clickedItem);
+                            dispatch(setDragOffset([boardX - minX, boardY - minY]));
                             selectQuickDragItem(clickedItem.id);
                         } else {
                             // dont set draggedItemId if not draggable
