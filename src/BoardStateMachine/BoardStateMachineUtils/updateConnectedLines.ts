@@ -3,7 +3,7 @@ import { BoardItem, UpdateData, Line } from '../../interfaces';
 import { isConnectableItem } from '../../utils';
 import { processItemUpdates } from './';
 
-// updates the coordinates of the Lines to wich an item is connected
+// updates the coordinates of the Lines to which an item is connected
 
 function updateConnectedLines(item: BoardItem): Line[] {
     const updatedLines: Line[] = [];
@@ -18,8 +18,7 @@ function updateConnectedLines(item: BoardItem): Line[] {
                 const x = Math.min(x0, x2) + width * pX;
                 const y = Math.min(y0, y2) + height * pY;
                 {
-                    const { x0, x2, y0, y2 } = line;
-                    const updateData: UpdateData = { id, x0, x2, y0, y2 };
+                    const updateData: UpdateData = { id };
                     if (point === 'P0') {
                         updateData.x0 = x;
                         updateData.y0 = y;

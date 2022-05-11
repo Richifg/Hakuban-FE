@@ -90,7 +90,7 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
                 // if cursor moved then multiple items might have been selected
                 if (hasCursorMoved) {
                     idsToSelect = selectedItemIds;
-                    dispatch(setCurrentAction(selectedItemIds.length ? 'IDLE' : 'IDLE'));
+                    dispatch(setCurrentAction(selectedItemIds.length ? 'EDIT' : 'IDLE'));
                 } else {
                     idsToSelect = [];
                     dispatch(setCurrentAction('IDLE'));

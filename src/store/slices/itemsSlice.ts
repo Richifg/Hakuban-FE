@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { BoardItem, Point, UpdateData } from '../../interfaces';
+import { BoardItem, Point, UpdateData, StoreLineConnections } from '../../interfaces';
 
 interface ItemsState {
     items: { [id: string]: BoardItem };
@@ -7,7 +7,7 @@ interface ItemsState {
     selectedItemIds: string[];
     draggedItemId?: string;
     selectedPoint?: Point;
-    lineConnections: { [lineId: string]: { [point: string]: string } };
+    lineConnections: StoreLineConnections;
     inProgress: boolean;
 }
 
@@ -57,7 +57,7 @@ const itemsSlice = createSlice({
         setSelectedPoint: (state, action: PayloadAction<Point>) => {
             state.selectedPoint = action.payload;
         },
-        setLineConnections: (state, action: PayloadAction<{ [id: string]: { [point: string]: string } }>) => {
+        setLineConnections: (state, action: PayloadAction<StoreLineConnections>) => {
             state.lineConnections = action.payload;
         },
         setInProgress: (state, action: PayloadAction<boolean>) => {

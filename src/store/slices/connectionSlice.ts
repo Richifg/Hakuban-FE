@@ -1,9 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk } from '../store';
 import { WSService, TestService } from '../../services';
-import { BoardItem, UpdateData } from '../../interfaces';
-
-type ItemsLock = { [itemId: string]: string };
+import { BoardItem, UpdateData, ItemsLock } from '../../interfaces';
 
 interface ConectionState {
     userId: string;
@@ -58,26 +56,19 @@ const connectionSlice = createSlice({
             });
         },
         syncData(state) {
+            const { dataToSync } = state;
             const items: BoardItem[] = [];
             const updates: UpdateData[] = [];
-            const { userId, itemsLock, dataToSync } = state;
-            const newDataToSync: typeof dataToSync = {};
-            // only sync syncData from items confirmed to be locked by user
+            // separate new items from updates
             Object.values(dataToSync).forEach((data) => {
-                const { id } = data;
-                if (itemsLock[id] === userId) {
-                    // separate new items from updates
-                    if (data.creationDate) items.push(data as BoardItem);
-                    else updates.push(data);
-                } else {
-                    newDataToSync[id] = data;
-                }
+                if (data.creationDate) items.push(data as BoardItem);
+                else updates.push(data as UpdateData);
             });
             // new items are sent first so updates that reference new items make sense
             // (e.g. connecting a new Line to and old Item)
             items.length && WSService.addItems(items);
             updates.length && WSService.updateItems(updates);
-            state.dataToSync = newDataToSync;
+            state.dataToSync = {};
         },
         setItemsLock(state, action: PayloadAction<ItemsLock>) {
             state.itemsLock = action.payload;
