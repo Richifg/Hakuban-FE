@@ -14,10 +14,11 @@ class WebSocketService {
         this.id = '';
     }
     connect(roomId: string, password?: string): Promise<void> {
+        // disconnect before attempting a new connection
+        if (this.socket) this.disconnect();
         const fullURL = `ws://${url}?roomId=${roomId}` + (password ? `&password=${password}` : '');
         const socket = new WebSocket(fullURL);
         this.socket = socket;
-
         const connectionPromise = new Promise<void>((resolve, reject) => {
             socket.addEventListener('open', () => {
                 console.log('ws connection openned');
