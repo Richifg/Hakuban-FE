@@ -20,7 +20,7 @@ const { dispatch, getState } = store;
 
 function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
     const { selectedTool } = getState().tools;
-    const { currentAction, cursorPosition, canvasTransform, isWriting, hasCursorMoved, mouseButton } = getState().board;
+    const { currentAction, cursorPosition, canvasTransform, hasCursorMoved, mouseButton } = getState().board;
     const { items, selectedItemIds, draggedItemId, selectedPoint, dragOffset, lineConnections } = getState().items;
 
     const selectedItem = selectedItemIds.length === 1 ? items[selectedItemIds[0]] : undefined;
@@ -31,7 +31,6 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
     !hasCursorMoved && mouseButton !== undefined && dispatch(setHasCursorMoved(true));
 
     if (mouseButton === MouseButton.Left) {
-        isWriting && dispatch(setIsWriting(false));
         switch (currentAction) {
             case 'DRAW':
                 if (selectedItem?.type === 'drawing') {

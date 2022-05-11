@@ -7,7 +7,7 @@ import './BoardUI.scss';
 
 const CanvasUI = (): React.ReactElement => {
     const { canvasSize, cursorPosition, currentAction } = useSelector((s) => s.board);
-    const { inProgress } = useSelector((s) => s.items);
+    const { isWriting } = useSelector((s) => s.board);
     const { selectedTool } = useSelector((s) => s.tools);
     const { width, height } = canvasSize;
     const tool = selectedTool.toLowerCase();
@@ -62,10 +62,12 @@ const CanvasUI = (): React.ReactElement => {
         >
             <p className="temp">Work In Progress!</p>
             <p className="cursor-position">
-                X: {cursorPosition.x} Y:{cursorPosition.y} {currentAction} {inProgress.toString()}
+                X: {cursorPosition.x} Y:{cursorPosition.y} {currentAction} {isWriting.toString()}
             </p>
+            {/* move these two out of here */}
             <DragSelectArea />
             <SelectionHighlight />
+            {/* move these two out of here */}
             <EditPoints />
             <TextEditor />
             <StylesMenu />

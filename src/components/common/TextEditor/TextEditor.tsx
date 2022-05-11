@@ -46,9 +46,12 @@ const TextEditor = (): React.ReactElement => {
 
     // update skip rendering so canvas doesnt double render text of edited item
     useEffect(() => {
-        // if selected item had text, it needs to be skipped
-        if (isWriting && isTextItem(selectedItem) && selectedItem.text) {
-            processTextUpdate(selectedItem, { skipRendering: true });
+        if (isWriting) {
+            textBoxRef.current?.focus();
+            // if selected item had text, it needs to be skipped
+            if (isTextItem(selectedItem) && selectedItem.text) {
+                processTextUpdate(selectedItem, { skipRendering: true });
+            }
         }
     }, [isWriting]);
 

@@ -20,7 +20,6 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
     // then mouseUp will clean up
     dispatch(setMouseButton());
     const [boardX, boardY] = getBoardCoordinates(e.clientX, e.clientY, canvasTransform);
-    const itemUnderCursor = getItemAtPosition(boardX, boardY, Object.values(items), [selectedItem]);
 
     const itemUpdates: (BoardItem | UpdateData)[] = [];
     let idsToSelect: string[] = [];
@@ -47,17 +46,23 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
                 break;
 
             case 'DRAG':
-                // edit the selected item
-                if (selectedItemIds.length) {
-                    dispatch(setCurrentAction('EDIT'));
-                } else {
-                    if (hasCursorMoved) {
+                if (hasCursorMoved) {
+                    // edit the selected moved item
+                    if (selectedItemIds.length) dispatch(setCurrentAction('EDIT'));
+                    else {
                         // finish the quick drag but hold unlock after item is updated
                         shouldCleanQuickDrag = true;
                         dispatch(setCurrentAction('IDLE'));
-                    } else {
-                        // click on top of an item without moving cursor means the item has to be selected
-                        if (itemUnderCursor) {
+                    }
+                } else {
+                    // check if item under cursor is the same as the selectedItem
+                    const itemUnderCursor = getItemAtPosition(boardX, boardY, Object.values(items));
+                    if (itemUnderCursor) {
+                        if (selectedItem?.id === itemUnderCursor.id) {
+                            // same item clicked twice starts a writing
+                            dispatch(setIsWriting(true));
+                        } else {
+                            // clicking a different item requires selection update
                             idsToSelect = [itemUnderCursor.id];
                             hasSelectionChanged = true;
                             // manually deselected quick drag item without unlocking (it will now be selected)
@@ -75,6 +80,9 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
                     const size = Math.abs(selectedItem.x2 - selectedItem.x0);
                     dispatch(setNoteStyle({ fillColor, size }));
                 } else if (selectedItem?.type === 'line' && isMainPoint(selectedPoint)) {
+                    // get the first item under cursor which is not selected
+                    const itemUnderCursor = getItemAtPosition(boardX, boardY, Object.values(items), [selectedItem]);
+
                     // only connect Lines to other non-Line items
                     const connectionUpdates: (UpdateData | undefined)[] = [];
                     if (itemUnderCursor && itemUnderCursor.type !== 'line') {
@@ -107,7 +115,9 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
 
         // lock items before updating them
         if (hasSelectionChanged) selectItems(idsToSelect);
+
         processItemUpdates(itemUpdates);
+
         // unlock quick drag after updating it
         if (shouldCleanQuickDrag) selectQuickDragItem();
     } else if (e.button === MouseButton.Middle || e.button === MouseButton.Right) {
