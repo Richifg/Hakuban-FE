@@ -1,27 +1,30 @@
 import { MouseEvent } from 'react';
-import { MouseButton, BoardItem, UpdateData } from '../../interfaces';
 import { setNoteStyle } from '../../store/slices/toolSlice';
+import { setDraggedItemId, setInProgress } from '../../store/slices/itemsSlice';
 import { setCurrentAction, setIsWriting, setMouseButton } from '../../store/slices/boardSlice';
-import { setDraggedItemId, setSelectedItemId, setDragSelectedItemIds, setInProgress } from '../../store/slices/itemsSlice';
 import { isMainPoint, getBoardCoordinates, getRelativeDrawing, getItemAtPosition, getNewItem } from '../../utils';
+import { MouseButton, BoardItem, UpdateData } from '../../interfaces';
 
-import { disconnectItem, connectItem, processItemUpdates } from '../BoardStateMachineUtils';
+import { disconnectItem, connectItem, processItemUpdates, selectItems, selectQuickDragItem } from '../BoardStateMachineUtils';
 
 import { store } from '../../store/store';
 const { dispatch, getState } = store;
 
 function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
     const { selectedTool } = getState().tools;
-    const { items, selectedItemId, selectedPoint, dragSelectedItemIds, draggedItemId } = getState().items;
+    const { items, selectedItemIds, selectedPoint } = getState().items;
     const { currentAction, canvasTransform, isWriting, hasCursorMoved } = getState().board;
-    const selectedItem = selectedItemId ? items[selectedItemId] : undefined;
+
+    const selectedItem = selectedItemIds.length === 1 ? items[selectedItemIds[0]] : undefined;
 
     // then mouseUp will clean up
     dispatch(setMouseButton());
     const [boardX, boardY] = getBoardCoordinates(e.clientX, e.clientY, canvasTransform);
-    const itemUnderCursor = getItemAtPosition(boardX, boardY, Object.values(items), [selectedItem]);
 
     const itemUpdates: (BoardItem | UpdateData)[] = [];
+    let idsToSelect: string[] = [];
+    let hasSelectionChanged = false;
+    let shouldCleanQuickDrag = false;
 
     if (e.button === MouseButton.Left) {
         switch (currentAction) {
@@ -43,20 +46,29 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
                 break;
 
             case 'DRAG':
-                if (dragSelectedItemIds.length) {
-                    dispatch(setCurrentAction('EDIT'));
+                if (hasCursorMoved) {
+                    // edit the selected moved item
+                    if (selectedItemIds.length) dispatch(setCurrentAction('EDIT'));
+                    else {
+                        // finish the quick drag but hold unlock after item is updated
+                        shouldCleanQuickDrag = true;
+                        dispatch(setCurrentAction('IDLE'));
+                    }
                 } else {
-                    dispatch(setDraggedItemId());
-                    if (!hasCursorMoved) {
-                        // click on top of an item without moving cursor means the item has to be selected
-                        if (itemUnderCursor) dispatch(setSelectedItemId(itemUnderCursor.id));
-                        else !isWriting && dispatch(setIsWriting(true));
+                    // check if item under cursor is the same as the selectedItem
+                    const itemUnderCursor = getItemAtPosition(boardX, boardY, Object.values(items));
+                    if (itemUnderCursor) {
+                        if (selectedItem?.id === itemUnderCursor.id) {
+                            // same item clicked twice starts a writing
+                            dispatch(setIsWriting(true));
+                        } else {
+                            // clicking a different item requires selection update
+                            idsToSelect = [itemUnderCursor.id];
+                            hasSelectionChanged = true;
+                            // manually deselected quick drag item without unlocking (it will now be selected)
+                            dispatch(setDraggedItemId());
+                        }
                         dispatch(setCurrentAction('EDIT'));
-                    } else {
-                        // otherwise an item was dragged and could be editted
-                        if (draggedItemId) {
-                            dispatch(setCurrentAction('EDIT'));
-                        } else dispatch(setCurrentAction('IDLE'));
                     }
                 }
                 break;
@@ -68,6 +80,9 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
                     const size = Math.abs(selectedItem.x2 - selectedItem.x0);
                     dispatch(setNoteStyle({ fillColor, size }));
                 } else if (selectedItem?.type === 'line' && isMainPoint(selectedPoint)) {
+                    // get the first item under cursor which is not selected
+                    const itemUnderCursor = getItemAtPosition(boardX, boardY, Object.values(items), [selectedItem]);
+
                     // only connect Lines to other non-Line items
                     const connectionUpdates: (UpdateData | undefined)[] = [];
                     if (itemUnderCursor && itemUnderCursor.type !== 'line') {
@@ -79,38 +94,37 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
                 break;
 
             case 'DRAGSELECT':
+                hasSelectionChanged = true;
                 // if cursor moved then multiple items might have been selected
                 if (hasCursorMoved) {
-                    isWriting && dispatch(setIsWriting(false));
-                    if (dragSelectedItemIds.length) {
-                        dragSelectedItemIds.length === 1 && dispatch(setSelectedItemId(dragSelectedItemIds[0]));
-                        dispatch(setCurrentAction('EDIT'));
-                    } else {
-                        selectedItem && dispatch(setSelectedItemId());
-                        dispatch(setCurrentAction('IDLE'));
-                    }
-                } else if (itemUnderCursor) {
-                    dispatch(setSelectedItemId(itemUnderCursor.id));
-                    dispatch(setCurrentAction('EDIT'));
-                } else if (dragSelectedItemIds) {
-                    dispatch(setDragSelectedItemIds());
+                    idsToSelect = selectedItemIds;
+                    dispatch(setCurrentAction(selectedItemIds.length ? 'EDIT' : 'IDLE'));
+                } else {
+                    idsToSelect = [];
                     dispatch(setCurrentAction('IDLE'));
                 }
+                isWriting && dispatch(setIsWriting(false));
                 break;
 
             case 'BLOCKED':
                 dispatch(setCurrentAction('IDLE'));
                 break;
         }
+        // allow BE sync
+        dispatch(setInProgress(false));
+
+        // lock items before updating them
+        if (hasSelectionChanged) selectItems(idsToSelect);
+
+        processItemUpdates(itemUpdates);
+
+        // unlock quick drag after updating it
+        if (shouldCleanQuickDrag) selectQuickDragItem();
     } else if (e.button === MouseButton.Middle || e.button === MouseButton.Right) {
         if (currentAction === 'PAN') {
             dispatch(setCurrentAction('SLIDE'));
         }
     }
-
-    // apply last item changes before sync
-    dispatch(setInProgress(false));
-    processItemUpdates(itemUpdates);
 }
 
 export default handleMouseUp;

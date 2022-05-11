@@ -4,20 +4,20 @@ import { getPositionCSSVars, getMaxCoordinates } from '../../../utils';
 import './SelectionHighlight.scss';
 
 const SelectionHighlight = (): React.ReactElement => {
-    const { items, dragSelectedItemIds } = useSelector((s) => s.items);
+    const { items, selectedItemIds } = useSelector((s) => s.items);
     const { canvasTransform } = useSelector((s) => s.board);
 
     const cssVars = useMemo(() => {
-        if (!dragSelectedItemIds.length) return [];
+        if (!selectedItemIds.length) return [];
         const vars: ReturnType<typeof getPositionCSSVars>[] = [];
-        const itemsToHighlight = dragSelectedItemIds.map((id) => items[id]);
+        const itemsToHighlight = selectedItemIds.map((id) => items[id]);
         if (itemsToHighlight.length < 5) {
             vars.push(...itemsToHighlight.map((item) => getPositionCSSVars(canvasTransform, item, true)));
         }
         const { maxX, maxY, minX, minY } = getMaxCoordinates(itemsToHighlight);
         vars.push(getPositionCSSVars(canvasTransform, { x0: minX, y0: minY, x2: maxX, y2: maxY }, true));
         return vars;
-    }, [items, dragSelectedItemIds, canvasTransform]);
+    }, [items, selectedItemIds, canvasTransform]);
 
     return (
         <span className="selection-highlights-container">

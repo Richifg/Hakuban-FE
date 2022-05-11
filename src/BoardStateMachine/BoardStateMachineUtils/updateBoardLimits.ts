@@ -1,9 +1,8 @@
 import { store } from '../../store/store';
 import { setBoardLimits } from '../../store/slices/boardSlice';
 import { BoardItem, Coordinates, UpdateData } from '../../interfaces';
-import { BOARD_PADDING } from '../../constants';
 import { getMaxCoordinates, getFarthestLimitFromItems } from '../../utils';
-import { COORDINATE_KEYS } from '../../constants';
+import { COORDINATE_KEYS, BOARD_PADDING } from '../../constants';
 
 function updateBoardLimits(updates: (BoardItem | UpdateData)[], areItemsDeleted = false): void {
     const { boardLimits } = store.getState().board;

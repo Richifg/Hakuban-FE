@@ -1,23 +1,25 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk } from '../store';
 import { WSService, TestService } from '../../services';
-import { BoardItem, UpdateData } from '../../interfaces';
+import { BoardItem, UpdateData, ItemsLock } from '../../interfaces';
 
 interface ConectionState {
-    id: string;
+    userId: string;
     roomId: string;
     isLoading: boolean;
     isConnected: boolean;
     dataToSync: { [key: string]: BoardItem | UpdateData };
+    itemsLock: ItemsLock;
     error: string;
 }
 
 const initialState: ConectionState = {
-    id: '',
+    userId: '',
     roomId: '',
     isLoading: false,
     isConnected: false,
     dataToSync: {},
+    itemsLock: {},
     error: '',
 };
 
@@ -25,8 +27,8 @@ const connectionSlice = createSlice({
     name: 'connection',
     initialState,
     reducers: {
-        setId(state, action: PayloadAction<string>) {
-            state.id = action.payload;
+        setUserId(state, action: PayloadAction<string>) {
+            state.userId = action.payload;
         },
         setRoomId(state, action: PayloadAction<string>) {
             state.roomId = action.payload;
@@ -37,7 +39,7 @@ const connectionSlice = createSlice({
         setIsConnected(state, action: PayloadAction<boolean>) {
             state.isConnected = action.payload;
         },
-        addSyncData: (state, action: PayloadAction<(BoardItem | UpdateData)[]>) => {
+        addSyncData(state, action: PayloadAction<(BoardItem | UpdateData)[]>) {
             action.payload.forEach((newData) => {
                 const { id } = newData;
                 const oldData = state.dataToSync[id];
@@ -47,17 +49,29 @@ const connectionSlice = createSlice({
                 else state.dataToSync[id] = { ...oldData, ...newData };
             });
         },
-        syncData: (state) => {
+        removeSyncData(state, action: PayloadAction<string[]>) {
+            const ids = action.payload;
+            ids.forEach((id) => {
+                delete state.dataToSync[id];
+            });
+        },
+        syncData(state) {
+            const { dataToSync } = state;
             const items: BoardItem[] = [];
             const updates: UpdateData[] = [];
-            // first send new items and then updates
-            Object.values(state.dataToSync).forEach((data) => {
+            // separate new items from updates
+            Object.values(dataToSync).forEach((data) => {
                 if (data.creationDate) items.push(data as BoardItem);
-                else updates.push(data);
+                else updates.push(data as UpdateData);
             });
+            // new items are sent first so updates that reference new items make sense
+            // (e.g. connecting a new Line to and old Item)
             items.length && WSService.addItems(items);
             updates.length && WSService.updateItems(updates);
             state.dataToSync = {};
+        },
+        setItemsLock(state, action: PayloadAction<ItemsLock>) {
+            state.itemsLock = action.payload;
         },
         setError(state, action: PayloadAction<string>) {
             state.error = action.payload;
@@ -65,7 +79,17 @@ const connectionSlice = createSlice({
     },
 });
 
-export const { setId, setRoomId, setIsLoading, setIsConnected, addSyncData, syncData, setError } = connectionSlice.actions;
+export const {
+    setUserId,
+    setRoomId,
+    setIsLoading,
+    setIsConnected,
+    addSyncData,
+    removeSyncData,
+    syncData,
+    setItemsLock,
+    setError,
+} = connectionSlice.actions;
 
 export const connectToRoom =
     (roomId: string, password?: string): AppThunk =>

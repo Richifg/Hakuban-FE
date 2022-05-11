@@ -5,6 +5,9 @@ import { updateBoardLimits, updateLineConnections, updateMaxZIndices } from '.';
 import { BoardItem, UpdateData } from '../../interfaces';
 import { isUpdateDataValid } from '../../utils';
 
+// process item updates both from user and from BE
+// keeps items, lineConnections and BoardLimits updated
+
 function processItemUpdates(data: BoardItem | UpdateData | (BoardItem | UpdateData)[], blockSync = false): void {
     const validUpdates: UpdateData[] = []; // updates that can be synced
     const updatedItems: BoardItem[] = []; // items after applying valid updates
@@ -33,11 +36,6 @@ function processItemUpdates(data: BoardItem | UpdateData | (BoardItem | UpdateDa
     // inmediatly update store items and lineConnections
     updatedItems.length && store.dispatch(addItems(updatedItems));
     updateLineConnections(oldItems, updatedItems);
-
-    // TODO START HERE
-    // somenthing is going on with the way boardLimits and ZIndices are updated
-    // only data on dataToSync is used which means only data made by the user is considered
-    // have to considered incoming messages from WS.....
 
     // queue data for later sync if needed
     !blockSync && validUpdates.length && store.dispatch(addSyncData(validUpdates));

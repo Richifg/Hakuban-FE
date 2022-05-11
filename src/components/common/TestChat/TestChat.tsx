@@ -9,7 +9,7 @@ import './TestChat.scss';
 const TestChat = (): React.ReactElement => {
     const [text, setText] = useState('');
     const { messages } = useSelector((s) => s.chat);
-    const { id } = useSelector((s) => s.connection);
+    const { userId } = useSelector((s) => s.connection);
     const chatBoxRef = useRef<HTMLUListElement>(null);
     const handleSendMessage = () => {
         setText('');
@@ -28,7 +28,7 @@ const TestChat = (): React.ReactElement => {
         <div className="test-chat">
             <ul className="chat-box" ref={chatBoxRef}>
                 {messages.map((message, index) => (
-                    <div key={index} className={`message ${id === message.from && 'own-message'}`}>
+                    <div key={index} className={`message ${userId === message.from && 'own-message'}`}>
                         <div className="avatar">
                             <img src={avatarImg} alt="" />
                         </div>

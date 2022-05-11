@@ -14,10 +14,10 @@ function processTextUpdate(item: BoardTextItem, data: Partial<TextData>) {
 const TextEditor = (): React.ReactElement => {
     const { canvasTransform, isWriting } = useSelector((s) => s.board);
     const { textStyle } = useSelector((s) => s.tools);
-    const { items, selectedItemId } = useSelector((s) => s.items);
+    const { items, selectedItemIds } = useSelector((s) => s.items);
     const [initText, setInitText] = useState('');
     const textBoxRef = useRef<HTMLDivElement>(null);
-    const selectedItem = selectedItemId ? items[selectedItemId] : undefined;
+    const selectedItem = selectedItemIds.length === 1 ? items[selectedItemIds[0]] : undefined;
 
     // keep last selected item on ref so it can be used inside debounce callback
     const lastSelectedItemRef = useRef<BoardItem>();
@@ -46,9 +46,12 @@ const TextEditor = (): React.ReactElement => {
 
     // update skip rendering so canvas doesnt double render text of edited item
     useEffect(() => {
-        // if selected item had text, it needs to be skipped
-        if (isWriting && isTextItem(selectedItem) && selectedItem.text) {
-            processTextUpdate(selectedItem, { skipRendering: true });
+        if (isWriting) {
+            textBoxRef.current?.focus();
+            // if selected item had text, it needs to be skipped
+            if (isTextItem(selectedItem) && selectedItem.text) {
+                processTextUpdate(selectedItem, { skipRendering: true });
+            }
         }
     }, [isWriting]);
 
