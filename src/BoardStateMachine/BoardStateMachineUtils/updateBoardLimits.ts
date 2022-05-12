@@ -38,8 +38,6 @@ function updateBoardLimits(updates: (BoardItem | UpdateData)[], areItemsDeleted 
             if (!areItemsDeleted && minX < left.extent + BOARD_PADDING)
                 updatedLimits.left = { extent: minX - BOARD_PADDING, itemId: id };
             else if (left.itemId === id) updatedLimits.left = getFarthestLimitFromItems('left', items);
-
-            console.log(JSON.parse(JSON.stringify(updatedLimits)));
         }
     });
     hasUpdated && store.dispatch(setBoardLimits(updatedLimits));
