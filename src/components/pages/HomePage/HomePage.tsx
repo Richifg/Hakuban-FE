@@ -11,7 +11,7 @@ const HomePage = (): React.ReactElement => {
     const dispatch = useDispatch();
     const [newRoomId, setNewRoomId] = useState('');
     const [password, setPassword] = useState('');
-    const { roomId, isLoading } = useSelector((s) => s.connection);
+    const { roomId, isLoading, error } = useSelector((s) => s.connection);
 
     useEffect(() => {
         if (roomId) {
@@ -34,6 +34,7 @@ const HomePage = (): React.ReactElement => {
                 <button disabled={isLoading} onClick={handleCreateRoom}>
                     Create
                 </button>
+                {error && <span>{error}</span>}
             </section>
             <section>
                 <h1>Join a room</h1>

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams } from 'react-router';
+import { useParams, useHistory } from 'react-router';
 
 import { useSelector, useDispatch } from '../../../hooks';
 import { connectToRoom } from '../../../store/slices/connectionSlice';
@@ -9,8 +9,9 @@ import './RoomPage.scss';
 
 const RoomPage = (): React.ReactElement => {
     const dispatch = useDispatch();
-    const { isLoading, isConnected, error } = useSelector((s) => s.connection);
+    const history = useHistory();
     const { roomId } = useParams<{ roomId: string }>();
+    const { isLoading, isConnected, error } = useSelector((s) => s.connection);
     const password = new URLSearchParams(location.search).get('password') || undefined;
 
     useEffect(() => {
@@ -39,7 +40,13 @@ const RoomPage = (): React.ReactElement => {
                 </>
             )}
             {isLoading && <h1>LOADING</h1>}
-            {error && <h1>Error: {error}</h1>}
+            {error && (
+                <>
+                    <h1>Error: {error}</h1>
+                    <button onClick={() => location.reload()}>Try again</button>
+                    <button onClick={() => history.goBack()}>Back to Menu</button>
+                </>
+            )}
         </div>
     );
 };
