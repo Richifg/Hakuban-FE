@@ -25,7 +25,7 @@ class WebSocketService {
             });
             socket.addEventListener('error', (event) => {
                 console.log('error!', event);
-                reject('unkown error');
+                reject('Service connection error');
             });
 
             socket.addEventListener('message', (event) => {

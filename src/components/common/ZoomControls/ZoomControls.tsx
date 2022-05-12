@@ -1,6 +1,6 @@
 import React from 'react';
-import { useSelector, useDispatch } from '../../../hooks';
 import { getBoardCoordinates } from '../../../utils';
+import { useSelector, useDispatch } from '../../../hooks';
 import { setCanvasScale, centerCanvasAt, toggleGrid } from '../../../store/slices/boardSlice';
 
 import './ZoomControls.scss';
@@ -35,9 +35,10 @@ const ZoomControls = (): React.ReactElement => {
     const handleFitScreen = () => {
         const { width: canvasWidth, height: canvasHeight } = canvasSize;
         const { top, left, bottom, right } = boardLimits;
-        const [limitWidth, limitHeight] = [right.extent - left.extent, bottom.extent - top.extent];
+        const [limitWidth, limitHeight] = [Math.abs(right.extent - left.extent), Math.abs(bottom.extent - top.extent)];
+
         // scale canvas so that everything is visible
-        const scale = limitWidth < limitHeight ? canvasHeight / limitHeight : canvasWidth / limitWidth;
+        const scale = Math.min(canvasHeight / limitHeight, canvasWidth / limitWidth);
         // center canvas at the middle of the board limits
         const x = (right.extent + left.extent) * 0.5;
         const y = (bottom.extent + top.extent) * 0.5;
@@ -48,7 +49,7 @@ const ZoomControls = (): React.ReactElement => {
         const { scale } = canvasTransform;
         // round current scale to nearest 0.1 (10%)
         const roundedScale = Math.round(scale * 10) * 0.1;
-        // increase/decrease depends on current scale ##TODO
+        // increase/decrease depends on current scale
         const newScale = roundedScale + 0.1 * sign;
         dispatch(setCanvasScale(newScale));
         // center canvas at the board coordinates of the middle of the canvas

@@ -111,11 +111,14 @@ export const createRoom = (): AppThunk => async (dispatch) => {
     dispatch(setIsConnected(false));
     dispatch(setRoomId(''));
     try {
+        // TODO: can't catch the errors from createRoom here
         const { success, data } = await TestService.createRoom();
         if (success) dispatch(setRoomId(data));
         else dispatch(setError(data));
     } catch (e) {
-        dispatch(setError(e as string));
+        console.log(e, typeof e);
+        const error = !e ? 'connection error' : (e as string);
+        dispatch(setError(error));
     } finally {
         dispatch(setIsLoading(false));
     }
