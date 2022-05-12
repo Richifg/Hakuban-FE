@@ -24,15 +24,16 @@ function processItemUpdates(data: BoardItem | UpdateData | (BoardItem | UpdateDa
         } else {
             const update = data as UpdateData;
             const oldItem = items[update.id];
+            // updates are only valid if the provided keys actually belong to the item
             if (oldItem && isUpdateDataValid(update, oldItem)) {
                 validUpdates.push(update);
                 oldItems.push(oldItem);
-
                 const updatedItem = { ...oldItem, ...update } as BoardItem;
                 updatedItems.push(updatedItem);
             }
         }
     });
+
     // inmediatly update store items and lineConnections
     updatedItems.length && store.dispatch(addItems(updatedItems));
     updateLineConnections(oldItems, updatedItems);
@@ -52,7 +53,7 @@ function processItemUpdates(data: BoardItem | UpdateData | (BoardItem | UpdateDa
 
     // update board
     if (updates.length) {
-        updates.length && updateBoardLimits(updates);
+        updateBoardLimits(updates);
         const zIndices = updates.map<number>((i) => i.zIndex).filter((i) => !!i);
         zIndices.length && updateMaxZIndices(zIndices);
     }
