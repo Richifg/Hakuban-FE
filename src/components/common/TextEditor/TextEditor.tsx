@@ -60,7 +60,10 @@ const TextEditor = (): React.ReactElement => {
         const lastItem = lastSelectedItemRef.current;
         if (!isWriting && isTextItem(lastItem)) {
             // clean html from textbox
-            const content = e.target.innerHTML.replace(/\<br\/?\>/g, '/n').replace(/\&nbsp;/g, ' ');
+            const content = e.target.innerHTML
+                .replace(/\<br\/?\>/g, '/n') // line breaks into new line chars
+                .replace(/\&nbsp;/g, ' ') // nbsp's into spaces
+                .replace(/(\<\/?span[^\>]*\>)/g, ''); // remove span tags
             // add new text content to item
             if (lastItem.text) processTextUpdate(lastItem, { content });
             else processTextUpdate({ ...lastItem, text: { ...textStyle, content, skipRendering: true } }, {});
