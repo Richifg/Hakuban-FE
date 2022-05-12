@@ -24,6 +24,7 @@ interface MenuOptions {
 const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
     const dispatch = useDispatch();
     const { textStyle } = useSelector((s) => s.tools);
+    const { itemsLock, userId } = useSelector((s) => s.connection);
 
     useLayoutEffect(() => {
         // let parent know options for new items have been rendered
@@ -56,25 +57,26 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
     const stopMouseDown = (e: React.MouseEvent) => e.stopPropagation();
 
     // only when all items have the appropiate attribute does the attribute style selector gets shown
-    const { showFillColor, showLineColor, showLineWidth, showTextStyles, showLineStyles } = useMemo(() => {
-        let [showFillColor, showLineColor, showLineWidth, showTextStyles, showLineStyles] = [true, true, true, true, true];
+    const show = useMemo(() => {
+        let [fillColor, lineColor, lineWidth, textStyles, lineStyles, deleteButton] = Array(6).fill(true);
         items.forEach((item) => {
-            if (!('fillColor' in item)) showFillColor = false;
-            if (!('lineWidth' in item)) showLineWidth = false;
-            if (!('lineColor' in item)) showLineColor = false;
-            if (!('text' in item)) showTextStyles = false;
-            if (item.type !== 'line') showLineStyles = false;
+            if (!('fillColor' in item)) fillColor = false;
+            if (!('lineWidth' in item)) lineWidth = false;
+            if (!('lineColor' in item)) lineColor = false;
+            if (!('text' in item)) textStyles = false;
+            if (item.type !== 'line') lineStyles = false;
+            if (itemsLock[item.id] !== userId) deleteButton = false;
         });
-        return { showFillColor, showLineColor, showLineWidth, showTextStyles, showLineStyles };
-    }, [items]);
+        return { fillColor, lineColor, lineWidth, textStyles, lineStyles, deleteButton };
+    }, [items, itemsLock, userId]);
 
     const item = items[0];
     return (
         <div className="menu-options" onMouseDown={stopMouseDown}>
-            {showFillColor && <ColorSelector onChange={handleChange} styleKey="fillColor" color={(item as Shape).fillColor} />}
-            {showLineColor && <ColorSelector onChange={handleChange} styleKey="lineColor" color={(item as Shape).lineColor} />}
-            {showLineWidth && <WidthSelector onChange={handleChange} width={(item as Shape).lineWidth} />}
-            {showLineStyles && (
+            {show.fillColor && <ColorSelector onChange={handleChange} styleKey="fillColor" color={(item as Shape).fillColor} />}
+            {show.lineColor && <ColorSelector onChange={handleChange} styleKey="lineColor" color={(item as Shape).lineColor} />}
+            {show.lineWidth && <WidthSelector onChange={handleChange} width={(item as Shape).lineWidth} />}
+            {show.lineStyles && (
                 <>
                     <LineTypeSelector onChange={handleChange} lineType={(item as Line).lineType} />
                     <ArrowSelector
@@ -84,7 +86,7 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
                     />
                 </>
             )}
-            {showTextStyles && (
+            {show.textStyles && (
                 <>
                     <AlignmentSelector onChange={handleNestedChange} styleKey="vAlign" align={(item as Text).text.vAlign} />
                     <AlignmentSelector onChange={handleNestedChange} styleKey="hAlign" align={(item as Text).text.hAlign} />
@@ -98,7 +100,7 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
                 </>
             )}
             <ZIndexSelector onChange={handleChange} />
-            <button onClick={handleDelete}>DEL</button>
+            {show.deleteButton && <button onClick={handleDelete}>DEL</button>}
         </div>
     );
 };

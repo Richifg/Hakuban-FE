@@ -5,6 +5,9 @@ import { updateBoardLimits, updateLineConnections, updateMaxZIndices } from '.';
 import { BoardItem, UpdateData } from '../../interfaces';
 import { isUpdateDataValid } from '../../utils';
 
+// process item updates both from user and from BE
+// keeps items, lineConnections and BoardLimits updated
+
 function processItemUpdates(data: BoardItem | UpdateData | (BoardItem | UpdateData)[], blockSync = false): void {
     const validUpdates: UpdateData[] = []; // updates that can be synced
     const updatedItems: BoardItem[] = []; // items after applying valid updates

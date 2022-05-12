@@ -1,6 +1,6 @@
-import { BoardItem } from '../interfaces';
+import { BoardItem, StoreLineConnections } from '../interfaces';
 
-function isItemDraggable(item: BoardItem, lineConnections: { [id: string]: { [point: string]: string } }): boolean {
+function isItemDraggable(item: BoardItem, lineConnections: StoreLineConnections): boolean {
     return item.type !== 'line' || !lineConnections[item.id];
 }
 

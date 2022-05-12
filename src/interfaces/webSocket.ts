@@ -3,6 +3,8 @@ import { BoardItem, ChatMessage } from './items';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type UpdateData = { id: string; [key: string]: any };
 
+export type LockData = { itemIds: string[]; lockState: boolean };
+
 interface WSBaseMessage {
     userId: string;
 }
@@ -33,6 +35,11 @@ interface WSChatMessage extends WSBaseMessage {
     content: ChatMessage;
 }
 
+interface WSLockMessage extends WSBaseMessage {
+    type: 'lock';
+    content: LockData;
+}
+
 interface WSErrorMessage extends WSBaseMessage {
     type: 'error';
     content: string;
@@ -40,4 +47,11 @@ interface WSErrorMessage extends WSBaseMessage {
 }
 
 // Messages sent via webSocket
-export type WSMessage = WSAddMessage | WSUpdateMessage | WSDeleteMessage | WSIdMessage | WSChatMessage | WSErrorMessage;
+export type WSMessage =
+    | WSAddMessage
+    | WSUpdateMessage
+    | WSDeleteMessage
+    | WSIdMessage
+    | WSChatMessage
+    | WSLockMessage
+    | WSErrorMessage;

@@ -1,8 +1,8 @@
 import { MouseEvent } from 'react';
 import { MouseButton, BoardItem, UpdateData, Coordinates } from '../../interfaces';
-import { connectItem, processItemUpdates, updateConnectedLines } from '../BoardStateMachineUtils';
+import { connectItem, processItemUpdates, updateConnectedLines, selectItems } from '../BoardStateMachineUtils';
 import { setCursorPosition, setIsWriting, setHasCursorMoved, setCurrentAction } from '../../store/slices/boardSlice';
-import { setDragSelectedItemIds, setDragOffset, setSelectedPoint, setSelectedItemId } from '../../store/slices/itemsSlice';
+import { setDragOffset, setSelectedPoint } from '../../store/slices/itemsSlice';
 import { translateCanvas } from '../../store/slices/boardSlice';
 import {
     getBoardCoordinates,
@@ -20,10 +20,10 @@ const { dispatch, getState } = store;
 
 function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
     const { selectedTool } = getState().tools;
-    const { currentAction, cursorPosition, canvasTransform, isWriting, hasCursorMoved, mouseButton } = getState().board;
-    const { items, selectedItemId, draggedItemId, dragSelectedItemIds, selectedPoint, dragOffset, lineConnections } =
-        getState().items;
-    const selectedItem = selectedItemId ? items[selectedItemId] : undefined;
+    const { currentAction, cursorPosition, canvasTransform, hasCursorMoved, mouseButton } = getState().board;
+    const { items, selectedItemIds, draggedItemId, selectedPoint, dragOffset, lineConnections } = getState().items;
+
+    const selectedItem = selectedItemIds.length === 1 ? items[selectedItemIds[0]] : undefined;
 
     const [x, y] = [e.clientX, e.clientY];
     dispatch(setCursorPosition([x, y]));
@@ -31,7 +31,6 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
     !hasCursorMoved && mouseButton !== undefined && dispatch(setHasCursorMoved(true));
 
     if (mouseButton === MouseButton.Left) {
-        isWriting && dispatch(setIsWriting(false));
         switch (currentAction) {
             case 'DRAW':
                 if (selectedItem?.type === 'drawing') {
@@ -41,17 +40,14 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
                 break;
 
             case 'DRAG':
-                const ids = draggedItemId ? [draggedItemId] : dragSelectedItemIds;
+                const ids = draggedItemId ? [draggedItemId] : selectedItemIds;
                 const selectedItems = ids.map((id) => items[id]);
                 const draggableItems = selectedItems.filter((item) => isItemDraggable(item, lineConnections));
-                const updatedCoordinates: Coordinates[] = [];
-                const updatedLines: BoardItem[] = [];
                 if (draggableItems.length) {
-                    // draggOffset is relative to the whole group of items
-                    const { minX, minY } =
-                        selectedItems.length > 1
-                            ? getMaxCoordinates(selectedItems)
-                            : { minX: selectedItems[0].x0, minY: selectedItems[0].y0 };
+                    // dragOffset is relative to minX and minY of the group of items
+                    const { minX, minY } = getMaxCoordinates(selectedItems);
+                    const updatedCoordinates: Coordinates[] = [];
+                    const updatedLines: BoardItem[] = [];
 
                     // update coordinates of draggable items and their line connections
                     draggableItems.forEach((item) => {
@@ -103,7 +99,7 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
                     if (newItem) {
                         itemUpdates.push(newItem);
                         processItemUpdates(itemUpdates);
-                        dispatch(setSelectedItemId(newItem.id));
+                        selectItems(newItem.id);
                     }
                 }
                 break;
@@ -115,8 +111,8 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
                     const insideItems = Object.values(items).filter((item) => isAreaInsideArea(item, areaCoordinates));
                     coveredItemIds = insideItems.map((item) => item.id);
                 }
-                if (dragSelectedItemIds.length > 0 && coveredItemIds.length === 0) dispatch(setDragSelectedItemIds());
-                else if (coveredItemIds.length) dispatch(setDragSelectedItemIds(coveredItemIds));
+                // clear selection or select covered items
+                selectItems(coveredItemIds);
                 break;
         }
         // update all items in bulk
