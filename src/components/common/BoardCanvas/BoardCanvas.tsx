@@ -1,6 +1,6 @@
 import React, { useRef, useMemo } from 'react';
 import { setCurrentAction, translateCanvas } from '../../../store/slices/boardSlice';
-import { useCanvas, useDispatch, useSelector, useMovementFriction } from '../../../hooks';
+import { useCanvas, useDispatch, useSelector, useCameraSlide } from '../../../hooks';
 import './BoardCanvas.scss';
 
 const BoardCanvas = (): React.ReactElement => {
@@ -22,8 +22,7 @@ const BoardCanvas = (): React.ReactElement => {
     useCanvas(canvasRef, canvasSize, canvasTransform, showGrid, orderedItems);
 
     // controls camera slide after user pans the camera
-    // ##TODO maybe this shouldn't be in Canvas, or even in a component??
-    useMovementFriction(
+    useCameraSlide(
         lastTranslate,
         currentAction === 'SLIDE',
         (x: number, y: number) => dispatch(translateCanvas([x, y])),
