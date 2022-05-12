@@ -1,12 +1,13 @@
 import { WheelEvent } from 'react';
-import { setCurrentAction, setCanvasScale, translateCanvas } from '../../store/slices/boardSlice';
+import { setCanvasScale, translateCanvas, setCurrentAction } from '../../store/slices/boardSlice';
 import { getBoardCoordinates, getCanvasCoordinates } from '../../utils';
 
 import { store } from '../../store/store';
-const { dispatch, getState } = store;
 
 function handleMouseWheel(e: WheelEvent<HTMLDivElement>): void {
+    const { dispatch, getState } = store;
     const { canvasTransform, currentAction } = getState().board;
+
     if (currentAction !== 'IDLE') dispatch(setCurrentAction('IDLE'));
 
     // calculate new scale, clamped between 4% and 400%
