@@ -7,6 +7,7 @@ import drawDrawing from './drawDrawing';
 import drawGrid from './drawGrid';
 import drawLine from './drawLine';
 import drawItemHighlights from './drawItemHighlights';
+import drawDragSelectArea from './drawDragSelectArea';
 import { getTextAreaCoordinates, isTextItem } from '../utils';
 
 /*
@@ -71,6 +72,8 @@ class CanvasManager {
         this.items.forEach((item) => this.drawItem(item));
 
         this.selectedItems.length && drawItemHighlights(this.selectedItems, this.transform, this.ctx);
+        drawDragSelectArea(this.ctx);
+
         this.animationId = requestAnimationFrame(this.animate.bind(this));
     }
 

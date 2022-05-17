@@ -1,6 +1,6 @@
 import React, { useLayoutEffect } from 'react';
 import { useSelector, useDebouncedCallback } from '../../../hooks';
-import { EditPoints, TextEditor, StylesMenu, DragSelectArea } from '../../common';
+import { EditPoints, TextEditor, StylesMenu } from '../../common';
 
 import SM from '../../../BoardStateMachine/BoardStateMachine';
 import './BoardUI.scss';
@@ -64,9 +64,6 @@ const CanvasUI = (): React.ReactElement => {
             <p className="cursor-position">
                 X: {cursorPosition.x} Y:{cursorPosition.y} {currentAction} {isWriting.toString()}
             </p>
-            {/* move these two out of here */}
-            <DragSelectArea />
-            {/* move these two out of here */}
             <EditPoints />
             <TextEditor />
             <StylesMenu />
