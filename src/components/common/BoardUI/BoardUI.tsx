@@ -1,6 +1,6 @@
 import React, { useLayoutEffect } from 'react';
 import { useSelector, useDebouncedCallback } from '../../../hooks';
-import { EditPoints, TextEditor, StylesMenu, DragSelectArea, SelectionHighlight } from '../../common';
+import { EditPoints, TextEditor, StylesMenu, DragSelectArea } from '../../common';
 
 import SM from '../../../BoardStateMachine/BoardStateMachine';
 import './BoardUI.scss';
@@ -66,7 +66,6 @@ const CanvasUI = (): React.ReactElement => {
             </p>
             {/* move these two out of here */}
             <DragSelectArea />
-            <SelectionHighlight />
             {/* move these two out of here */}
             <EditPoints />
             <TextEditor />

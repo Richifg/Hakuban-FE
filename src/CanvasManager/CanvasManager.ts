@@ -6,6 +6,7 @@ import drawNote from './drawNote';
 import drawDrawing from './drawDrawing';
 import drawGrid from './drawGrid';
 import drawLine from './drawLine';
+import drawItemHighlights from './drawItemHighlights';
 import { getTextAreaCoordinates, isTextItem } from '../utils';
 
 /*
@@ -21,6 +22,7 @@ class CanvasManager {
     size: CanvasSize;
     transform: CanvasTransform;
     items: BoardItem[];
+    selectedItems: BoardItem[];
     showGrid: boolean;
     animationId?: number;
 
@@ -29,6 +31,7 @@ class CanvasManager {
         this.size = { width: 0, height: 0 };
         this.transform = { scale: 1, dX: 0, dY: 0 };
         this.items = [];
+        this.selectedItems = [];
         this.showGrid = true;
     }
 
@@ -63,8 +66,11 @@ class CanvasManager {
     animate(): void {
         this.clear();
         this.showGrid && drawGrid(this.transform, this.size, this.ctx);
+
         this.transformCanvas();
         this.items.forEach((item) => this.drawItem(item));
+
+        this.selectedItems.length && drawItemHighlights(this.selectedItems, this.transform, this.ctx);
         this.animationId = requestAnimationFrame(this.animate.bind(this));
     }
 
