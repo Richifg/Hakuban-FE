@@ -1,6 +1,7 @@
 import getBoardCoordinates from './getBoardCoordinates';
 import getCanvasCoordinates from './getCanvasCoordinates';
 import getDebouncedFunction from './getDebouncedFunction';
+import getDefaultUser from './getDefaultUser';
 import getFarthestLimitFromItems from './getFarthestLimitFromItems';
 import getItemAtPosition from './getItemAtPosition';
 import getPositionCSSVars from './getPositionCSSVars';
@@ -26,6 +27,7 @@ export {
     getBoardCoordinates,
     getCanvasCoordinates,
     getDebouncedFunction,
+    getDefaultUser,
     getFarthestLimitFromItems,
     getItemAtPosition,
     getPositionCSSVars,

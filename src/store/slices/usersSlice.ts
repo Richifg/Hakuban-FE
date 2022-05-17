@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { getDefaultUser } from '../../utils';
 import { User } from '../../interfaces';
 
 interface UsersSliceState {
@@ -18,9 +19,12 @@ const connectionSlice = createSlice({
             const users = action.payload;
             users.forEach((user) => (state.users[user.id] = user));
         },
-        addUser(state, action: PayloadAction<User>) {
-            const user = action.payload;
-            state.users[user.id] = user;
+        addUsers(state, action: PayloadAction<User[]>) {
+            const users = action.payload;
+            users.forEach((user) => {
+                const nonEmptyUser = user.userName ? user : getDefaultUser(user.id);
+                state.users[user.id] = nonEmptyUser;
+            });
         },
         removeUser(state, action: PayloadAction<string>) {
             delete state.users[action.payload];
@@ -31,6 +35,6 @@ const connectionSlice = createSlice({
     },
 });
 
-export const { setUsers, addUser, removeUser, setOwnUser } = connectionSlice.actions;
+export const { setUsers, addUsers, removeUser, setOwnUser } = connectionSlice.actions;
 
 export default connectionSlice.reducer;

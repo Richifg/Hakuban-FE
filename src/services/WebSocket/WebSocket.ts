@@ -2,8 +2,9 @@ import { store } from '../../store/store';
 import { setUserId, setError } from '../../store/slices/connectionSlice';
 import { addMessage } from '../../store/slices/chatSlice';
 import { BoardItem, UpdateData, WSMessage, LockData } from '../../interfaces';
-import { getSanitizedData } from '../../utils';
 import { processItemDeletions, processItemLocks, processItemUpdates } from '../../BoardStateMachine/BoardStateMachineUtils';
+import { addUsers, removeUser, setOwnUser } from '../../store/slices/usersSlice';
+import { getSanitizedData, getDefaultUser } from '../../utils';
 
 const url = process.env.REACT_APP_SERVER_URL;
 
@@ -66,9 +67,15 @@ class WebSocketService {
                             processItemLocks(lockData, userId);
                             break;
 
+                        case 'user':
+                            if (message.content.userAction === 'leave') store.dispatch(removeUser(message.content.id));
+                            else store.dispatch(addUsers(message.content.users));
+                            break;
+
                         case 'id':
-                            store.dispatch(setUserId(message.content));
                             this.id = message.content;
+                            store.dispatch(setUserId(message.content));
+                            store.dispatch(setOwnUser(getDefaultUser(this.id)));
                             // resolve promise to indicate successfull connect
                             resolve();
                             break;

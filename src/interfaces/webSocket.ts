@@ -6,7 +6,7 @@ export type UpdateData = { id: string; [key: string]: any };
 
 export type LockData = { itemIds: string[]; lockState: boolean };
 
-export type UserData = { user: User; userState: 'join' | 'left' | 'update' };
+export type UserData = { userAction: 'join' | 'update'; users: User[] } | { userAction: 'leave'; id: string };
 
 interface WSBaseMessage {
     userId: string;
@@ -45,7 +45,7 @@ interface WSLockMessage extends WSBaseMessage {
 
 interface WSUserMessage extends WSBaseMessage {
     type: 'user';
-    content: UserData[];
+    content: UserData;
 }
 
 interface WSErrorMessage extends WSBaseMessage {
