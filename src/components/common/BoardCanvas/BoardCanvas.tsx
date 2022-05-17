@@ -7,7 +7,7 @@ const BoardCanvas = (): React.ReactElement => {
     const dispatch = useDispatch();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const { items, selectedItemIds } = useSelector((s) => s.items);
-    const { canvasSize, canvasTransform, lastTranslate, currentAction, showGrid } = useSelector((s) => s.board);
+    const { canvasSize, lastTranslate, currentAction } = useSelector((s) => s.board);
     const { width, height } = canvasSize;
 
     const orderedItems = useMemo(
@@ -18,10 +18,8 @@ const BoardCanvas = (): React.ReactElement => {
         [items],
     );
 
-    const selectedItems = useMemo(() => selectedItemIds.map((id) => items[id]), [items, selectedItemIds]);
-
     // renders items on every update
-    useCanvas(canvasRef, canvasSize, canvasTransform, showGrid, orderedItems, selectedItems);
+    useCanvas(canvasRef, orderedItems);
 
     // controls camera slide after user pans the camera
     useCameraSlide(
