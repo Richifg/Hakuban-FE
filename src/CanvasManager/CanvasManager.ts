@@ -7,6 +7,7 @@ import drawDrawing from './drawDrawing';
 import drawGrid from './drawGrid';
 import drawLine from './drawLine';
 import drawItemHighlights from './drawItemHighlights';
+import drawLockHighlights from './drawLockHighlights';
 import drawDragSelectArea from './drawDragSelectArea';
 import { getTextAreaCoordinates, isTextItem } from '../utils';
 
@@ -59,6 +60,7 @@ class CanvasManager {
     animate(): void {
         const { showGrid, currentAction } = store.getState().board;
         const { selectedItemIds } = store.getState().items;
+        const { itemsLock } = store.getState().connection;
 
         this.clear();
         showGrid && drawGrid(this.ctx);
@@ -68,6 +70,7 @@ class CanvasManager {
 
         selectedItemIds.length && drawItemHighlights(this.ctx);
         currentAction === 'DRAGSELECT' && drawDragSelectArea(this.ctx);
+        Object.keys(itemsLock).length && drawLockHighlights(this.ctx);
 
         this.animationId = requestAnimationFrame(this.animate.bind(this));
     }
