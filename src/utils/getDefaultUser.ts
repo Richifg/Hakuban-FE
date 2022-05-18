@@ -9,10 +9,10 @@ function getDefaultUser(id: string): User {
     const rng = seedRandom(id);
     const color = avatarColors[Math.floor(rng() * avatarColors.length)];
     const icon = avatarIcons[Math.floor(rng() * avatarIcons.length)];
-    const userName = `${color} ${icon}`;
+    const username = `${color} ${icon}`;
     return {
         id,
-        userName,
+        username,
         color,
         icon,
     };

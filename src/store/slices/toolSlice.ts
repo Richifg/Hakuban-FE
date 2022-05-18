@@ -46,7 +46,7 @@ const initialState: ToolsState = {
     },
 };
 
-export const toolsSlice = createSlice({
+export const slice = createSlice({
     name: 'tools',
     initialState,
     reducers: {
@@ -74,6 +74,6 @@ export const toolsSlice = createSlice({
     },
 });
 
-export const { setSelectedTool, setShapeType, setShapeStyle, setTextStyle, setNoteStyle, setDrawingStyle } = toolsSlice.actions;
+export const { setSelectedTool, setShapeType, setShapeStyle, setTextStyle, setNoteStyle, setDrawingStyle } = slice.actions;
 
-export default toolsSlice.reducer;
+export default slice.reducer;

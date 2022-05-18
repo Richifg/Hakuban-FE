@@ -11,7 +11,7 @@ const initialState: ChatState = {
     unreadMessageCount: 0,
 };
 
-const chatSlice = createSlice({
+const slice = createSlice({
     name: 'chat',
     initialState,
     reducers: {
@@ -33,6 +33,6 @@ const chatSlice = createSlice({
     },
 });
 
-export const { setMessages, addMessage, deleteMessage, resetUnreadMessages, increaseUnreadMessages } = chatSlice.actions;
+export const { setMessages, addMessage, deleteMessage, resetUnreadMessages, increaseUnreadMessages } = slice.actions;
 
-export default chatSlice.reducer;
+export default slice.reducer;

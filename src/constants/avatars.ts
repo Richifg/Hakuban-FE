@@ -1,3 +1,3 @@
 export const avatarIcons = ['lion', 'tiger', 'turtle'];
 
-export const avatarColors = ['blue', 'gree', 'pink'];
+export const avatarColors = ['blue', 'green', 'pink'];

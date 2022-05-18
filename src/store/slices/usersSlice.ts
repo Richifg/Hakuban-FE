@@ -11,8 +11,8 @@ const initialState: UsersSliceState = {
     users: {},
 };
 
-const connectionSlice = createSlice({
-    name: 'connection',
+const slice = createSlice({
+    name: 'users',
     initialState,
     reducers: {
         setUsers(state, action: PayloadAction<User[]>) {
@@ -22,7 +22,7 @@ const connectionSlice = createSlice({
         addUsers(state, action: PayloadAction<User[]>) {
             const users = action.payload;
             users.forEach((user) => {
-                const nonEmptyUser = user.userName ? user : getDefaultUser(user.id);
+                const nonEmptyUser = user.username ? user : getDefaultUser(user.id);
                 state.users[user.id] = nonEmptyUser;
             });
         },
@@ -30,11 +30,13 @@ const connectionSlice = createSlice({
             delete state.users[action.payload];
         },
         setOwnUser(state, action: PayloadAction<User>) {
-            state.ownUser = action.payload;
+            const ownUser = action.payload;
+            state.ownUser = ownUser;
+            state.users[ownUser.id] = ownUser;
         },
     },
 });
 
-export const { setUsers, addUsers, removeUser, setOwnUser } = connectionSlice.actions;
+export const { setUsers, addUsers, removeUser, setOwnUser } = slice.actions;
 
-export default connectionSlice.reducer;
+export default slice.reducer;

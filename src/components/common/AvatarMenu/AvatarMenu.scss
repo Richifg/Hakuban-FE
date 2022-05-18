@@ -1,0 +1,17 @@
+.avatar-menu {
+    background-color: gray; 
+    min-width: 400px;
+    max-width: 50px;
+    display: flex;
+    flex-direction: column;
+
+    .options-container {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .option {
+        margin: 0;
+    }
+}
+

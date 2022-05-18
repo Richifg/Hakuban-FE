@@ -1,7 +1,7 @@
 import { store } from '../../store/store';
 import { setUserId, setError } from '../../store/slices/connectionSlice';
 import { addMessage } from '../../store/slices/chatSlice';
-import { BoardItem, UpdateData, WSMessage, LockData } from '../../interfaces';
+import { BoardItem, UpdateData, WSMessage, LockData, User } from '../../interfaces';
 import { processItemDeletions, processItemLocks, processItemUpdates } from '../../BoardStateMachine/BoardStateMachineUtils';
 import { addUsers, removeUser, setOwnUser } from '../../store/slices/usersSlice';
 import { getSanitizedData, getDefaultUser } from '../../utils';
@@ -17,6 +17,7 @@ class WebSocketService {
     connect(roomId: string, password?: string): Promise<void> {
         // disconnect before attempting a new connection
         if (this.socket) this.disconnect();
+
         const fullURL = `ws://${url}?roomId=${roomId}` + (password ? `&password=${password}` : '');
         const socket = new WebSocket(fullURL);
         this.socket = socket;
@@ -131,6 +132,14 @@ class WebSocketService {
             userId: this.id,
             type: 'lock',
             content: lockData,
+        });
+    }
+
+    updateUser(user: User): void {
+        this.sendMessage({
+            userId: this.id,
+            type: 'user',
+            content: { userAction: 'update', users: [user] },
         });
     }
 

@@ -35,7 +35,7 @@ const initialState: BoardState = {
     hasCursorMoved: false,
 };
 
-export const boardSlice = createSlice({
+export const slice = createSlice({
     name: 'board',
     initialState,
     reducers: {
@@ -105,6 +105,6 @@ export const {
     setIsWriting,
     setMouseButton,
     setHasCursorMoved,
-} = boardSlice.actions;
+} = slice.actions;
 
-export default boardSlice.reducer;
+export default slice.reducer;
