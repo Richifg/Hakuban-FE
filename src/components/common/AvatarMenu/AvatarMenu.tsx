@@ -2,7 +2,7 @@ import React, { useState, useLayoutEffect, useEffect } from 'react';
 import { useSelector, useDispatch } from '../../../hooks';
 import { setShowAvatarMenu } from '../../../store/slices/UISlice';
 import { setOwnUser } from '../../../store/slices/usersSlice';
-import { avatarColors, avatarIcons } from '../../../constants';
+import { avatarColors, avatarIcons, avatarColorsValue } from '../../../constants';
 import { WSService } from '../../../services';
 
 import './AvatarMenu.scss';
@@ -53,12 +53,13 @@ const AvatarMenu = (): React.ReactElement => {
                 <span className="options-container">
                     {avatarIcons.map((avatarIcon) => (
                         <button
-                            className="option"
-                            key={avatarIcon}
-                            disabled={icon === avatarIcon}
-                            onClick={() => setIcon(avatarIcon)}
+                            style={{ backgroundColor: color }}
+                            className="icon-option"
+                            key={avatarIcon.name}
+                            disabled={icon === avatarIcon.name}
+                            onClick={() => setIcon(avatarIcon.name)}
                         >
-                            {avatarIcon}
+                            <img src={avatarIcon.icon} />
                         </button>
                     ))}
                 </span>
@@ -68,13 +69,12 @@ const AvatarMenu = (): React.ReactElement => {
                 <span className="options-container">
                     {avatarColors.map((avatarColor) => (
                         <button
-                            className="option"
-                            key={avatarColor}
-                            disabled={color === avatarColor}
-                            onClick={() => setColor(avatarColor)}
-                        >
-                            {avatarColor}
-                        </button>
+                            style={{ backgroundColor: avatarColor.color }}
+                            className="color-option"
+                            key={avatarColor.name}
+                            disabled={color === avatarColor.color}
+                            onClick={() => setColor(avatarColor.color)}
+                        />
                     ))}
                 </span>
             </label>

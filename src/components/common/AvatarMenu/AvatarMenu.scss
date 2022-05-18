@@ -10,8 +10,24 @@
         justify-content: space-between;
     }
 
-    .option {
+    .color-option {
+        outline: none;
+        border-color: black;
+        height: 30px;
         margin: 0;
+        flex: 1 1 0;
+        &:disabled {
+            border-color: transparent;
+        }
     }
+
+    .icon-option {
+        border-radius: 100%;
+        overflow: hidden;
+        img {
+            width: 100%;
+        }
+    }
+
 }
 
