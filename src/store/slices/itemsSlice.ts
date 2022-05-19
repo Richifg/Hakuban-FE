@@ -19,7 +19,7 @@ const initialState: ItemsState = {
     inProgress: false,
 };
 
-const itemsSlice = createSlice({
+const slice = createSlice({
     name: 'items',
     initialState,
     reducers: {
@@ -77,6 +77,6 @@ export const {
     setSelectedPoint,
     setLineConnections,
     setInProgress,
-} = itemsSlice.actions;
+} = slice.actions;
 
-export default itemsSlice.reducer;
+export default slice.reducer;

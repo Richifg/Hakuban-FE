@@ -1,12 +1,13 @@
-import { CanvasTransform, CanvasSize } from '../interfaces';
+import { store } from '../store/store';
 
 const INIT_GRID_SIZE = 20; //px
 const MIN_GRID_RENDER_SIZE = 20; //px
-const MAX_GRID_RENDER_SIZE = 300; //px
+const MAX_GRID_RENDER_SIZE = 250; //px
 
-function drawGrid(transform: CanvasTransform, size: CanvasSize, ctx: CanvasRenderingContext2D): void {
-    const { width, height } = size;
-    const { scale, dX, dY } = transform;
+function drawGrid(ctx: CanvasRenderingContext2D): void {
+    const { canvasSize, canvasTransform } = store.getState().board;
+    const { width, height } = canvasSize;
+    const { scale, dX, dY } = canvasTransform;
 
     // calculate initial small gridSize so that it isn't too small on current scale
     let smallGridSize = INIT_GRID_SIZE;
@@ -26,8 +27,8 @@ function drawGrid(transform: CanvasTransform, size: CanvasSize, ctx: CanvasRende
         if (scaledGridSize < MAX_GRID_RENDER_SIZE) {
             const [offsetX, offsetY] = [dX % scaledGridSize, dY % scaledGridSize];
 
-            // black with darkest ligthness at 85%
-            const lightness = 90 + 10 * (MIN_GRID_RENDER_SIZE / scaledGridSize);
+            // the smaller the subdivisions the lighter they are drawn
+            const lightness = 95 + 5 * (MIN_GRID_RENDER_SIZE / scaledGridSize);
             ctx.strokeStyle = `hsl(0, 0%, ${lightness}%)`;
 
             ctx.beginPath();

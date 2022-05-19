@@ -23,7 +23,7 @@ const initialState: ConectionState = {
     error: '',
 };
 
-const connectionSlice = createSlice({
+const slice = createSlice({
     name: 'connection',
     initialState,
     reducers: {
@@ -89,7 +89,7 @@ export const {
     syncData,
     setItemsLock,
     setError,
-} = connectionSlice.actions;
+} = slice.actions;
 
 export const connectToRoom =
     (roomId: string, password?: string): AppThunk =>
@@ -124,4 +124,4 @@ export const createRoom = (): AppThunk => async (dispatch) => {
     }
 };
 
-export default connectionSlice.reducer;
+export default slice.reducer;

@@ -1,0 +1,33 @@
+.avatar-menu {
+    background-color: gray; 
+    min-width: 400px;
+    max-width: 50px;
+    display: flex;
+    flex-direction: column;
+
+    .options-container {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .color-option {
+        outline: none;
+        border-color: black;
+        height: 30px;
+        margin: 0;
+        flex: 1 1 0;
+        &:disabled {
+            border-color: transparent;
+        }
+    }
+
+    .icon-option {
+        border-radius: 100%;
+        overflow: hidden;
+        img {
+            width: 100%;
+        }
+    }
+
+}
+

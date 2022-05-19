@@ -1,9 +1,10 @@
 import { store } from '../../store/store';
 import { setUserId, setError } from '../../store/slices/connectionSlice';
 import { addMessage } from '../../store/slices/chatSlice';
-import { BoardItem, UpdateData, WSMessage, LockData } from '../../interfaces';
-import { getSanitizedData } from '../../utils';
+import { BoardItem, UpdateData, WSMessage, LockData, User } from '../../interfaces';
 import { processItemDeletions, processItemLocks, processItemUpdates } from '../../BoardStateMachine/BoardStateMachineUtils';
+import { addUsers, removeUser, setOwnUser } from '../../store/slices/usersSlice';
+import { getSanitizedData, getDefaultUser } from '../../utils';
 
 const url = process.env.REACT_APP_SERVER_URL;
 
@@ -16,6 +17,7 @@ class WebSocketService {
     connect(roomId: string, password?: string): Promise<void> {
         // disconnect before attempting a new connection
         if (this.socket) this.disconnect();
+
         const fullURL = `ws://${url}?roomId=${roomId}` + (password ? `&password=${password}` : '');
         const socket = new WebSocket(fullURL);
         this.socket = socket;
@@ -33,7 +35,6 @@ class WebSocketService {
                 const { type, userId } = message;
                 // only process broadcasts from other user or of type lock
                 // own locks need to be confirmed before data can be synced
-                console.log(`R:${type}`, message.content);
                 if (userId !== this.id || type === 'lock') {
                     switch (type) {
                         case 'error':
@@ -66,9 +67,15 @@ class WebSocketService {
                             processItemLocks(lockData, userId);
                             break;
 
+                        case 'user':
+                            if (message.content.userAction === 'leave') store.dispatch(removeUser(message.content.id));
+                            else store.dispatch(addUsers(message.content.users));
+                            break;
+
                         case 'id':
-                            store.dispatch(setUserId(message.content));
                             this.id = message.content;
+                            store.dispatch(setUserId(message.content));
+                            store.dispatch(setOwnUser(getDefaultUser(this.id)));
                             // resolve promise to indicate successfull connect
                             resolve();
                             break;
@@ -127,8 +134,15 @@ class WebSocketService {
         });
     }
 
+    updateUser(user: User): void {
+        this.sendMessage({
+            userId: this.id,
+            type: 'user',
+            content: { userAction: 'update', users: [user] },
+        });
+    }
+
     sendMessage(message: WSMessage): void {
-        console.log(message.type, message.content);
         this.socket?.send(JSON.stringify(message));
     }
 

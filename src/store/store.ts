@@ -5,6 +5,8 @@ import chatReducer from './slices/chatSlice';
 import connectionReducer from './slices/connectionSlice';
 import itemsReducer from './slices/itemsSlice';
 import toolsReducer from './slices/toolSlice';
+import UIReducer from './slices/UISlice';
+import usersReducer from './slices/usersSlice';
 
 export const store = configureStore({
     reducer: {
@@ -13,6 +15,8 @@ export const store = configureStore({
         connection: connectionReducer,
         items: itemsReducer,
         tools: toolsReducer,
+        UI: UIReducer,
+        users: usersReducer,
     },
 });
 

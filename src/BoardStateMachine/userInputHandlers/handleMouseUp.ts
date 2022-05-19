@@ -107,18 +107,19 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
                 break;
 
             case 'BLOCKED':
-                dispatch(setCurrentAction('IDLE'));
+                if (selectedItemIds.length) dispatch(setCurrentAction('EDIT'));
+                else dispatch(setCurrentAction('IDLE'));
                 break;
         }
         // allow BE sync
         dispatch(setInProgress(false));
 
-        // lock items before updating them
+        // before updating, lock items
         if (hasSelectionChanged) selectItems(idsToSelect);
 
         processItemUpdates(itemUpdates);
 
-        // unlock quick drag after updating it
+        // after updating, clear quick drag item
         if (shouldCleanQuickDrag) selectQuickDragItem();
     } else if (e.button === MouseButton.Middle || e.button === MouseButton.Right) {
         if (currentAction === 'PAN') {

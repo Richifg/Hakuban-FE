@@ -1,9 +1,12 @@
 import { BoardItem, ChatMessage } from './items';
+import { User } from './users';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type UpdateData = { id: string; [key: string]: any };
 
 export type LockData = { itemIds: string[]; lockState: boolean };
+
+export type UserData = { userAction: 'join' | 'update'; users: User[] } | { userAction: 'leave'; id: string };
 
 interface WSBaseMessage {
     userId: string;
@@ -40,6 +43,11 @@ interface WSLockMessage extends WSBaseMessage {
     content: LockData;
 }
 
+interface WSUserMessage extends WSBaseMessage {
+    type: 'user';
+    content: UserData;
+}
+
 interface WSErrorMessage extends WSBaseMessage {
     type: 'error';
     content: string;
@@ -54,4 +62,5 @@ export type WSMessage =
     | WSIdMessage
     | WSChatMessage
     | WSLockMessage
+    | WSUserMessage
     | WSErrorMessage;
