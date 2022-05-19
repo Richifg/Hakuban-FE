@@ -5,7 +5,7 @@ interface UIState {
 }
 
 const initialState: UIState = {
-    showAvatarMenu: true,
+    showAvatarMenu: false,
 };
 
 const slice = createSlice({

@@ -13,10 +13,13 @@ function drawLockHighlights(ctx: CanvasRenderingContext2D): void {
         if (userId !== ownId) {
             ctx.beginPath();
             const user = users[userId];
-            ctx.strokeStyle = user.color;
-            const { x0, y0, x2, y2 } = items[itemId];
-            ctx.rect(x0, y0, x2 - x0, y2 - y0);
-            ctx.stroke();
+            const item = items[itemId];
+            if (user && item) {
+                ctx.strokeStyle = user.color;
+                const { x0, y0, x2, y2 } = item;
+                ctx.rect(x0, y0, x2 - x0, y2 - y0);
+                ctx.stroke();
+            }
         }
     });
 

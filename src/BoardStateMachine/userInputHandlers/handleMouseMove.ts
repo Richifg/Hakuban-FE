@@ -25,9 +25,9 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
 
     const selectedItem = selectedItemIds.length === 1 ? items[selectedItemIds[0]] : undefined;
 
-    const [x, y] = [e.clientX, e.clientY];
-    dispatch(setCursorPosition([x, y]));
-    const [boardX, boardY] = getBoardCoordinates(x, y, canvasTransform);
+    const [screenX, screenY] = [e.clientX, e.clientY];
+    dispatch(setCursorPosition([screenX, screenY]));
+    const [boardX, boardY] = getBoardCoordinates(screenX, screenY, canvasTransform);
     !hasCursorMoved && mouseButton !== undefined && dispatch(setHasCursorMoved(true));
 
     if (mouseButton === MouseButton.Left) {
@@ -42,30 +42,18 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
             case 'DRAG':
                 const ids = draggedItemId ? [draggedItemId] : selectedItemIds;
                 const selectedItems = ids.map((id) => items[id]);
-                const draggableItems = selectedItems.filter((item) => isItemDraggable(item, lineConnections));
-                if (draggableItems.length) {
-                    // dragOffset is relative to minX and minY of the group of items
-                    const { minX, minY } = getMaxCoordinates(selectedItems);
-                    const updatedCoordinates: Coordinates[] = [];
-                    const updatedLines: BoardItem[] = [];
-
-                    // update coordinates of draggable items and their line connections
-                    draggableItems.forEach((item) => {
+                const draggables = selectedItems.filter((item) => isItemDraggable(item, lineConnections));
+                if (draggables.length) {
+                    // dragOffset is relative to minX and minY of the draggable items
+                    const { minX, minY } = getMaxCoordinates(draggables);
+                    draggables.forEach((item) => {
+                        // update coordinates of draggable items and their line connections
                         const { id, x0, y0 } = item;
                         const offset = { x: dragOffset.x + minX - x0, y: dragOffset.y + minY - y0 };
                         const newCoordinates = getTranslatedCoordinates(item, offset, boardX, boardY);
-
-                        updatedCoordinates.push(newCoordinates);
-                        updatedLines.push(...updateConnectedLines({ ...item, ...newCoordinates }));
+                        updateConnectedLines({ ...item, ...newCoordinates });
                         processItemUpdates({ id, ...newCoordinates });
                     });
-
-                    // a selection with unmoveable items requires a new dragOffset for each update (lines grow when selection is moved)
-                    const linesInSelection = updatedLines.filter(({ id: lineId }) => ids.includes(lineId));
-                    if (linesInSelection.length) {
-                        const { minX, minY } = getMaxCoordinates([...updatedCoordinates, ...linesInSelection]);
-                        dispatch(setDragOffset([boardX - minX, boardY - minY]));
-                    }
                 } else dispatch(setCurrentAction('BLOCKED'));
                 break;
 
@@ -118,7 +106,7 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
         // update all items in bulk
     } else if (mouseButton === MouseButton.Middle || mouseButton === MouseButton.Right) {
         // middle and right buttons always pan camera
-        dispatch(translateCanvas([x - cursorPosition.x, y - cursorPosition.y]));
+        dispatch(translateCanvas([screenX - cursorPosition.x, screenY - cursorPosition.y]));
     }
 }
 

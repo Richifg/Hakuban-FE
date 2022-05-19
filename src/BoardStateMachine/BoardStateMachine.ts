@@ -8,7 +8,7 @@ import { handleMouseDown, handleMouseMove, handleMouseUp, handleMouseWheel, hand
         - receives user inputs like mouse, wheel and window resize events
         - reads current state and other variables from various store slices (e.g. selectedTool)
         - produces several side effects to create/update items and change board properties
-        - sets the new state
+        - sets the next state
 */
 
 const BoardStateMachine = {
@@ -18,7 +18,7 @@ const BoardStateMachine = {
 
     mouseUp: handleMouseUp, // wraps up and syncs items with BE
 
-    wheelScroll: handleMouseWheel,
+    wheelScroll: handleMouseWheel, // controls board zoom (scale)
 
     keyPress: handleKeyboard,
 

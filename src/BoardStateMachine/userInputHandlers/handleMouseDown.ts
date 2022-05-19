@@ -29,7 +29,6 @@ function handleMouseDown(e: MouseEvent<HTMLDivElement>): void {
         switch (selectedTool) {
             case 'POINTER':
                 const [boardX, boardY] = getBoardCoordinates(screenX, screenY, canvasTransform);
-                const clickedItem = getItemAtPosition(boardX, boardY, Object.values(items));
                 let clickedOutside = true;
 
                 if (selectedItemIds.length) {
@@ -38,6 +37,9 @@ function handleMouseDown(e: MouseEvent<HTMLDivElement>): void {
                     if (isPointInsideArea(boardX, boardY, { x0: minX, x2: maxX, y0: minY, y2: maxY })) {
                         // has selected items and clicked within the the group
                         clickedOutside = false;
+                        // use only draggables items for setting the dragOffset
+                        const draggbleItems = selectedItems.filter((item) => isItemDraggable(item, lineConnections));
+                        const { minX, minY } = getMaxCoordinates(draggbleItems);
                         dispatch(setDragOffset([boardX - minX, boardY - minY]));
                         dispatch(setCurrentAction('DRAG'));
                     } else {
@@ -47,6 +49,7 @@ function handleMouseDown(e: MouseEvent<HTMLDivElement>): void {
                     }
                 }
                 if (!selectedItemIds.length || clickedOutside) {
+                    const clickedItem = getItemAtPosition(boardX, boardY, Object.values(items));
                     if (clickedItem) {
                         // clicked an item so might be starting a quick drag
                         if (isItemDraggable(clickedItem, lineConnections)) {

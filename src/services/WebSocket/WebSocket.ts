@@ -35,7 +35,6 @@ class WebSocketService {
                 const { type, userId } = message;
                 // only process broadcasts from other user or of type lock
                 // own locks need to be confirmed before data can be synced
-                console.log(`R:${type}`, message.content);
                 if (userId !== this.id || type === 'lock') {
                     switch (type) {
                         case 'error':
@@ -144,7 +143,6 @@ class WebSocketService {
     }
 
     sendMessage(message: WSMessage): void {
-        console.log(message.type, message.content);
         this.socket?.send(JSON.stringify(message));
     }
 

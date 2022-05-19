@@ -12,7 +12,7 @@ function updateConnectedLines(item: BoardItem): Line[] {
         const { items } = store.getState().items;
         item.connections?.forEach(([id, point, pX, pY]) => {
             const line = items[id];
-            if (line) {
+            if (line && line.type === 'line') {
                 const { x0, x2, y0, y2 } = item;
                 const [width, height] = [Math.abs(x2 - x0), Math.abs(y2 - y0)];
                 const x = Math.min(x0, x2) + width * pX;
@@ -27,7 +27,7 @@ function updateConnectedLines(item: BoardItem): Line[] {
                         updateData.y2 = y;
                     }
                     updateDataArr.push(updateData);
-                    line.type === 'line' && updatedLines.push({ ...line, ...updateData });
+                    updatedLines.push({ ...line, ...updateData });
                 }
             }
         });
