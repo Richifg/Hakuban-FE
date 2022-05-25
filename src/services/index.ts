@@ -1,4 +1,4 @@
 import WSService from './WebSocket/WebSocket';
-import TestService from './test/testService';
+import RoomService from './RoomService/RoomService';
 
-export { WSService, TestService };
+export { WSService, RoomService };

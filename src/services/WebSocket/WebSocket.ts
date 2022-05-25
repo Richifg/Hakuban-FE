@@ -7,6 +7,8 @@ import { addUsers, removeUser, setOwnUser } from '../../store/slices/usersSlice'
 import { getSanitizedData, getDefaultUser } from '../../utils';
 
 const url = process.env.REACT_APP_SERVER_URL;
+const protocol = process.env.REACT_APP_NODE_ENV === 'development' ? 'ws' : 'wss';
+const fullUrl = `${protocol}://${url}`;
 
 class WebSocketService {
     id: string;
@@ -18,7 +20,7 @@ class WebSocketService {
         // disconnect before attempting a new connection
         if (this.socket) this.disconnect();
 
-        const fullURL = `ws://${url}?roomId=${roomId}` + (password ? `&password=${password}` : '');
+        const fullURL = `${fullUrl}?roomId=${roomId}` + (password ? `&password=${password}` : '');
         const socket = new WebSocket(fullURL);
         this.socket = socket;
         const connectionPromise = new Promise<void>((resolve, reject) => {

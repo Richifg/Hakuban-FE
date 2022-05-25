@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk } from '../store';
-import { WSService, TestService } from '../../services';
+import { WSService, RoomService } from '../../services';
 import { BoardItem, UpdateData, ItemsLock } from '../../interfaces';
 
 interface ConectionState {
@@ -112,7 +112,7 @@ export const createRoom = (): AppThunk => async (dispatch) => {
     dispatch(setRoomId(''));
     try {
         // TODO: can't catch the errors from createRoom here
-        const { success, data } = await TestService.createRoom();
+        const { success, data } = await RoomService.createRoom();
         if (success) dispatch(setRoomId(data));
         else dispatch(setError(data));
     } catch (e) {
