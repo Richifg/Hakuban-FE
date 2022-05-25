@@ -59,13 +59,13 @@
     "type": "git",
     "url": "git+https://github.com/Richifg/CollabTool-FE.git"
   },
+  "bugs": {
+    "url": "https://github.com/Richifg/CollabTool-FE/issues"
+  },
   "keywords": [
     "collaboration",
     "online"
   ],
   "author": "Ricardo Fernandez",
-  "license": "gpl-3.0",
-  "bugs": {
-    "url": "https://github.com/Richifg/CollabTool-FE/issues"
-  }
+  "license": "gpl-3.0"
 }
