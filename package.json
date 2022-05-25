@@ -64,7 +64,7 @@
     "online"
   ],
   "author": "Ricardo Fernandez",
-  "license": "MIT",
+  "license": "gpl-3.0",
   "bugs": {
     "url": "https://github.com/Richifg/CollabTool-FE/issues"
   }
