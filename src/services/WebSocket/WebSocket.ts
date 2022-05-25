@@ -7,7 +7,7 @@ import { addUsers, removeUser, setOwnUser } from '../../store/slices/usersSlice'
 import { getSanitizedData, getDefaultUser } from '../../utils';
 
 const url = process.env.REACT_APP_SERVER_URL;
-const protocol = process.env.REACT_APP_NODE_ENV === 'development' ? 'ws' : 'wss';
+const protocol = process.env.REACT_APP_NODE_ENV === 'production' ? 'wss' : 'ws';
 const fullUrl = `${protocol}://${url}`;
 
 class WebSocketService {
@@ -145,6 +145,7 @@ class WebSocketService {
     }
 
     sendMessage(message: WSMessage): void {
+        // TODO: add try hard here
         this.socket?.send(JSON.stringify(message));
     }
 

@@ -110,18 +110,10 @@ export const createRoom = (): AppThunk => async (dispatch) => {
     dispatch(setIsLoading(true));
     dispatch(setIsConnected(false));
     dispatch(setRoomId(''));
-    try {
-        // TODO: can't catch the errors from createRoom here
-        const { success, data } = await RoomService.createRoom();
-        if (success) dispatch(setRoomId(data));
-        else dispatch(setError(data));
-    } catch (e) {
-        console.log(e, typeof e);
-        const error = !e ? 'connection error' : (e as string);
-        dispatch(setError(error));
-    } finally {
-        dispatch(setIsLoading(false));
-    }
+    const { success, data } = await RoomService.createRoom();
+    if (success) dispatch(setRoomId(data));
+    else dispatch(setError(data));
+    dispatch(setIsLoading(false));
 };
 
 export default slice.reducer;
