@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk } from '../store';
-import { WSService, TestService } from '../../services';
+import { WSService, RoomService } from '../../services';
 import { BoardItem, UpdateData, ItemsLock } from '../../interfaces';
 
 interface ConectionState {
@@ -110,18 +110,10 @@ export const createRoom = (): AppThunk => async (dispatch) => {
     dispatch(setIsLoading(true));
     dispatch(setIsConnected(false));
     dispatch(setRoomId(''));
-    try {
-        // TODO: can't catch the errors from createRoom here
-        const { success, data } = await TestService.createRoom();
-        if (success) dispatch(setRoomId(data));
-        else dispatch(setError(data));
-    } catch (e) {
-        console.log(e, typeof e);
-        const error = !e ? 'connection error' : (e as string);
-        dispatch(setError(error));
-    } finally {
-        dispatch(setIsLoading(false));
-    }
+    const { success, data } = await RoomService.createRoom();
+    if (success) dispatch(setRoomId(data));
+    else dispatch(setError(data));
+    dispatch(setIsLoading(false));
 };
 
 export default slice.reducer;
