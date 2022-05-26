@@ -7,6 +7,8 @@ import { addUsers, removeUser, setOwnUser } from '../../store/slices/usersSlice'
 import { getSanitizedData, getDefaultUser } from '../../utils';
 
 const url = process.env.REACT_APP_SERVER_URL;
+console.log(process.env.NODE_ENV);
+console.log(process.env.REACT_APP_NODE_ENV);
 const protocol = process.env.REACT_APP_NODE_ENV === 'production' ? 'wss' : 'ws';
 const fullUrl = `${protocol}://${url}`;
 
