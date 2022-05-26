@@ -1,5 +1,5 @@
 const url = process.env.REACT_APP_SERVER_URL;
-const protocol = process.env.REACT_APP_NODE_ENV === 'production' ? 'https' : 'http';
+const protocol = process.env.NODE_ENV === 'production' ? 'wss' : 'ws';
 const fullUrl = `${protocol}://${url}`;
 
 const RoomService = {
