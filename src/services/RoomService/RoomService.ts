@@ -3,8 +3,8 @@ const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
 const fullUrl = `${protocol}://${url}`;
 
 const RoomService = {
-    createRoom: async (): Promise<{ success: boolean; data: string }> => {
-        return fetch(`${fullUrl}/room`, { method: 'POST' })
+    createRoom: async (password?: string): Promise<{ success: boolean; data: string }> =>
+        fetch(`${fullUrl}/room`, { method: 'POST', body: password })
             .then((response) => {
                 if (response.status !== 200) {
                     return { success: false, data: response.statusText };
@@ -13,8 +13,7 @@ const RoomService = {
             })
             .catch((err) => {
                 return { success: false, data: err.toString() };
-            });
-    },
+            }),
     wakeUp: async (): Promise<boolean> =>
         fetch(`${fullUrl}/room`, { method: 'GET' })
             .then((res) => {
