@@ -4,7 +4,11 @@ const fullUrl = `${protocol}://${url}`;
 
 const RoomService = {
     createRoom: async (password?: string): Promise<{ success: boolean; data: string }> =>
-        fetch(`${fullUrl}/room`, { method: 'POST', body: password })
+        fetch(`${fullUrl}/room`, {
+            method: 'POST',
+            body: JSON.stringify({ password }),
+            headers: { 'Content-Type': 'application/json' },
+        })
             .then((response) => {
                 if (response.status !== 200) {
                     return { success: false, data: response.statusText };
