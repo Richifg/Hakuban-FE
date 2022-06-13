@@ -38,7 +38,9 @@ function handleMouseDown(e: MouseEvent<HTMLDivElement>): void {
                         // has selected items and clicked within the the group
                         clickedOutside = false;
                         // use only draggables items for setting the dragOffset
-                        const draggbleItems = selectedItems.filter((item) => isItemDraggable(item, lineConnections));
+                        const draggbleItems = selectedItems.filter((item) =>
+                            isItemDraggable(item, lineConnections, selectedItemIds),
+                        );
                         const { minX, minY } = getMaxCoordinates(draggbleItems);
                         dispatch(setDragOffset([boardX - minX, boardY - minY]));
                         dispatch(setCurrentAction('DRAG'));
