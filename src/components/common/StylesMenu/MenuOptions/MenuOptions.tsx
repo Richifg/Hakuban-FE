@@ -11,6 +11,7 @@ import {
     TextStyleSelector,
     ArrowSelector,
     LineTypeSelector,
+    LinePatternSelector,
     ZIndexSelector,
 } from '.';
 import './MenuOptions.scss';
@@ -58,24 +59,28 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
 
     // only when all items have the appropiate attribute does the attribute style selector gets shown
     const show = useMemo(() => {
-        let [fillColor, lineColor, lineWidth, textStyles, lineStyles, deleteButton] = Array(6).fill(true);
+        let [fillColor, strokeStyles, textStyles, lineStyles, deleteButton] = Array(6).fill(true);
         items.forEach((item) => {
             if (!('fillColor' in item)) fillColor = false;
-            if (!('lineWidth' in item)) lineWidth = false;
-            if (!('lineColor' in item)) lineColor = false;
+            if (!('lineWidth' in item)) strokeStyles = false;
             if (!('text' in item)) textStyles = false;
             if (item.type !== 'line') lineStyles = false;
             if (itemsLock[item.id] !== userId) deleteButton = false;
         });
-        return { fillColor, lineColor, lineWidth, textStyles, lineStyles, deleteButton };
+        return { fillColor, strokeStyles, textStyles, lineStyles, deleteButton };
     }, [items, itemsLock, userId]);
 
     const item = items[0];
     return (
         <div className="menu-options" onMouseDown={stopMouseDown}>
             {show.fillColor && <ColorSelector onChange={handleChange} styleKey="fillColor" color={(item as Shape).fillColor} />}
-            {show.lineColor && <ColorSelector onChange={handleChange} styleKey="lineColor" color={(item as Shape).lineColor} />}
-            {show.lineWidth && <WidthSelector onChange={handleChange} width={(item as Shape).lineWidth} />}
+            {show.strokeStyles && (
+                <>
+                    <ColorSelector onChange={handleChange} styleKey="lineColor" color={(item as Shape).lineColor} />
+                    <WidthSelector onChange={handleChange} width={(item as Shape).lineWidth} />
+                    <LinePatternSelector onChange={handleChange} pattern={(item as Shape).linePattern} />
+                </>
+            )}
             {show.lineStyles && (
                 <>
                     <LineTypeSelector onChange={handleChange} lineType={(item as Line).lineType} />

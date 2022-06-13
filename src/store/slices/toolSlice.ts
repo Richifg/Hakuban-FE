@@ -17,6 +17,7 @@ const initialState: ToolsState = {
     shapeType: 'rect',
     shapeStyle: {
         lineWidth: 1,
+        linePattern: 0,
         lineColor: 'black',
         fillColor: 'transparent',
     },
@@ -34,15 +35,17 @@ const initialState: ToolsState = {
         size: 100,
     },
     lineStyle: {
-        lineWidth: 1,
+        lineWidth: 2,
         lineColor: 'black',
         lineType: 'straight',
+        linePattern: 0,
         arrow0Type: 'none',
         arrow2Type: 'simple',
     },
     drawingStyle: {
         lineWidth: 1,
         lineColor: 'black',
+        linePattern: 0,
     },
 };
 

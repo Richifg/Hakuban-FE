@@ -24,9 +24,11 @@ interface BoardItemBase extends ItemBase, Coordinates {
     zIndex: number;
 }
 
+export type LinePattern = 0 | 1 | 2 | 3;
 export interface StrokeStyle {
     lineColor: string;
     lineWidth: number;
+    linePattern: LinePattern;
 }
 
 export interface FillStyle {

@@ -15,3 +15,11 @@ export const LINE_CLICK_TOLERNACE = 10; // px
 
 // arrow size for 1px line_width Lines
 export const ARROW_SIZE = 4; // px
+
+// line patterns used for the canvas setDashLine function
+export const LINE_PATTERNS = {
+    0: [],
+    1: [20, 5],
+    2: [10, 10],
+    3: [2, 2],
+};
