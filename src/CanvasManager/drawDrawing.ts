@@ -1,4 +1,5 @@
 import { Drawing } from '../interfaces';
+import { LINE_PATTERNS } from '../constants';
 
 function drawDrawing(drawing: Drawing, ctx: CanvasRenderingContext2D): void {
     ctx.beginPath();
@@ -7,6 +8,7 @@ function drawDrawing(drawing: Drawing, ctx: CanvasRenderingContext2D): void {
     if (points.length > 1) {
         ctx.strokeStyle = drawing.lineColor;
         ctx.lineWidth = drawing.lineWidth;
+        ctx.setLineDash(LINE_PATTERNS[drawing.linePattern]);
 
         // new drawings have absolute coordinates up until they are finished
         if (drawing.isAbsolute) {

@@ -1,4 +1,5 @@
 import { Line } from '../interfaces';
+import { LINE_PATTERNS } from '../constants';
 import drawArrows from './drawArrows';
 
 function drawLine(line: Line, ctx: CanvasRenderingContext2D): void {
@@ -8,6 +9,7 @@ function drawLine(line: Line, ctx: CanvasRenderingContext2D): void {
     ctx.strokeStyle = lineColor;
     ctx.fillStyle = lineColor;
     ctx.lineWidth = lineWidth;
+    ctx.setLineDash(LINE_PATTERNS[line.linePattern]);
     ctx.beginPath();
     ctx.moveTo(x0, y0);
 
@@ -37,6 +39,9 @@ function drawLine(line: Line, ctx: CanvasRenderingContext2D): void {
     }
 
     ctx.stroke();
+
+    // arrows never used line patterns
+    ctx.setLineDash(LINE_PATTERNS[0]);
     drawArrows(line, ctx);
 }
 

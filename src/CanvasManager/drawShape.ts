@@ -1,4 +1,5 @@
 import { Shape } from '../interfaces';
+import { LINE_PATTERNS } from '../constants';
 
 function drawShape(shape: Shape, ctx: CanvasRenderingContext2D): void {
     ctx.beginPath();
@@ -7,6 +8,7 @@ function drawShape(shape: Shape, ctx: CanvasRenderingContext2D): void {
     ctx.fillStyle = shape.fillColor;
     ctx.strokeStyle = shape.lineColor;
     ctx.lineWidth = shape.lineWidth;
+    ctx.setLineDash(LINE_PATTERNS[shape.linePattern]);
 
     if (shapeType === 'triangle' || shapeType === 'romboid') ctx.lineJoin = 'round';
     else ctx.lineJoin = 'miter';
