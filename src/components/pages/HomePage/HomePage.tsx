@@ -11,11 +11,13 @@ const HomePage = (): React.ReactElement => {
     const dispatch = useDispatch();
     const [newRoomId, setNewRoomId] = useState('');
     const [password, setPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [addPassword, setAddPassword] = useState(false);
     const { roomId, isLoading, error } = useSelector((s) => s.connection);
 
     useEffect(() => {
         if (roomId) {
-            history.push(`/room/${roomId}`);
+            history.push(`/room/${roomId}` + (newPassword ? `?password=${newPassword}` : ''));
         }
     }, [roomId]);
 
@@ -24,7 +26,7 @@ const HomePage = (): React.ReactElement => {
     };
 
     const handleCreateRoom = () => {
-        dispatch(createRoom());
+        dispatch(createRoom(newPassword));
     };
 
     return (
@@ -34,6 +36,17 @@ const HomePage = (): React.ReactElement => {
                 <button disabled={isLoading} onClick={handleCreateRoom}>
                     Create
                 </button>
+                <label>
+                    Add room password?
+                    <input type="checkbox" checked={addPassword} onClick={() => setAddPassword(!addPassword)} />
+                </label>
+                {addPassword && (
+                    <input
+                        type="text"
+                        value={newPassword}
+                        onChange={({ currentTarget }) => setNewPassword(currentTarget.value)}
+                    />
+                )}
                 {error && <span>{error}</span>}
             </section>
             <section>
