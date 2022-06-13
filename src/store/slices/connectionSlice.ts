@@ -106,14 +106,16 @@ export const connectToRoom =
         }
     };
 
-export const createRoom = (): AppThunk => async (dispatch) => {
-    dispatch(setIsLoading(true));
-    dispatch(setIsConnected(false));
-    dispatch(setRoomId(''));
-    const { success, data } = await RoomService.createRoom();
-    if (success) dispatch(setRoomId(data));
-    else dispatch(setError(data));
-    dispatch(setIsLoading(false));
-};
+export const createRoom =
+    (password?: string): AppThunk =>
+    async (dispatch) => {
+        dispatch(setIsLoading(true));
+        dispatch(setIsConnected(false));
+        dispatch(setRoomId(''));
+        const { success, data } = await RoomService.createRoom(password);
+        if (success) dispatch(setRoomId(data));
+        else dispatch(setError(data));
+        dispatch(setIsLoading(false));
+    };
 
 export default slice.reducer;
