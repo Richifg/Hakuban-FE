@@ -1,7 +1,6 @@
 @import '../../../styles/variables.scss';
  
-
-.landingPage {
+.landingPage { 
     height: 100%;
     width: 100%; 
     background-color: $color-background;
@@ -12,8 +11,24 @@
     .navbar {
         width: 100%;
         max-width: $page-max-width;
-        flex-basis: 50px;
+        flex-shrink: 0;
         border: 1px solid black;
+        padding: 10px 0;
+
+        .link {
+            font-size: 30px;
+            font-weight: 900;
+            color: $color-primary;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .logoIcon {
+            font-size: 40px;
+            color: $color-primary-contrast;
+            margin: 0 20px;
+        }
     }
     
 
@@ -21,16 +36,94 @@
         width: 100%;
         max-width: $page-max-width;
         flex-grow: 1;
+        display: flex;
+
+        .col {
+            flex-basis: 50%;
+            border: 1px solid red;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            &:first-child {
+                background-color: $color-primary;
+                color: $color-primary-contrast;
+            }
+
+            &:last-child {
+                color: $color-secondary;
+            }
+        }
 
         .title1 {
-            font-size: 65px;
-            color: $color-primary-contrast;
+            font-size: 80px;
+            font-weight: 900;
+            line-height: 0.9;
+            color: $color-primary-contrast; 
+
+            .big {
+                font-size: 120px;
+                font-weight: 300
+            }
+        }
+
+        .formContainer {
+            background-color: $color-background-light;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 15px 15px 75px -10px rgba(50, 50, 50, 0.3)
+
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+
+            &:not(:last-child) {
+                margin-bottom: 40px;
+            }
         }
     
         .title2 {
-            font-size: 22px;
+            font-size: 28px;
+            font-weight: 700;
             color: $color-primary;
+            margin: 0 0 20px 0;
     
+        }
+
+        .input {
+            font-size: 16px;
+            border-radius: 12px;
+            border: none;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            outline: none;
+            color: $color-secondary;
+            background-color: $color-background-ligther;
+            box-shadow: inset 3px 3px 13px -8px #464646,
+                        inset 6px 6px 15px rgba(255, 255, 255, 0.5);
+        }
+
+        .button {
+            cursor: pointer;
+            align-self: end;
+            font-size: 18px;
+            font-weight: 700; 
+            padding: 8px 12px;
+            color: $color-primary;
+            border: 2px solid $color-primary;
+            background-color: transparent;
+            border-radius: 12px;
+            &:hover {
+                background-color: $color-primary-lighter;
+            }
+            
+            &:focus {
+                background-color: $color-primary;
+                color: $color-primary-contrast
+            }
         }
     }
     

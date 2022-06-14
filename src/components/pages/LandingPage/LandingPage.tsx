@@ -3,6 +3,7 @@ import { useHistory } from 'react-router';
 
 import { useDispatch, useSelector } from '../../../hooks';
 import { createRoom } from '../../../store/slices/connectionSlice';
+import { Icon } from '../../common';
 
 import styles from './LandingPage.module.scss';
 
@@ -32,9 +33,34 @@ const HomePage = (): React.ReactElement => {
     return (
         <div className={styles.landingPage}>
             <nav className={styles.navbar}>
-                <a href="/">HAKUBAN</a>
+                <a href="/" className={styles.link}>
+                    <Icon className={styles.logoIcon}>logo</Icon>
+                    <span>Hakuban</span>
+                </a>
             </nav>
-            <main className={styles.main}>asd</main>
+            <main className={styles.main}>
+                <div className={styles.col}>
+                    <h1 className={styles.title1}>
+                        Online <br></br>
+                        <span className={styles.big}>Whiteboard</span>
+                    </h1>
+                </div>
+                <div className={styles.col}>
+                    <div className={styles.formContainer}>
+                        <form className={styles.form}>
+                            <h2 className={styles.title2}>Create a new board</h2>
+                            <input className={styles.input} type="text" placeholder="Password (optional)" />
+                            <button className={styles.button}>Create</button>
+                        </form>
+                        <form className={styles.form}>
+                            <h2 className={styles.title2}>Join a board</h2>
+                            <input className={styles.input} type="text" placeholder="Board #" />
+                            <input className={styles.input} type="password" placeholder="Password" />
+                            <button className={styles.button}>Join</button>
+                        </form>
+                    </div>
+                </div>
+            </main>
         </div>
     );
 };
