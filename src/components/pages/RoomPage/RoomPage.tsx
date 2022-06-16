@@ -3,7 +3,7 @@ import { useParams, useHistory } from 'react-router';
 
 import { useSelector, useDispatch } from '../../../hooks';
 import { connectToRoom } from '../../../store/slices/connectionSlice';
-import { BoardCanvas, BoardUI, TestChat, ToolsMenu, ZoomControls, AvatarMenu } from '../../common';
+import { BoardCanvas, BoardUI, TestChat, ToolsMenu, ZoomControls, AvatarMenu } from '../../board';
 
 import './RoomPage.scss';
 
