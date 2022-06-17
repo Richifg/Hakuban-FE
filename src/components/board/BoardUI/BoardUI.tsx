@@ -1,6 +1,6 @@
 import React, { useLayoutEffect } from 'react';
 import { useSelector, useDebouncedCallback } from '../../../hooks';
-import { EditPoints, TextEditor, StylesMenu } from '../../common';
+import { EditPoints, TextEditor, StylesMenu } from '../';
 
 import SM from '../../../BoardStateMachine/BoardStateMachine';
 import './BoardUI.scss';
