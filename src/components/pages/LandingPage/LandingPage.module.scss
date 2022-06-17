@@ -1,78 +1,85 @@
 @import '../../../styles/variables.scss';
+
  
-.landingPage { 
-    height: 100%;
-    width: 100%; 
-    background-color: $color-background;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.landingPage {
+    color: $color-primary;
+    background: linear-gradient(90deg, $color-primary 0 60%, $color-background 60% 100%);
+    position: relative;
+
+    .landingPageContent {
+        background: url('../../../assets/images/backgroundMask.svg');
+        background-size: 100% 100%;
+    }
 
     .navbar {
         width: 100%;
-        max-width: $page-max-width;
         flex-shrink: 0;
-        border: 1px solid black;
-        padding: 10px 0;
+        padding: 1em 4em;
 
         .link {
-            font-size: 30px;
+            font-size: 1.5em;
             font-weight: 900;
-            color: $color-primary;
+            color: currentColor;
             text-decoration: none;
             display: flex;
             align-items: center;
         }
 
         .logoIcon {
-            font-size: 40px;
             color: $color-primary-contrast;
-            margin: 0 20px;
+            margin-right: 1em;
+            font-size: 1.2em;
         }
     }
     
-
     .main {
         width: 100%;
-        max-width: $page-max-width;
         flex-grow: 1;
         display: flex;
 
         .col {
             flex-basis: 50%;
-            border: 1px solid red;
             display: flex;
-            flex-direction: column;
+            flex-direction: column; 
             justify-content: center;
             align-items: center;
-
+            
             &:first-child {
-                background-color: $color-primary;
                 color: $color-primary-contrast;
             }
-
-            &:last-child {
-                color: $color-secondary;
-            }
+        
         }
 
         .title1 {
-            font-size: 80px;
+            font-size: 5em;
             font-weight: 900;
-            line-height: 0.9;
+            line-height: 0.85;
+            margin: 0 0 0.5em 0;
             color: $color-primary-contrast; 
 
             .big {
-                font-size: 120px;
+                font-size: 1.2em;
                 font-weight: 300
             }
         }
 
+        .image {
+            width: 30em;
+            height: 18em;
+            background-color: white;
+        }
+
+        .subtitle1 {
+            font-size: 2em;
+            font-weight: 400;
+            font-style: italic;
+        }
+
         .formContainer {
             background-color: $color-background-light;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 15px 15px 75px -10px rgba(50, 50, 50, 0.3)
+            border-radius: 1em;
+            padding: 2em;
+            box-shadow: 4px 4px 15px -2px rgb(50 50 50 / 30%);
 
         }
 
@@ -81,41 +88,40 @@
             flex-direction: column;
 
             &:not(:last-child) {
-                margin-bottom: 40px;
+                margin-bottom: 2em;
             }
         }
     
         .title2 {
-            font-size: 28px;
+            font-size: 1.2em;
             font-weight: 700;
-            color: $color-primary;
-            margin: 0 0 20px 0;
+            margin: 0 0 1em 0;
     
         }
 
         .input {
-            font-size: 16px;
-            border-radius: 12px;
+            font-size: 0.8em;
+            border-radius: .75em;
             border: none;
-            padding: 15px 20px;
-            margin-bottom: 15px;
+            padding: .75em 1.5em;
+            margin-bottom: 1em;
             outline: none;
             color: $color-secondary;
             background-color: $color-background-ligther;
-            box-shadow: inset 3px 3px 13px -8px #464646,
+            box-shadow: inset 2px 2px 5px -3px #464646,
                         inset 6px 6px 15px rgba(255, 255, 255, 0.5);
         }
 
         .button {
             cursor: pointer;
             align-self: end;
-            font-size: 18px;
+            font-size: .75em;
             font-weight: 700; 
-            padding: 8px 12px;
+            padding: .5em 1em;
             color: $color-primary;
-            border: 2px solid $color-primary;
+            border: .15em solid $color-primary;
             background-color: transparent;
-            border-radius: 12px;
+            border-radius: .75em;
             &:hover {
                 background-color: $color-primary-lighter;
             }

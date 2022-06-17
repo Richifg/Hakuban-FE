@@ -3,7 +3,7 @@ import { useHistory } from 'react-router';
 
 import { useDispatch, useSelector } from '../../../hooks';
 import { createRoom } from '../../../store/slices/connectionSlice';
-import { Icon } from '../../common';
+import { Icon, PageWrapper } from '../../common';
 
 import styles from './LandingPage.module.scss';
 
@@ -31,7 +31,7 @@ const HomePage = (): React.ReactElement => {
     };
 
     return (
-        <div className={styles.landingPage}>
+        <PageWrapper wrapperClassName={styles.landingPage} contentClassName={styles.landingPageContent}>
             <nav className={styles.navbar}>
                 <a href="/" className={styles.link}>
                     <Icon className={styles.logoIcon}>logo</Icon>
@@ -44,6 +44,9 @@ const HomePage = (): React.ReactElement => {
                         Online <br></br>
                         <span className={styles.big}>Whiteboard</span>
                     </h1>
+                    <img className={styles.image} />
+                    <p className={styles.subtitle1}>No sign-up required!</p>
+                    <p>Boards are deleted after 24h</p>
                 </div>
                 <div className={styles.col}>
                     <div className={styles.formContainer}>
@@ -61,7 +64,7 @@ const HomePage = (): React.ReactElement => {
                     </div>
                 </div>
             </main>
-        </div>
+        </PageWrapper>
     );
 };
 
