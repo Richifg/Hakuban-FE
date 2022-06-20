@@ -1,8 +1,8 @@
 import { MouseEvent } from 'react';
-import { MouseButton, BoardItem, UpdateData, Coordinates } from '../../interfaces';
+import { MouseButton, BoardItem, UpdateData } from '../../interfaces';
 import { connectItem, processItemUpdates, updateConnectedLines, selectItems } from '../BoardStateMachineUtils';
 import { setCursorPosition, setHasCursorMoved, setCurrentAction } from '../../store/slices/boardSlice';
-import { setDragOffset, setSelectedPoint } from '../../store/slices/itemsSlice';
+import { setSelectedPoint } from '../../store/slices/itemsSlice';
 import { translateCanvas } from '../../store/slices/boardSlice';
 import {
     getBoardCoordinates,

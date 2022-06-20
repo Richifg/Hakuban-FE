@@ -15,8 +15,7 @@ import { getTextAreaCoordinates, isTextItem } from '../utils';
     Manages the animation cycle of a canvas html element by constantly:
      - clearing screen
      - transforming canvas (scale, translate)
-     - and drawing items on screen 
-    Uses animationFrames to keep a consistent framerate 
+     - and drawing items on screen
 */
 
 class CanvasManager {

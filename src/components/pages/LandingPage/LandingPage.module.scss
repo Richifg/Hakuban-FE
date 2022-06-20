@@ -7,7 +7,7 @@
     position: relative;
 
     .landingPageContent {
-        background: url('../../../assets/images/backgroundMask.svg');
+        background: url('../../../assets/images/backgroundMask.svg'); 
         background-size: 100% 100%;
     }
 
@@ -15,122 +15,137 @@
         width: 100%;
         flex-shrink: 0;
         padding: 1em 4em;
+    }
 
-        .link {
-            font-size: 1.5em;
-            font-weight: 900;
-            color: currentColor;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-        }
+    .link {
+        font-size: 1.5em;
+        font-weight: 900;
+        color: currentColor;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+    }
 
-        .logoIcon {
-            color: $color-primary-contrast;
-            margin-right: 1em;
-            font-size: 1.2em;
-        }
+    .logoIcon {
+        color: $color-primary-contrast;
+        margin-right: .8em;
+        font-size: 1.2em;
     }
     
     .main {
         width: 100%;
         flex-grow: 1;
         display: flex;
+    }
 
-        .col {
-            flex-basis: 50%;
-            display: flex;
-            flex-direction: column; 
-            justify-content: center;
-            align-items: center;
-            
-            &:first-child {
-                color: $color-primary-contrast;
-            }
+    .col {
+        flex-basis: 50%;
+        display: flex;
+        flex-direction: column; 
+        justify-content: center;
+        align-items: center;
+        position: relative;
         
-        }
-
-        .title1 {
-            font-size: 5em;
-            font-weight: 900;
-            line-height: 0.85;
-            margin: 0 0 0.5em 0;
-            color: $color-primary-contrast; 
-
-            .big {
-                font-size: 1.2em;
-                font-weight: 300
-            }
-        }
-
-        .image {
-            width: 30em;
-            height: 18em;
-            background-color: white;
-        }
-
-        .subtitle1 {
-            font-size: 2em;
-            font-weight: 400;
-            font-style: italic;
-        }
-
-        .formContainer {
-            background-color: $color-background-light;
-            border-radius: 1em;
-            padding: 2em;
-            box-shadow: 4px 4px 15px -2px rgb(50 50 50 / 30%);
-
-        }
-
-        .form {
-            display: flex;
-            flex-direction: column;
-
-            &:not(:last-child) {
-                margin-bottom: 2em;
-            }
+        &:first-of-type {
+            color: $color-primary-contrast;
+            align-items: start;
+            margin-left: 7em;
         }
     
-        .title2 {
+    }
+
+    .title1 {
+        font-size: 5em;
+        font-weight: 900;
+        line-height: 0.85;
+        margin: 0 0 0.5em 0;
+        color: $color-primary-contrast; 
+
+        .big {
             font-size: 1.2em;
-            font-weight: 700;
-            margin: 0 0 1em 0;
-    
-        }
-
-        .input {
-            font-size: 0.8em;
-            border-radius: .75em;
-            border: none;
-            padding: .75em 1.5em;
-            margin-bottom: 1em;
-            outline: none;
-            color: $color-secondary;
-            background-color: $color-background-ligther;
-            box-shadow: inset 2px 2px 5px -3px #464646,
-                        inset 6px 6px 15px rgba(255, 255, 255, 0.5);
-        }
-
-        .button {
-            cursor: pointer;
-            align-self: end;
-            font-size: .75em;
-            font-weight: 700; 
-            padding: .5em 1em;
-            color: $color-primary;
-            border: .15em solid $color-primary;
-            background-color: transparent;
-            border-radius: .75em;
-            &:hover {
-                background-color: $color-primary-lighter;
-            }
-            
-            &:focus {
-                background-color: $color-primary;
-                color: $color-primary-contrast
-            }
+            font-weight: 300
         }
     }
+
+    .carouselContainer {
+        width: 30em;
+        height: 18em;
+        margin-bottom: 2em;
+        position: relative;
+        left: 6em;
+    }
     
+    .subtitle1 {
+        font-size: 2em;
+        font-weight: 400;
+        font-style: italic;
+    }
+
+    .formContainer {
+        background-color: $color-background-light;
+        border-radius: 1em;
+        padding: 2em;
+        box-shadow: 4px 4px 15px -2px rgb(50 50 50 / 30%);
+        position: relative;
+    }
+
+    .form {
+        display: flex;
+        flex-direction: column;
+
+        &:not(:last-child) {
+            margin-bottom: 2em;
+        }
+    }
+
+    .title2 {
+        font-size: 1.2em;
+        font-weight: 700;
+        margin: 0 0 1em 0;
+
+    }
+
+    .input {
+        font-size: 0.8em;
+        border-radius: .75em;
+        border: none;
+        padding: .75em 1.5em;
+        margin-bottom: 1em;
+        outline: none;
+        color: $color-secondary;
+        background-color: $color-background-ligther;
+        box-shadow: inset 2px 2px 5px -3px #464646,
+                    inset 6px 6px 15px rgba(255, 255, 255, 0.5);
+    }
+
+    .button {
+        cursor: pointer;
+        align-self: end;
+        font-size: .75em;
+        font-weight: 700; 
+        padding: .5em 1em;
+        color: $color-primary;
+        border: .15em solid $color-primary;
+        background-color: transparent;
+        border-radius: .75em;
+        &:hover {
+            background-color: $color-primary-lighter;
+        }
+        
+        &:focus {
+            background-color: $color-primary;
+            color: $color-primary-contrast
+        }
+    }
+
+    .backgroundLogo {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        transform: translate(17%, 20%);
+        font-size: 35em;
+        color: black;
+        opacity: 0.02;
+        filter: blur(4px);
+    }
 }

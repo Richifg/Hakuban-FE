@@ -15,12 +15,12 @@ function handleMouseWheel(e: WheelEvent<HTMLDivElement>): void {
     const zoomDirection = -1 * Math.sign(e.deltaY);
 
     let deltaModifier = 1;
-    // changing zoom when zoomed out requires slower rate of zoom
+    // changing zoom when zoomed-out requires slower rate of zoom
     if (scale < 0.1) deltaModifier = 0.05;
     else if (scale < 0.25) deltaModifier = 0.2;
     else if (scale < 0.5) deltaModifier = 0.4;
     else if (scale < 0.75) deltaModifier = 0.8;
-    // while changing zoom when zoomed in requires faster rate of zoom
+    // while changing zoom when zoomed-in requires faster rate of zoom
     else if (scale > 3) deltaModifier = 2.5;
     else if (scale > 2) deltaModifier = 1.75;
     else if (scale > 1.75) deltaModifier = 1.5;

@@ -17,7 +17,6 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
 
     const selectedItem = selectedItemIds.length === 1 ? items[selectedItemIds[0]] : undefined;
 
-    // then mouseUp will clean up
     dispatch(setMouseButton());
     const [boardX, boardY] = getBoardCoordinates(e.clientX, e.clientY, canvasTransform);
 
@@ -38,7 +37,7 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
 
             case 'DRAW':
                 if (selectedItem?.type === 'drawing') {
-                    // transformed in-progress drawing into relative coordinates drawing
+                    // transform in-progress drawing into relative coordinates drawing
                     const finishedDrawing = getRelativeDrawing(selectedItem);
                     itemUpdates.push(finishedDrawing);
                     dispatch(setCurrentAction('IDLE'));

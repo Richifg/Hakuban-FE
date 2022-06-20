@@ -1,3 +1,8 @@
+// grid variables
+export const INIT_GRID_SIZE = 20; //px
+export const MIN_GRID_RENDER_SIZE = 20; //px
+export const MAX_GRID_RENDER_SIZE = 250; //px
+
 // min padding around all items used to determine the extents of the board
 export const BOARD_PADDING = 200; // px
 
@@ -13,7 +18,7 @@ export const SHAPE_CLICK_TOLERANCE = 0; // px
 // tolerance around line for a succesfull click
 export const LINE_CLICK_TOLERNACE = 10; // px
 
-// arrow size for 1px line_width Lines
+// arrow size for 1px line-width Lines
 export const ARROW_SIZE = 4; // px
 
 // line patterns used for the canvas setDashLine function

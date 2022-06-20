@@ -3,7 +3,7 @@ import { useHistory } from 'react-router';
 
 import { useDispatch, useSelector } from '../../../hooks';
 import { createRoom } from '../../../store/slices/connectionSlice';
-import { Icon, PageWrapper } from '../../common';
+import { Icon, PageWrapper, Carousel } from '../../common';
 
 import styles from './LandingPage.module.scss';
 
@@ -13,7 +13,6 @@ const HomePage = (): React.ReactElement => {
     const [newRoomId, setNewRoomId] = useState('');
     const [password, setPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
-    const [addPassword, setAddPassword] = useState(false);
     const { roomId, isLoading, error } = useSelector((s) => s.connection);
 
     useEffect(() => {
@@ -39,12 +38,15 @@ const HomePage = (): React.ReactElement => {
                 </a>
             </nav>
             <main className={styles.main}>
+                <Icon className={styles.backgroundLogo}>logo</Icon>
                 <div className={styles.col}>
                     <h1 className={styles.title1}>
                         Online <br></br>
                         <span className={styles.big}>Whiteboard</span>
                     </h1>
-                    <img className={styles.image} />
+                    <div className={styles.carouselContainer}>
+                        <Carousel />
+                    </div>
                     <p className={styles.subtitle1}>No sign-up required!</p>
                     <p>Boards are deleted after 24h</p>
                 </div>
