@@ -1,0 +1,55 @@
+@import '../../../styles/variables.scss';
+
+.menuItem {
+    padding: 10px;
+    background-color: transparent;
+    outline: none;
+    border: none;
+    position: relative;
+
+    
+    &.selected {
+        background-color: $color-background-lighter;
+        color: $color-primary;
+        font-weight: bold;
+    }
+    &:hover {
+        background-color: $color-background-light;    
+    }
+    &:active {
+        background-color: $color-background;
+    }
+    
+     &:focus, &:hover {
+        .subMenu {
+            pointer-events: all;
+            opacity: 1;
+            transform: translate(-50%, 0px);
+            transition-delay: 50ms;
+            
+        }
+    }
+
+    $subMenu-distance: 5px;
+    .subMenu {
+        pointer-events: none;
+        left: 50%;
+        top: calc(100% + $subMenu-distance);
+        opacity: 0;
+        transform: translate(-50%, -$subMenu-distance);
+        transition: 50ms transform, 50ms opacity;
+        border-radius: 8px;
+        & > :first-child, & > :last-child {
+            border-radius: 0px;
+        }
+
+        // to bridge the gap between menuItem and subMenu so hover effect on menuItem is maintained
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            height: $subMenu-distance;
+            width: 100%;
+        }
+    }
+}
