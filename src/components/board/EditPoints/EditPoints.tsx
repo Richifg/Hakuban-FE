@@ -3,8 +3,9 @@ import { Point, Action } from '../../../interfaces';
 import { useSelector, useDispatch } from '../../../hooks';
 import { setSelectedPoint, setInProgress } from '../../../store/slices/itemsSlice';
 import { setCurrentAction, setIsWriting, setMouseButton } from '../../../store/slices/boardSlice';
+
+import styles from './EditPoints.module.scss';
 import getEditPoints from './getEditPoints';
-import './EditPoints.scss';
 
 const EditPointsActions: Action[] = ['EDIT', 'RESIZE'];
 
@@ -31,13 +32,13 @@ const EditPoints = (): React.ReactElement => {
     );
 
     return (
-        <div className="edit-points-container">
+        <div className={styles.editPoints}>
             {EditPointsActions.includes(currentAction) &&
                 points.map(([point, x, y]) => (
                     <div
                         key={point}
                         id={point}
-                        className="edit-point"
+                        className={styles.point}
                         style={{ left: x, top: y }}
                         onMouseDown={handleMouseDown}
                     />

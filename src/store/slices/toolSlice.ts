@@ -4,7 +4,7 @@ import type { ShapeStyle, TextStyle, ShapeType, NoteStyle, LineStyle, DrawingSty
 
 interface ToolsState {
     selectedTool: Tool;
-    shapeType: ShapeType;
+    selectedShapeType: ShapeType;
     shapeStyle: ShapeStyle;
     textStyle: TextStyle;
     noteStyle: NoteStyle;
@@ -14,7 +14,7 @@ interface ToolsState {
 
 const initialState: ToolsState = {
     selectedTool: 'POINTER',
-    shapeType: 'rect',
+    selectedShapeType: 'rect',
     shapeStyle: {
         lineWidth: 1,
         linePattern: 0,
@@ -56,8 +56,8 @@ export const slice = createSlice({
         setSelectedTool: (state, action: PayloadAction<Tool>) => {
             state.selectedTool = action.payload;
         },
-        setShapeType: (state, action: PayloadAction<ShapeType>) => {
-            state.shapeType = action.payload;
+        setSelectedShapeType: (state, action: PayloadAction<ShapeType>) => {
+            state.selectedShapeType = action.payload;
         },
         setShapeStyle: (state, action: PayloadAction<ShapeStyle>) => {
             state.shapeStyle = action.payload;
@@ -77,6 +77,7 @@ export const slice = createSlice({
     },
 });
 
-export const { setSelectedTool, setShapeType, setShapeStyle, setTextStyle, setNoteStyle, setDrawingStyle } = slice.actions;
+export const { setSelectedTool, setSelectedShapeType, setShapeStyle, setTextStyle, setNoteStyle, setDrawingStyle } =
+    slice.actions;
 
 export default slice.reducer;

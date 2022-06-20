@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import styles from './Carousel.module.scss';
 import kanban from '../../../assets/images/kanban.png';
+
+import styles from './Carousel.module.scss';
 
 const slides = [kanban, kanban, kanban];
 

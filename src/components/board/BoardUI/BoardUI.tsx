@@ -1,13 +1,12 @@
 import React, { useLayoutEffect } from 'react';
 import { useSelector, useDebouncedCallback } from '../../../hooks';
-import { EditPoints, TextEditor, StylesMenu } from '../';
+import { EditPoints, TextEditor } from '../';
 
 import SM from '../../../BoardStateMachine/BoardStateMachine';
-import './BoardUI.scss';
+import styles from './BoardUI.module.scss';
 
 const CanvasUI = (): React.ReactElement => {
-    const { canvasSize, cursorPosition, currentAction } = useSelector((s) => s.board);
-    const { isWriting } = useSelector((s) => s.board);
+    const { canvasSize, currentAction } = useSelector((s) => s.board);
     const { selectedTool } = useSelector((s) => s.tools);
     const { width, height } = canvasSize;
     const tool = selectedTool.toLowerCase();
@@ -21,7 +20,7 @@ const CanvasUI = (): React.ReactElement => {
         return () => window.removeEventListener('resize', resizeHandler);
     }, []);
 
-    // handle user with BoardStateMachine
+    // handle user inputs with BoardStateMachine
     const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
         e.preventDefault(); // stop native drag behaviour
         e.persist();
@@ -39,7 +38,8 @@ const CanvasUI = (): React.ReactElement => {
         e.persist();
         SM.keyPress(e);
     };
-    // 5ms debounc on mouse move
+
+    // 5ms debounce on mouse move
     const handleMouseMove = useDebouncedCallback((e: React.MouseEvent<HTMLDivElement>) => {
         e.persist;
         SM.mouseMove(e);
@@ -48,7 +48,7 @@ const CanvasUI = (): React.ReactElement => {
     return (
         <div
             role="application"
-            className={`board-ui ${tool} ${action}`}
+            className={`${styles.boardUI} ${tool} ${action}`}
             style={{ width, height }}
             onMouseMove={handleMouseMove}
             onMouseDown={handleMouseDown}
@@ -60,13 +60,8 @@ const CanvasUI = (): React.ReactElement => {
             onKeyPress={handleKeyboard}
             onWheel={handleWheel}
         >
-            <p className="temp">Work In Progress!</p>
-            <p className="cursor-position">
-                X: {cursorPosition.x} Y:{cursorPosition.y} {currentAction} {isWriting.toString()}
-            </p>
             <EditPoints />
             <TextEditor />
-            <StylesMenu />
         </div>
     );
 };

@@ -1,12 +1,12 @@
-.text-editor {
+.textEditor {
+    box-sizing: border-box;
+    position: absolute;
     left: 0;
     top: 0;
-    position: absolute;
     transform-origin: top left;
-    box-sizing: border-box;
     overflow: hidden;
 
-    .text-box {
+    .textBox {
         height: inherit;
         display: table-cell;
         word-break: break-word;

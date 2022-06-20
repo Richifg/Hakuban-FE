@@ -33,12 +33,12 @@ const HomePage = (): React.ReactElement => {
         <PageWrapper wrapperClassName={styles.landingPage} contentClassName={styles.landingPageContent}>
             <nav className={styles.navbar}>
                 <a href="/" className={styles.link}>
-                    <Icon className={styles.logoIcon}>logo</Icon>
+                    <Icon className={styles.logoIcon} name="logo" />
                     <span>Hakuban</span>
                 </a>
             </nav>
             <main className={styles.main}>
-                <Icon className={styles.backgroundLogo}>logo</Icon>
+                <Icon className={styles.backgroundLogo} name="logo" />
                 <div className={styles.col}>
                     <h1 className={styles.title1}>
                         Online <br></br>

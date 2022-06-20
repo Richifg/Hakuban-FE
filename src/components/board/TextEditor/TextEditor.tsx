@@ -4,7 +4,7 @@ import { useSelector, useDebouncedCallback } from '../../../hooks';
 import { BoardItem, BoardTextItem, TextData } from '../../../interfaces';
 import { processItemUpdates } from '../../../BoardStateMachine/BoardStateMachineUtils';
 
-import './TextEditor.scss';
+import styles from './TextEditor.module.scss';
 
 function processTextUpdate(item: BoardTextItem, data: Partial<TextData>) {
     const updateData = { id: item.id, text: { ...item.text, ...data } };
@@ -37,21 +37,18 @@ const TextEditor = (): React.ReactElement => {
         // also cleanup text from lastSelectedItem if it was a textItem
         const lastItem = lastSelectedItemRef.current;
         if (isTextItem(lastItem) && lastItem.text) {
-            // cleans unerasable final enter when writing into content editable html
+            // cleans unerasable final enter when writing into content editable html ##TODO theres a bug here
             let content = lastItem.text.content;
             if (content.slice(-2) === '/n') content = content.substring(0, content.length - 2);
             processTextUpdate(lastItem, { content, skipRendering: false });
         }
     }, [selectedItem?.id]);
 
-    // update skip rendering so canvas doesnt double render text of edited item
+    // focus texbox and skip item text rendering
     useEffect(() => {
         if (isWriting) {
             textBoxRef.current?.focus();
-            // if selected item had text, it needs to be skipped
-            if (isTextItem(selectedItem) && selectedItem.text) {
-                processTextUpdate(selectedItem, { skipRendering: true });
-            }
+            if (isTextItem(selectedItem) && selectedItem.text) processTextUpdate(selectedItem, { skipRendering: true });
         }
     }, [isWriting]);
 
@@ -77,7 +74,7 @@ const TextEditor = (): React.ReactElement => {
         const verticalAlign = vAlign == 'start' ? ' top' : vAlign == 'end' ? 'bottom' : 'middle';
         const font = `${italic ? 'italic' : 'normal'} ${bold ? 'bold' : 'normal'} ${fontSize}px ${fontFamily}`;
         return [textColor, font, hAlign, verticalAlign];
-    }, [selectedItem, textStyle]);
+    }, [textStyle, selectedItem]);
 
     // css position vars for texteditor
     const { left, top, width, height } = useMemo(() => {
@@ -99,13 +96,13 @@ const TextEditor = (): React.ReactElement => {
     const { scale } = canvasTransform;
     return (
         <div
-            className="text-editor"
+            className={styles.textEditor}
             style={{ left, top, width, height, transform: `scale(${scale})` }}
             onMouseDown={handleMouseDown}
         >
             <div
                 ref={textBoxRef}
-                className="text-box"
+                className={styles.textBox}
                 style={{ color, font, textAlign, verticalAlign, width }}
                 contentEditable
                 dangerouslySetInnerHTML={{ __html: initText }}
