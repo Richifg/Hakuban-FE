@@ -10,7 +10,7 @@ import { disconnectItem, connectItem, processItemUpdates, selectItems, selectQui
 import { store } from '../../store/store';
 const { dispatch, getState } = store;
 
-function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
+function handleMouseUp(e: MouseEvent): void {
     const { selectedTool } = getState().tools;
     const { items, selectedItemIds, selectedPoint } = getState().items;
     const { currentAction, canvasTransform, isWriting, hasCursorMoved } = getState().board;

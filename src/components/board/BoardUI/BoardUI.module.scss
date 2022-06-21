@@ -3,10 +3,21 @@
     left: 0;
     top: 0;
 
-    &.pen { cursor: alias; }
-    &.pointer { cursor: pointer; }
-    &.shape { cursor: crosshair; }
-    &.pan, &.drag { cursor: grabbing !important; } 
-    &.dragselect { cursor: crosshair; }
-    &.blocked { cursor: not-allowed; }
+    // actions
+    &.IDLE { cursor: default; }
+    &.PAN, &.DRAG { cursor: grabbing !important; } 
+    &.DRAGSELECT { cursor: crosshair; }
+    &.BLOCKED { cursor: not-allowed !important; }
+    &.DRAW { cursor: default; }
+    &.EDIT { cursor: default; }
+    &.SLIDE { cursor: default; }
+    &.RESIZE  { cursor: default !important; }
+
+    // tools
+    &.PEN { cursor: alias; }
+    &.POINTER { cursor: pointer; }
+    &.SHAPE { cursor: crosshair; }
+    &.TEXT { cursor: default; }
+    &.NOTE { cursor: default; }
+    &.LINE { cursor: default; }
 }

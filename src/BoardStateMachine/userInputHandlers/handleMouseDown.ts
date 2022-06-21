@@ -14,7 +14,7 @@ import { selectItems, selectQuickDragItem } from '../BoardStateMachineUtils';
 import { store } from '../../store/store';
 const { dispatch, getState } = store;
 
-function handleMouseDown(e: MouseEvent<HTMLDivElement>): void {
+function handleMouseDown(e: MouseEvent): void {
     const { canvasTransform, isWriting, hasCursorMoved } = getState().board;
     const { items, lineConnections, selectedItemIds } = getState().items;
     const { selectedTool } = getState().tools;

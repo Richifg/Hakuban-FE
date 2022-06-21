@@ -4,7 +4,7 @@ import { getBoardCoordinates, getCanvasCoordinates } from '../../utils';
 
 import { store } from '../../store/store';
 
-function handleMouseWheel(e: WheelEvent<HTMLDivElement>): void {
+function handleMouseWheel(e: WheelEvent): void {
     const { dispatch, getState } = store;
     const { canvasTransform, currentAction } = getState().board;
     const { scale } = canvasTransform;

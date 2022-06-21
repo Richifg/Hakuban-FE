@@ -18,7 +18,7 @@ import {
 import { store } from '../../store/store';
 const { dispatch, getState } = store;
 
-function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
+function handleMouseMove(e: MouseEvent): void {
     const { selectedTool } = getState().tools;
     const { currentAction, cursorPosition, canvasTransform, hasCursorMoved, mouseButton } = getState().board;
     const { items, selectedItemIds, draggedItemId, selectedPoint, dragOffset, lineConnections } = getState().items;

@@ -26,7 +26,7 @@ export type IconName =
     | 'line'
     | 'note'
     | 'text'
-    | 'shape'
+    | 'shapes'
     | 'circle'
     | 'romboid'
     | 'roundedSquare'

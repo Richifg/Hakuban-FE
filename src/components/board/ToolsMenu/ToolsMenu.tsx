@@ -1,36 +1,59 @@
 import React from 'react';
 import { useDispatch, useSelector } from '../../../hooks';
-import { setSelectedTool } from '../../../store/slices/toolSlice';
+import { setSelectedShapeType, setSelectedTool } from '../../../store/slices/toolSlice';
 import { setCurrentAction } from '../../../store/slices/boardSlice';
 import { selectItems } from '../../../BoardStateMachine/BoardStateMachineUtils';
-import type { Tool } from '../../../interfaces/board';
-import tools from './tools';
+import { MenuContainer, MenuItem, Icon } from '../../common';
+import type { Tool, ShapeType } from '../../../interfaces';
 
-import './ToolsMenu.scss';
+import { toolOptions, shapeOptions } from './options';
+import styles from './ToolsMenu.module.scss';
 
 const ToolsMenu = (): React.ReactElement => {
     const dispatch = useDispatch();
-    const { selectedTool } = useSelector((s) => s.tools);
+    const { selectedTool, selectedShapeType } = useSelector((s) => s.tools);
 
-    const handleToolClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-        const tool = e.currentTarget.value as Tool;
-        if (selectedTool !== tool) {
-            dispatch(setSelectedTool(tool));
-            dispatch(setCurrentAction('IDLE'));
-            selectItems();
+    const handleToolSelect = (tool: Tool) => {
+        if (selectedTool !== tool) dispatch(setSelectedTool(tool));
+        else dispatch(setSelectedTool('POINTER'));
+        dispatch(setCurrentAction('IDLE'));
+        selectItems();
+    };
+
+    const handleShapeSelect = (shape: ShapeType) => {
+        if (selectedShapeType !== shape) {
+            dispatch(setSelectedTool('SHAPE'));
+            dispatch(setSelectedShapeType(shape));
         }
     };
 
     return (
-        <div className="tools-menu">
-            {tools.map((tool) => (
-                <div className={`tool-container  ${selectedTool === tool.name ? 'selected' : ''}`} key={tool.name}>
-                    <button value={tool.name} onClick={handleToolClick} className={'tool-button'}>
-                        {tool.name}
-                    </button>
-                </div>
+        <MenuContainer className={styles.toolsMenu}>
+            {toolOptions.map(([toolIcon, tool]) => (
+                <MenuItem
+                    key={tool}
+                    type={tool === 'SHAPE' ? 'sub' : 'button'}
+                    iconName={toolIcon}
+                    onClick={tool === 'SHAPE' ? undefined : () => handleToolSelect(tool)}
+                    selected={selectedTool === tool}
+                >
+                    {tool === 'SHAPE' && (
+                        <div className={styles.shapesMenu}>
+                            {shapeOptions.map(([shapeIcon, shape]) => (
+                                <div
+                                    tabIndex={0}
+                                    key={shape}
+                                    className={`${styles.shapeOption} ${shape === selectedShapeType ? styles.selected : ''}`}
+                                    onClick={() => handleShapeSelect(shape)}
+                                >
+                                    <Icon name={shapeIcon} />
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </MenuItem>
             ))}
-        </div>
+        </MenuContainer>
     );
 };
 
