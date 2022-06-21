@@ -11,6 +11,10 @@
     transform: translateX(-50%);
     box-shadow: 5px 5px 20px -10px black;
 
+    & > * {
+        padding: 10px;
+    }
+
     & > :first-child {
         // child border radius instead of [overflow:hidden] to let submenus be visible outside of container
         border-radius: 8px 0 0 8px;

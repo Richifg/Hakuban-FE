@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from '../../../hooks';
 import { setSelectedShapeType, setSelectedTool } from '../../../store/slices/toolSlice';
 import { setCurrentAction } from '../../../store/slices/boardSlice';
 import { selectItems } from '../../../BoardStateMachine/BoardStateMachineUtils';
-import { MenuContainer, MenuItem, Icon } from '../../common';
+import { MenuContainer, MenuItem, SubMenuButton } from '../../common';
 import type { Tool, ShapeType } from '../../../interfaces';
 
 import { toolOptions, shapeOptions } from './options';
@@ -20,7 +20,8 @@ const ToolsMenu = (): React.ReactElement => {
         selectItems();
     };
 
-    const handleShapeSelect = (shape: ShapeType) => {
+    const handleShapeSelect = (e: React.MouseEvent<HTMLButtonElement>) => {
+        const shape = e.currentTarget.value as ShapeType;
         if (selectedShapeType !== shape) {
             dispatch(setSelectedTool('SHAPE'));
             dispatch(setSelectedShapeType(shape));
@@ -40,14 +41,13 @@ const ToolsMenu = (): React.ReactElement => {
                     {tool === 'SHAPE' && (
                         <div className={styles.shapesMenu}>
                             {shapeOptions.map(([shapeIcon, shape]) => (
-                                <div
-                                    tabIndex={0}
+                                <SubMenuButton
+                                    iconName={shapeIcon}
                                     key={shape}
-                                    className={`${styles.shapeOption} ${shape === selectedShapeType ? styles.selected : ''}`}
-                                    onClick={() => handleShapeSelect(shape)}
-                                >
-                                    <Icon name={shapeIcon} />
-                                </div>
+                                    value={shape}
+                                    onClick={handleShapeSelect}
+                                    selected={selectedShapeType === shape}
+                                />
                             ))}
                         </div>
                     )}

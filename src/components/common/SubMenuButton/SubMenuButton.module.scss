@@ -1,0 +1,18 @@
+@import '../../../styles/variables.scss';
+
+.subMenuButton {
+    padding: 2px;
+    background-color: transparent;
+    border: 2px solid transparent;
+    border-radius: 5px;
+    font-size: inherit;
+    line-height: 0;
+
+    &:hover { 
+        background-color: $color-background-lighter;
+    }
+
+    &.selected {
+        border-color: $color-primary-light;
+    }   
+}

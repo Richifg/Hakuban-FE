@@ -1,7 +1,6 @@
 @import '../../../styles/variables.scss';
 
 .menuItem {
-    padding: 10px;
     background-color: transparent;
     outline: none;
     border: none;
@@ -34,12 +33,13 @@
     $subMenu-distance: 5px;
     .subMenu {
         pointer-events: none;
-        left: 50%;
         top: calc(100% + $subMenu-distance);
-        opacity: 0;
-        transform: translate(-50%, -$subMenu-distance);
-        transition: 50ms transform, 50ms opacity;
+        left: 50%;
         border-radius: 8px;
+        transform: translate(-50%, -$subMenu-distance);
+        opacity: 0;
+        transition: 50ms transform, 50ms opacity;
+
         & > :first-child, & > :last-child {
             border-radius: 0px;
         }

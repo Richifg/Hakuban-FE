@@ -1,8 +1,16 @@
 import React, { HTMLAttributes } from 'react';
 import styles from './MenuContainer.module.scss';
 
-const MenuContainer: React.FC<HTMLAttributes<HTMLDivElement>> = ({ children, className }): React.ReactElement => {
-    return <div className={` ${styles.menuContainer} ${className} `}>{children}</div>;
+interface MenuContainer extends HTMLAttributes<HTMLDivElement> {
+    ref?: React.RefObject<HTMLDivElement>;
+}
+
+const MenuContainer = ({ children, className, ref, ...rest }: MenuContainer): React.ReactElement => {
+    return (
+        <div ref={ref} className={` ${styles.menuContainer} ${className} `} {...rest}>
+            {children}
+        </div>
+    );
 };
 
 export default MenuContainer;

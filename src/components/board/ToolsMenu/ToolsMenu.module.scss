@@ -9,20 +9,5 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         grid-gap: 5px;
-        padding: 5px;
-    }
-
-    .shapeOption {
-        padding: 2px;
-        border-radius: 5px;
-        border: 2px solid transparent;
-
-        &:hover { 
-            background-color: $color-background-lighter;
-        }
-    }
-
-    .selected {
-        border-color: $color-primary-light;
     }
 }
