@@ -149,3 +149,37 @@
         filter: blur(4px);
     }
 }
+
+@media (max-aspect-ratio: 5/4) {
+    .landingPage {
+        color: $color-secondary;
+        background-color: $color-background;
+
+        .landingPageContent {
+            background: none;
+        }
+
+        .navbar {
+            background-color: $color-primary;
+            color: $color-primary-contrast;
+        }
+
+        .main {
+            flex-direction: column;
+        }
+
+        .col {
+            margin: 0 !important;
+
+            &:first-of-type {
+                align-items: center;
+                background-color: $color-primary;
+                color: $color-primary-contrast;
+            }
+        }
+
+        .carouselContainer {
+            left: auto;
+        }
+    }
+};

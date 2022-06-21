@@ -27,3 +27,18 @@
         z-index: 3;
     }
 }
+@media (max-aspect-ratio: 5/4) {
+    .carousel {
+        .state0 {
+            transform: scale(0.7) skew(8deg, -10deg) rotateY(-25deg) rotateZ(5deg) translate(68%, 12%); 
+            z-index: 2;
+        }   
+        .state1 {
+            transform: scale(0.7) skew(-8deg, 10deg) rotateY(25deg) rotateZ(-5deg) translate(-68%, 12%); 
+            z-index: 1;
+        }   
+        .state2 {
+            transform: scale(1);
+        }   
+    }
+}

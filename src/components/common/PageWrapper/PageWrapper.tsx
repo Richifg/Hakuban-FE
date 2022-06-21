@@ -3,6 +3,7 @@ import styles from './PageWrapper.module.scss';
 
 const DESIGN_WIDTH = 1722;
 const DESIGN_HEIGHT = 969;
+const DESIGN_RATIO = DESIGN_WIDTH / DESIGN_HEIGHT;
 
 interface PageWrapper {
     wrapperClassName?: string;
@@ -19,14 +20,16 @@ const PageWrapper: React.FC<PageWrapper> = ({ children, wrapperClassName, conten
         const resizeHandler = () => {
             const width = window.innerWidth;
             const height = window.innerHeight;
-            if (width > (height * 16) / 9) {
-                setMaxWidth(`${height * 1.778}px`); // 16:9
+            const ratio = width / height;
+            if (ratio > DESIGN_RATIO) {
+                setMaxWidth(`${height * DESIGN_RATIO}px`);
                 setMaxHeight('100%');
                 setFontSize(`${16 * (height / DESIGN_HEIGHT)}px`);
             } else {
-                setMaxHeight(`100%`); // TODO
+                if (ratio < 1.25) setFontSize('1rem');
+                else setFontSize(`${16 * (width / DESIGN_WIDTH)}px`);
                 setMaxWidth('100%');
-                setFontSize(`${16 * (width / DESIGN_WIDTH)}px`);
+                setMaxHeight('100%');
             }
         };
         window.addEventListener('resize', resizeHandler);
