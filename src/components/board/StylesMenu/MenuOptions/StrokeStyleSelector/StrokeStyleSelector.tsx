@@ -3,32 +3,29 @@ import { MAX_LINE_WIDTH } from '../../../../../constants';
 import { LinePattern, LineStyle } from '../../../../../interfaces';
 import { MenuItem, SubMenuButton, RangeInput } from '../../../../common';
 
-import styles from './LineStyleSelector.module.scss';
+import styles from './StrokeStyleSelector.module.scss';
 import patternOptions from './options';
 
-const patternKey: keyof LineStyle = 'linePattern';
-const widthKey: keyof LineStyle = 'lineWidth';
-
-interface LinePattermSelector {
-    onChange(value: number, key: string): void;
+interface StrokeStyleSelector {
+    onChange(value: number, key: keyof LineStyle): void;
     pattern: LinePattern;
     width: number;
 }
 
-const LinePattermSelector = ({ onChange, pattern, width }: LinePattermSelector): React.ReactElement => {
+const StrokeStyleSelector = ({ onChange, pattern, width }: StrokeStyleSelector): React.ReactElement => {
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         const pattern = parseInt(e.currentTarget.value);
-        onChange(pattern, patternKey);
+        onChange(pattern, 'linePattern');
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const width = parseInt(e.currentTarget.value);
-        onChange(width, widthKey);
+        onChange(width, 'lineWidth');
     };
 
     return (
         <MenuItem type="sub" iconName="lineWidth">
-            <div className={styles.lineStyleSelector}>
+            <div className={styles.strokeStyleSelector}>
                 <div className={styles.linePatterns}>
                     {patternOptions.map(([linePattern, icon]) => (
                         <SubMenuButton
@@ -40,11 +37,10 @@ const LinePattermSelector = ({ onChange, pattern, width }: LinePattermSelector):
                         />
                     ))}
                 </div>
-                <RangeInput onChange={handleChange} value={width} min={0} max={MAX_LINE_WIDTH} />
-                <label className={styles.widthLabel}>Line width</label>
+                <RangeInput onChange={handleChange} value={width} min={0} max={MAX_LINE_WIDTH} label="Line width" />
             </div>
         </MenuItem>
     );
 };
 
-export default LinePattermSelector;
+export default StrokeStyleSelector;

@@ -1,5 +1,6 @@
 import React from 'react';
 import { TextStyle } from '../../../../../interfaces';
+import { MenuItem } from '../../../../common';
 
 const boldKey: keyof TextStyle = 'bold';
 const italicKey: keyof TextStyle = 'italic';
@@ -12,10 +13,10 @@ interface TextStyleSelector {
 
 const TextStyleSelector = ({ onChange, bold, italic }: TextStyleSelector): React.ReactElement => {
     return (
-        <div className="text-style-selector">
-            <button onClick={() => onChange(!bold, boldKey)}>bold</button>
-            <button onClick={() => onChange(!italic, italicKey)}>italic</button>
-        </div>
+        <>
+            <MenuItem iconName="bold" onClick={() => onChange(!bold, boldKey)} selected={bold} />
+            <MenuItem iconName="italic" onClick={() => onChange(!italic, italicKey)} selected={italic} />
+        </>
     );
 };
 

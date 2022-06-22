@@ -22,8 +22,8 @@ const ToolsMenu = (): React.ReactElement => {
 
     const handleShapeSelect = (e: React.MouseEvent<HTMLButtonElement>) => {
         const shape = e.currentTarget.value as ShapeType;
+        dispatch(setSelectedTool('SHAPE'));
         if (selectedShapeType !== shape) {
-            dispatch(setSelectedTool('SHAPE'));
             dispatch(setSelectedShapeType(shape));
         }
     };
@@ -46,7 +46,7 @@ const ToolsMenu = (): React.ReactElement => {
                                     key={shape}
                                     value={shape}
                                     onClick={handleShapeSelect}
-                                    selected={selectedShapeType === shape}
+                                    selected={selectedShapeType === shape && selectedTool === 'SHAPE'}
                                 />
                             ))}
                         </div>

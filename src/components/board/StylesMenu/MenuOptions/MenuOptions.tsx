@@ -12,7 +12,7 @@ import {
     TextStyleSelector,
     ArrowSelector,
     LineTypeSelector,
-    LineStyleSelector,
+    StrokeStyleSelector,
     ZIndexSelector,
 } from '.';
 
@@ -80,7 +80,7 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
             {show.strokeStyles && (
                 <>
                     <ColorSelector type="stroke" onChange={handleChange} color={(item as Shape).lineColor} />
-                    <LineStyleSelector
+                    <StrokeStyleSelector
                         onChange={handleChange}
                         pattern={(item as Shape).linePattern}
                         width={(item as Shape).lineWidth}
@@ -105,7 +105,11 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
                         vAlign={(item as Text).text.vAlign}
                         hAlign={(item as Text).text.hAlign}
                     />
-                    <FontSizeSelector onChange={handleNestedChange} fontSize={(item as Text).text.fontSize} />
+                    <FontSizeSelector
+                        onChange={handleNestedChange}
+                        fontSize={(item as Text).text.fontSize}
+                        fontFamily={(item as Text).text.fontFamily}
+                    />
                     <TextStyleSelector
                         onChange={handleNestedChange}
                         bold={(item as Text).text.bold}
