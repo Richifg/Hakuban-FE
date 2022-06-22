@@ -1,0 +1,91 @@
+@import '../../../styles/variables.scss';
+
+$slider-height: 6px;
+$thumb-diameter: 12px;
+
+.range-input {
+    margin: 5px 0;
+    position: relative;
+    
+    .input {
+        -webkit-appearance: none;
+        background: transparent;
+        border-color: transparent;
+        color: transparent;
+        margin: 0;
+    }
+    
+    .input::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: $thumb-diameter;
+        height: $thumb-diameter;
+        cursor: pointer;
+        border-radius: $thumb-diameter;
+        border-width: 2px;
+        position: relative;
+        top: calc($slider-height / -2);
+        
+    }
+    
+    .input::-webkit-slider-runnable-track {
+        cursor: pointer;
+        width: 100%;
+        height: $slider-height;
+        background: transparent;
+        border-radius: $slider-height;
+        box-shadow: inset 4px 4px 16px -10px black,
+                    inset -4px -4px 8px -8px white;
+    }
+
+    .fill {
+        pointer-events: none;
+        position: absolute;
+        left: 0px;
+        top: 0;
+        width: 100%;
+        height: calc($slider-height - 2px);
+        transform: translate(1px, 3px); 
+        background-color: $color-primary;
+        border-radius: $thumb-diameter;
+    }
+
+    .thumb {
+        pointer-events: none;
+        width: $thumb-diameter;
+        height: $thumb-diameter;
+        box-sizing: border-box;
+        position: absolute;
+        transform: translate(-50%, -1px);
+        border-radius: $thumb-diameter;
+        border: 2px solid $color-primary;
+        background-color: rgb(185, 185, 185);
+        box-shadow: inset -4px -4px 16px -10px black,
+                    inset 4px 4px 8px -8px white;
+    }
+}
+
+// was not able to use , (comma) selector to avoid repeating styles
+// scss @extends also didn't work, somenthing with the vendors selectors must be interfering...
+// anyway, same styles here for mozilla
+.range-input {
+    .input::-moz-range-thumb {
+        width: $thumb-diameter;
+        height: $thumb-diameter;
+        cursor: pointer;
+        border-radius: $thumb-diameter;
+        border-width: 2px;
+        position: relative;
+        top: calc($slider-height / -2);
+        
+    }
+    
+    .input::-moz-range-track {
+        cursor: pointer;
+        width: 100%;
+        height: $slider-height;
+        background: transparent;
+        border-radius: $slider-height;
+        box-shadow: inset 4px 4px 16px -10px black,
+                    inset -4px -4px 8px -8px white;
+    }
+}

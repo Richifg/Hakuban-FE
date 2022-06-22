@@ -6,16 +6,18 @@
     border: 2px solid transparent;
     border-radius: 5px;
     font-size: inherit;
-    
-    i {
-        line-height: 0;
-    }
+    line-height: 0;
 
+
+    &.selected {
+        border-color: $color-primary-light;
+    } 
+    
     &:hover { 
         background-color: $color-background-lighter;
     }
 
-    &.selected {
-        border-color: $color-primary-light;
-    }   
+    &:active {
+        background-color: $color-background;
+    }
 }

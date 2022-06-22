@@ -21,6 +21,9 @@ export const LINE_CLICK_TOLERNACE = 10; // px
 // arrow size for 1px line-width Lines
 export const ARROW_SIZE = 4; // px
 
+// maximun line width for all stroke items
+export const MAX_LINE_WIDTH = 25; // px
+
 // line patterns used for the canvas setDashLine function
 export const LINE_PATTERNS = {
     0: [],
