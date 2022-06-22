@@ -9,7 +9,6 @@ import {
     AlignmentSelector,
     ColorSelector,
     FontSizeSelector,
-    WidthSelector,
     TextStyleSelector,
     ArrowSelector,
     LineTypeSelector,
@@ -71,10 +70,16 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
     const item = items[0];
     return (
         <>
-            {show.fillColor && <ColorSelector onChange={handleChange} styleKey="fillColor" color={(item as Shape).fillColor} />}
+            {show.fillColor && (
+                <ColorSelector
+                    type={item.type === 'note' ? 'note' : 'fill'}
+                    onChange={handleChange}
+                    color={(item as Shape).fillColor}
+                />
+            )}
             {show.strokeStyles && (
                 <>
-                    <ColorSelector onChange={handleChange} styleKey="lineColor" color={(item as Shape).lineColor} />
+                    <ColorSelector type="stroke" onChange={handleChange} color={(item as Shape).lineColor} />
                     <LineStyleSelector
                         onChange={handleChange}
                         pattern={(item as Shape).linePattern}
@@ -99,7 +104,7 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
                         vAlign={(item as Text).text.vAlign}
                         hAlign={(item as Text).text.hAlign}
                     />
-                    <ColorSelector onChange={handleNestedChange} styleKey="textColor" color={(item as Text).text.textColor} />
+                    <ColorSelector type="text" onChange={handleNestedChange} color={(item as Text).text.fontColor} />
                     <FontSizeSelector onChange={handleNestedChange} fontSize={(item as Text).text.fontSize} />
                     <TextStyleSelector
                         onChange={handleNestedChange}

@@ -4,8 +4,7 @@ import { IconName } from '../../../interfaces';
 
 import styles from './MenuItem.module.scss';
 
-interface MenuItem {
-    className?: string;
+interface MenuItem extends React.HTMLProps<HTMLDivElement> {
     iconName: IconName;
     selected?: boolean;
     onClick?: () => void;
@@ -14,11 +13,12 @@ interface MenuItem {
 
 const MenuItem: React.FC<MenuItem> = ({
     children,
-    className = '',
+    className,
     iconName,
     selected,
     onClick,
     type = 'button',
+    ...rest
 }): React.ReactElement => {
     const handleClick = (e: React.MouseEvent) => {
         e.stopPropagation(); // dont let clicks go beyond, into menu to the canvas
@@ -26,7 +26,12 @@ const MenuItem: React.FC<MenuItem> = ({
     };
 
     return (
-        <div tabIndex={0} className={`${styles.menuItem} ${className} ${selected ? styles.selected : ''}`} onClick={handleClick}>
+        <div
+            tabIndex={0}
+            className={`${styles.menuItem} ${className} ${selected ? styles.selected : ''}`}
+            onClick={handleClick}
+            {...rest}
+        >
             {type === 'misc' && children}
             {type !== 'misc' && <Icon name={iconName} />}
             {type === 'sub' && <MenuContainer className={styles.subMenu}>{children}</MenuContainer>}

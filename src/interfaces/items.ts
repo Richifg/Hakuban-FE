@@ -40,7 +40,7 @@ export type Align = 'start' | 'center' | 'end';
 export interface TextStyle {
     fontSize: number;
     fontFamily: string;
-    textColor: string;
+    fontColor: string;
     hAlign: Align;
     vAlign: Align;
     italic: boolean;

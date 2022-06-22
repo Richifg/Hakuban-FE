@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { Tool } from '../../interfaces/board';
 import type { ShapeStyle, TextStyle, ShapeType, NoteStyle, LineStyle, DrawingStyle } from '../../interfaces/items';
+import { MAX_CUSTOM_COLORS } from '../../constants';
 
 interface ToolsState {
     selectedTool: Tool;
@@ -10,6 +11,8 @@ interface ToolsState {
     noteStyle: NoteStyle;
     lineStyle: LineStyle;
     drawingStyle: DrawingStyle;
+    customColors: string[];
+    newColorIndex: number;
 }
 
 const initialState: ToolsState = {
@@ -24,7 +27,7 @@ const initialState: ToolsState = {
     textStyle: {
         fontSize: 20,
         fontFamily: 'serif',
-        textColor: 'black',
+        fontColor: 'black',
         hAlign: 'center',
         vAlign: 'center',
         bold: false,
@@ -47,6 +50,8 @@ const initialState: ToolsState = {
         lineColor: 'black',
         linePattern: 0,
     },
+    customColors: [],
+    newColorIndex: 0,
 };
 
 export const slice = createSlice({
@@ -74,10 +79,24 @@ export const slice = createSlice({
         setDrawingStyle: (state, action: PayloadAction<DrawingStyle>) => {
             state.drawingStyle = action.payload;
         },
+        updateNewColorIndex: (state) => {
+            state.newColorIndex = Math.min(state.customColors.length, MAX_CUSTOM_COLORS - 1);
+        },
+        addCustomColor: (state, action: PayloadAction<string>) => {
+            state.customColors.splice(state.newColorIndex, 1, action.payload);
+        },
     },
 });
 
-export const { setSelectedTool, setSelectedShapeType, setShapeStyle, setTextStyle, setNoteStyle, setDrawingStyle } =
-    slice.actions;
+export const {
+    setSelectedTool,
+    setSelectedShapeType,
+    setShapeStyle,
+    setTextStyle,
+    setNoteStyle,
+    setDrawingStyle,
+    updateNewColorIndex,
+    addCustomColor,
+} = slice.actions;
 
 export default slice.reducer;
