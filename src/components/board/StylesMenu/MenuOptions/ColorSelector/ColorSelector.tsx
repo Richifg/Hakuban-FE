@@ -11,7 +11,7 @@ const settingsByType: {
     fill: { styleKey: 'fillColor', icon: 'fill', colors: FILL_STROKE_COLORS },
     stroke: { styleKey: 'lineColor', icon: 'outline', colors: FILL_STROKE_COLORS },
     note: { styleKey: 'fillColor', icon: 'fill', colors: NOTE_COLORS },
-    text: { styleKey: 'fontColor', icon: 'font1', colors: TEXT_COLORS },
+    text: { styleKey: 'fontColor', icon: 'textColor', colors: TEXT_COLORS },
 };
 
 interface ColorSelector {

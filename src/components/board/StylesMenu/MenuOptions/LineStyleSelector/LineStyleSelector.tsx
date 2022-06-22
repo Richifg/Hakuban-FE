@@ -27,7 +27,7 @@ const LinePattermSelector = ({ onChange, pattern, width }: LinePattermSelector):
     };
 
     return (
-        <MenuItem type="sub" iconName="lineStyle">
+        <MenuItem type="sub" iconName="lineWidth">
             <div className={styles.lineStyleSelector}>
                 <div className={styles.linePatterns}>
                     {patternOptions.map(([linePattern, icon]) => (

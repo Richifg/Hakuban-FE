@@ -18,8 +18,8 @@ const ZIndexSelector = ({ onChange }: ZIndexSelector): React.ReactElement => {
 
     return (
         <>
-            <MenuItem iconName="back" type="button" onClick={handleChange(minZIndex - 1)} />
-            <MenuItem iconName="front" type="button" onClick={handleChange(maxZIndex + 1)} />
+            <MenuItem iconName="sendBottom" type="button" onClick={handleChange(minZIndex - 1)} />
+            <MenuItem iconName="sendTop" type="button" onClick={handleChange(maxZIndex + 1)} />
         </>
     );
 };

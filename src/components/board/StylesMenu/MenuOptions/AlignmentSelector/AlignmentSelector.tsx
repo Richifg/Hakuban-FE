@@ -18,7 +18,7 @@ const AligmentSelector = ({ onChange, vAlign, hAlign }: AligmentSelector): React
     };
 
     return (
-        <MenuItem iconName="justifyCenter" type="sub">
+        <MenuItem iconName="alignment" type="sub">
             <div className={styles.alignmentSelector}>
                 {vOptions.map(([align, icon]) => (
                     <SubMenuButton

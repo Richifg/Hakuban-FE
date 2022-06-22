@@ -41,7 +41,7 @@ const ColorSelector = ({ color, defaultOptions, onChange }: ColorSelector): Reac
             ))}
             <div className={styles.colorContainer}>
                 <button className={`${styles.button} ${styles.newColor}`} onClick={() => dispatch(updateNewColorIndex())}>
-                    <Icon name="triangle" />
+                    <Icon name="plus" />
                     <input className={styles.colorInput} type="color" onInput={handleChange} onChange={handleChange} />
                 </button>
             </div>

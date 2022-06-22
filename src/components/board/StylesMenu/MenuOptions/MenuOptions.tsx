@@ -99,12 +99,12 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
             )}
             {show.textStyles && (
                 <>
+                    <ColorSelector type="text" onChange={handleNestedChange} color={(item as Text).text.fontColor} />
                     <AlignmentSelector
                         onChange={handleNestedChange}
                         vAlign={(item as Text).text.vAlign}
                         hAlign={(item as Text).text.hAlign}
                     />
-                    <ColorSelector type="text" onChange={handleNestedChange} color={(item as Text).text.fontColor} />
                     <FontSizeSelector onChange={handleNestedChange} fontSize={(item as Text).text.fontSize} />
                     <TextStyleSelector
                         onChange={handleNestedChange}
@@ -114,7 +114,7 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
                 </>
             )}
             <ZIndexSelector onChange={handleChange} />
-            {show.deleteButton && <MenuItem iconName="alignBottom" type="button" onClick={handleDelete} />}
+            {show.deleteButton && <MenuItem iconName="trash" type="button" onClick={handleDelete} />}
         </>
     );
 };

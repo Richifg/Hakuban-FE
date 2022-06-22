@@ -1,7 +1,7 @@
 import { IconName, Tool, ShapeType } from '../../../interfaces';
 
 export const toolOptions: [IconName, Tool][] = [
-    ['justifyLeft', 'POINTER'],
+    ['cursor', 'POINTER'],
     ['pen', 'PEN'],
     ['line', 'LINE'],
     ['note', 'NOTE'],
