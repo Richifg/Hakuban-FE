@@ -27,6 +27,7 @@ const MenuItem: React.FC<MenuItem> = ({
 
     return (
         <div tabIndex={0} className={`${styles.menuItem} ${className} ${selected ? styles.selected : ''}`} onClick={handleClick}>
+            {type === 'misc' && children}
             {type !== 'misc' && <Icon name={iconName} />}
             {type === 'sub' && <MenuContainer className={styles.subMenu}>{children}</MenuContainer>}
         </div>

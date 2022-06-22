@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from '../../../../hooks';
 import { setCurrentAction } from '../../../../store/slices/boardSlice';
 import { Align, BoardItem, Shape, Line, Text } from '../../../../interfaces';
 import { processItemDeletions, processItemUpdates } from '../../../../BoardStateMachine/BoardStateMachineUtils';
+import { isTextItem } from '../../../../utils';
+import { MenuItem } from '../../../common';
 import {
     AlignmentSelector,
     ColorSelector,
@@ -11,11 +13,9 @@ import {
     TextStyleSelector,
     ArrowSelector,
     LineTypeSelector,
-    LinePatternSelector,
+    LineStyleSelector,
     ZIndexSelector,
 } from '.';
-import './MenuOptions.scss';
-import { isTextItem } from '../../../../utils';
 
 interface MenuOptions {
     items: BoardItem[];
@@ -55,8 +55,6 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
         dispatch(setCurrentAction('IDLE'));
     };
 
-    const stopMouseDown = (e: React.MouseEvent) => e.stopPropagation();
-
     // only when all items have the appropiate attribute does the attribute style selector gets shown
     const show = useMemo(() => {
         let [fillColor, strokeStyles, textStyles, lineStyles, deleteButton] = Array(6).fill(true);
@@ -72,13 +70,16 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
 
     const item = items[0];
     return (
-        <div className="menu-options" onMouseDown={stopMouseDown}>
+        <>
             {show.fillColor && <ColorSelector onChange={handleChange} styleKey="fillColor" color={(item as Shape).fillColor} />}
             {show.strokeStyles && (
                 <>
                     <ColorSelector onChange={handleChange} styleKey="lineColor" color={(item as Shape).lineColor} />
-                    <WidthSelector onChange={handleChange} width={(item as Shape).lineWidth} />
-                    <LinePatternSelector onChange={handleChange} pattern={(item as Shape).linePattern} />
+                    <LineStyleSelector
+                        onChange={handleChange}
+                        pattern={(item as Shape).linePattern}
+                        width={(item as Shape).lineWidth}
+                    />
                 </>
             )}
             {show.lineStyles && (
@@ -93,8 +94,11 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
             )}
             {show.textStyles && (
                 <>
-                    <AlignmentSelector onChange={handleNestedChange} styleKey="vAlign" align={(item as Text).text.vAlign} />
-                    <AlignmentSelector onChange={handleNestedChange} styleKey="hAlign" align={(item as Text).text.hAlign} />
+                    <AlignmentSelector
+                        onChange={handleNestedChange}
+                        vAlign={(item as Text).text.vAlign}
+                        hAlign={(item as Text).text.hAlign}
+                    />
                     <ColorSelector onChange={handleNestedChange} styleKey="textColor" color={(item as Text).text.textColor} />
                     <FontSizeSelector onChange={handleNestedChange} fontSize={(item as Text).text.fontSize} />
                     <TextStyleSelector
@@ -105,8 +109,8 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
                 </>
             )}
             <ZIndexSelector onChange={handleChange} />
-            {show.deleteButton && <button onClick={handleDelete}>DEL</button>}
-        </div>
+            {show.deleteButton && <MenuItem iconName="alignBottom" type="button" onClick={handleDelete} />}
+        </>
     );
 };
 

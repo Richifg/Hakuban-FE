@@ -6,7 +6,10 @@
     border: 2px solid transparent;
     border-radius: 5px;
     font-size: inherit;
-    line-height: 0;
+    
+    i {
+        line-height: 0;
+    }
 
     &:hover { 
         background-color: $color-background-lighter;

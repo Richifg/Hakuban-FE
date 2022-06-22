@@ -5,7 +5,10 @@
     outline: none;
     border: none;
     position: relative;
-    line-height: 0;
+    
+    i {
+        line-height: 0;
+    }
 
     
     &.selected {
@@ -39,6 +42,7 @@
         transform: translate(-50%, -$subMenu-distance);
         opacity: 0;
         transition: 50ms transform, 50ms opacity;
+        padding: 5px !important;
 
         & > :first-child, & > :last-child {
             border-radius: 0px;

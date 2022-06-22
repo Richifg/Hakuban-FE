@@ -1,27 +1,45 @@
 import React from 'react';
 import { Align, TextStyle } from '../../../../../interfaces';
-import AlignmentOptions from './AlignmentOptions';
-import './AlignmentSelector.scss';
+import { MenuItem, SubMenuButton } from '../../../../common';
+
+import { vOptions, hOptions } from './options';
+import styles from './AlignmentSelector.module.scss';
 
 interface AligmentSelector {
-    align: Align;
+    vAlign: Align;
+    hAlign: Align;
     onChange(value: Align, key: string): void;
-    styleKey: keyof TextStyle;
 }
 
-const AligmentSelector = ({ onChange, styleKey, align }: AligmentSelector): React.ReactElement => {
-    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const value = e.currentTarget.value as Align;
-        onChange(value, styleKey);
+const AligmentSelector = ({ onChange, vAlign, hAlign }: AligmentSelector): React.ReactElement => {
+    const handleChange = (key: keyof TextStyle) => (e: React.MouseEvent<HTMLButtonElement>) => {
+        const align = e.currentTarget.value as Align;
+        onChange(align, key);
     };
 
     return (
-        <div className="alignment-selector">
-            {styleKey}
-            <select onChange={handleChange} value={align}>
-                <AlignmentOptions />
-            </select>
-        </div>
+        <MenuItem iconName="justifyCenter" type="sub">
+            <div className={styles.alignmentSelector}>
+                {vOptions.map(([align, icon]) => (
+                    <SubMenuButton
+                        key={icon}
+                        onClick={handleChange('vAlign')}
+                        value={align}
+                        iconName={icon}
+                        selected={align === vAlign}
+                    />
+                ))}
+                {hOptions.map(([align, icon]) => (
+                    <SubMenuButton
+                        key={icon}
+                        onClick={handleChange('hAlign')}
+                        value={align}
+                        iconName={icon}
+                        selected={align === hAlign}
+                    />
+                ))}
+            </div>
+        </MenuItem>
     );
 };
 
