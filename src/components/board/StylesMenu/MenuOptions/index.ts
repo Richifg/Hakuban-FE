@@ -7,7 +7,6 @@ import FontSizeSelector from './FontSizeSelector/FontSizeSelector';
 import LineTypeSelector from './LineTypeSelector/LineTypeSelector';
 import StrokeStyleSelector from './StrokeStyleSelector/StrokeStyleSelector';
 import TextStyleSelector from './TextStyleSelector/TextStyleSelector';
-import WidthSelector from './WidthSelector/WidthSelector';
 import ZIndexSelector from './ZIndexSelector/ZIndexSelector';
 
 export {
@@ -19,6 +18,5 @@ export {
     LineTypeSelector,
     StrokeStyleSelector,
     TextStyleSelector,
-    WidthSelector,
     ZIndexSelector,
 };

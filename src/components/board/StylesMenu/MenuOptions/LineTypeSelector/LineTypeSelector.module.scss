@@ -1,0 +1,12 @@
+.lineTypeSelector {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 10px;
+
+    .lineTypeButton {
+        font-size: 30px;
+        i {
+            line-height: 0.4
+        }
+    }
+}

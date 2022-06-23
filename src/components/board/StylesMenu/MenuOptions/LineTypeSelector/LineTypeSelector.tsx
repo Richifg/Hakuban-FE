@@ -1,27 +1,40 @@
 import React from 'react';
-import LineTypeOptions from './LineTypeOptions';
-import { LineType, LineStyle } from '../../../../../interfaces';
-import './LineTypeSelector.scss';
+import { MenuItem, SubMenuButton } from '../../../../common';
+import { LineType, LineStyle, IconName } from '../../../../../interfaces';
 
-const key: keyof LineStyle = 'lineType';
+import styles from './LineTypeSelector.module.scss';
+
+const lineTypeIcons: { [key in LineType]: IconName } = {
+    straight: 'arrowCircle',
+    stepped: 'arrowCircle',
+    curved: 'arrowCircle',
+};
 
 interface LineTypeSelector {
-    onChange(value: string, key: string): void;
+    onChange(value: string, key: keyof LineStyle): void;
     lineType: LineType;
 }
 
 const LineTypeSelector = ({ onChange, lineType }: LineTypeSelector): React.ReactElement => {
-    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const { value } = e.currentTarget;
-        onChange(value, key);
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        onChange(e.currentTarget.value, 'lineType');
     };
 
     return (
-        <div className="arrow-selector">
-            <select onChange={handleChange} value={lineType}>
-                <LineTypeOptions />
-            </select>
-        </div>
+        <MenuItem type="sub" iconName={lineTypeIcons[lineType]}>
+            <div className={styles.lineTypeSelector}>
+                {Object.entries(lineTypeIcons).map(([type, icon]) => (
+                    <SubMenuButton
+                        key={type}
+                        iconName={icon}
+                        onClick={handleClick}
+                        value={type}
+                        selected={lineType === type}
+                        className={styles.lineTypeButton}
+                    />
+                ))}
+            </div>
+        </MenuItem>
     );
 };
 
