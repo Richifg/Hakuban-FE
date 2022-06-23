@@ -1,6 +1,7 @@
 @import '../../../styles/variables.scss';
 
 .menuContainer {
+    cursor: default;
     position: absolute;
     display: flex;
     flex-direction: row;

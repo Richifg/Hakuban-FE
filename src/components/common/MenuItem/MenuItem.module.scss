@@ -1,16 +1,17 @@
 @import '../../../styles/variables.scss';
 
 .menuItem {
+    cursor: pointer;
     background-color: transparent;
     outline: none;
     border: none;
-    position: relative;
+    position: relative; 
     line-height: 0;
 
     
     &.selected {
         background-color: $color-background-lighter;
-        color: $color-primary;
+        color: $color-selected;
         font-weight: bold;
     }
     &:hover {
