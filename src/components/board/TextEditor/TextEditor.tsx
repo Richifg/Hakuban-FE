@@ -70,10 +70,10 @@ const TextEditor = (): React.ReactElement => {
     // css style vars for texteditor
     const [color, font, textAlign, verticalAlign] = useMemo(() => {
         const source = (isTextItem(selectedItem) && selectedItem?.text) || textStyle;
-        const { textColor, fontSize, fontFamily, hAlign, vAlign, bold, italic } = source;
+        const { fontColor, fontSize, fontFamily, hAlign, vAlign, bold, italic } = source;
         const verticalAlign = vAlign == 'start' ? ' top' : vAlign == 'end' ? 'bottom' : 'middle';
         const font = `${italic ? 'italic' : 'normal'} ${bold ? 'bold' : 'normal'} ${fontSize}px ${fontFamily}`;
-        return [textColor, font, hAlign, verticalAlign];
+        return [fontColor, font, hAlign, verticalAlign];
     }, [textStyle, selectedItem]);
 
     // css position vars for texteditor

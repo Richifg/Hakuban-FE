@@ -46,7 +46,7 @@ const initialState: ToolsState = {
         arrow2Type: 'simple',
     },
     drawingStyle: {
-        lineWidth: 1,
+        lineWidth: 3,
         lineColor: 'black',
         linePattern: 0,
     },
