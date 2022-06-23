@@ -4,7 +4,7 @@ import { setCurrentAction } from '../../../../store/slices/boardSlice';
 import { Align, BoardItem, Shape, Line, Text } from '../../../../interfaces';
 import { processItemDeletions, processItemUpdates } from '../../../../BoardStateMachine/BoardStateMachineUtils';
 import { isTextItem } from '../../../../utils';
-import { MenuItem } from '../../../common';
+import { MenuItem, MenuSeparator } from '../../../common';
 import {
     AlignmentSelector,
     ColorSelector,
@@ -71,20 +71,25 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
     return (
         <>
             {show.fillColor && (
-                <ColorSelector
-                    type={item.type === 'note' ? 'note' : 'fill'}
-                    onChange={handleChange}
-                    color={(item as Shape).fillColor}
-                />
+                <>
+                    <ColorSelector
+                        type={item.type === 'note' ? 'note' : 'fill'}
+                        onChange={handleChange}
+                        color={(item as Shape).fillColor}
+                    />
+                    {!show.strokeStyles && <MenuSeparator />}
+                </>
             )}
             {show.strokeStyles && (
                 <>
                     <ColorSelector type="stroke" onChange={handleChange} color={(item as Shape).lineColor} />
+                    <MenuSeparator />
                     <StrokeStyleSelector
                         onChange={handleChange}
                         pattern={(item as Shape).linePattern}
                         width={(item as Shape).lineWidth}
                     />
+                    <MenuSeparator />
                 </>
             )}
             {show.lineStyles && (
@@ -95,6 +100,7 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
                         arrow0Type={(item as Line).arrow0Type}
                         arrow2Type={(item as Line).arrow2Type}
                     />
+                    <MenuSeparator />
                 </>
             )}
             {show.textStyles && (
@@ -115,10 +121,16 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
                         bold={(item as Text).text.bold}
                         italic={(item as Text).text.italic}
                     />
+                    <MenuSeparator />
                 </>
             )}
             <ZIndexSelector onChange={handleChange} />
-            {show.deleteButton && <MenuItem iconName="trash" type="button" onClick={handleDelete} />}
+            {show.deleteButton && (
+                <>
+                    <MenuSeparator />
+                    <MenuItem iconName="trash" type="button" onClick={handleDelete} />
+                </>
+            )}
         </>
     );
 };

@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from 'react';
 import { TextStyle, IconName } from '../../../../../interfaces';
-import { MenuItem, SubMenuButton, RangeInput } from '../../../../common';
+import { MenuItem, SubMenuButton, RangeInput, MenuSeparator } from '../../../../common';
 
 import styles from './FontSizeSelector.module.scss';
 
@@ -42,6 +42,7 @@ const FontSizeSelector = ({ fontSize, fontFamily, onChange }: FontSizeSelector):
                         />
                     ))}
                 </div>
+                <MenuSeparator horizontal full />
                 <RangeInput min={1} max={50} onChange={handleChange} value={fontSize} label="Font size" />
             </div>
         </MenuItem>

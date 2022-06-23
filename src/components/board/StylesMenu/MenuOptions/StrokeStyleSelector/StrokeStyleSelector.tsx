@@ -1,7 +1,7 @@
 import React from 'react';
 import { MAX_LINE_WIDTH } from '../../../../../constants';
 import { LinePattern, LineStyle } from '../../../../../interfaces';
-import { MenuItem, SubMenuButton, RangeInput } from '../../../../common';
+import { MenuItem, SubMenuButton, RangeInput, MenuSeparator } from '../../../../common';
 
 import styles from './StrokeStyleSelector.module.scss';
 import patternOptions from './options';
@@ -37,6 +37,7 @@ const StrokeStyleSelector = ({ onChange, pattern, width }: StrokeStyleSelector):
                         />
                     ))}
                 </div>
+                <MenuSeparator horizontal full />
                 <RangeInput onChange={handleChange} value={width} min={0} max={MAX_LINE_WIDTH} label="Line width" />
             </div>
         </MenuItem>
