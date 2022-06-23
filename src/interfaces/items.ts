@@ -102,7 +102,8 @@ export interface Line extends BoardItemBase, LineStyle {
 export interface ChatMessage extends ItemBase {
     type: 'chat';
     content: string;
-    from: string;
+    fromId: string; // need id to fetch updated username from users slice
+    fromUsername: string; // need username for when user disconnects (this one doesn't update)
 }
 
 // items drawn on the board with coordinates
