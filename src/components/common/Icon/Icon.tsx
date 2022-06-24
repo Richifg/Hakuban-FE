@@ -1,12 +1,15 @@
 import React from 'react';
+import { IconName } from '../../../interfaces';
+
+import styles from './Icon.module.scss';
 
 interface Icon {
-    children: string;
-    className: string;
+    className?: string;
+    name: IconName;
 }
 
-const Icon = ({ children, className }: Icon): React.ReactElement => {
-    return <i className={`icon-${children} ${className}`}></i>;
+const Icon: React.FC<Icon> = ({ name, className = '' }): React.ReactElement => {
+    return <i className={` ${styles.icon} ${styles[`icon-${name}`]} ${className}`} />;
 };
 
 export default Icon;

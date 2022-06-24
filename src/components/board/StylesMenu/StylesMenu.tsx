@@ -1,30 +1,29 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { useSelector } from '../../../hooks';
+import { MenuContainer } from '../../common';
 import { getPositionCSSVars, getMaxCoordinates } from '../../../utils';
 import { MENU_ITEM_OFFSET, MENU_BOARD_OFFSET } from '../../../constants';
+
 import MenuOptions from './MenuOptions/MenuOptions';
-import './StylesMenu.scss';
+import styles from './StylesMenu.module.scss';
 
 const StylesMenu = (): React.ReactElement => {
     const menuRef = useRef<HTMLDivElement>(null);
     const { canvasTransform, canvasSize, currentAction } = useSelector((s) => s.board);
     const { items, selectedItemIds } = useSelector((s) => s.items);
+
     // flag to avoid calculating menu position without menu having full size
     const [calculatePosition, setCalculatePosition] = useState(false);
 
-    // stop click events from reaching board
-    const handleClick = (e: React.MouseEvent) => {
-        e.stopPropagation();
-    };
-
     const selectedItems = useMemo(() => {
         const selectedItems = selectedItemIds.map((id) => items[id]);
+        // new items means new style options so wait for options to render
         setCalculatePosition(false);
         return selectedItems;
     }, [items, selectedItemIds]);
 
     const [top, left]: [number, number] = useMemo(() => {
-        // defualt position outside screen
+        // default position outside screen
         let [menuTop, menuLeft] = [-500, -500];
 
         // calculate position if an item is being edited
@@ -56,9 +55,9 @@ const StylesMenu = (): React.ReactElement => {
     }, [selectedItems, canvasTransform, canvasSize, currentAction, calculatePosition]);
 
     return (
-        <div ref={menuRef} className="styles-menu" style={{ left, top }} onClick={handleClick} onMouseUp={handleClick}>
+        <MenuContainer divRef={menuRef} className={styles.stylesMenu} style={{ left, top }}>
             {selectedItems.length && <MenuOptions items={selectedItems} onRender={() => setCalculatePosition(true)} />}
-        </div>
+        </MenuContainer>
     );
 };
 

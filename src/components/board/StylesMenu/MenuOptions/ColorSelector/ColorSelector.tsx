@@ -1,35 +1,36 @@
 import React from 'react';
-import { ShapeStyle, TextStyle } from '../../../../../interfaces';
-import colorOptions from './colorOptions';
-import './ColorSelector.scss';
+import { ShapeStyle, TextStyle, IconName } from '../../../../../interfaces';
+import { ColorPallete, MenuItem } from '../../../../common';
+import { TEXT_COLORS, FILL_STROKE_COLORS, NOTE_COLORS } from '../../../../../constants';
+
+type ColorSelectorType = 'fill' | 'stroke' | 'note' | 'text';
+
+const settingsByType: {
+    [key in ColorSelectorType]: { styleKey: keyof ShapeStyle | keyof TextStyle; icon: IconName; colors: string[] };
+} = {
+    fill: { styleKey: 'fillColor', icon: 'fill', colors: FILL_STROKE_COLORS },
+    stroke: { styleKey: 'lineColor', icon: 'outline', colors: FILL_STROKE_COLORS },
+    note: { styleKey: 'fillColor', icon: 'fill', colors: NOTE_COLORS },
+    text: { styleKey: 'fontColor', icon: 'textColor', colors: TEXT_COLORS },
+};
 
 interface ColorSelector {
+    type: ColorSelectorType;
     color: string;
-    styleKey: keyof ShapeStyle | keyof TextStyle;
     onChange(value: string, key: string): void;
 }
 
-const ColorSelector = ({ onChange, styleKey }: ColorSelector): React.ReactElement => {
-    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-        const { value } = e.currentTarget;
-        onChange(value, styleKey);
+const ColorSelector = ({ color, onChange, type }: ColorSelector): React.ReactElement => {
+    const { styleKey, icon, colors } = settingsByType[type];
+
+    const handleChange = (color: string) => {
+        onChange(color, styleKey);
     };
 
     return (
-        <div className="color-selector">
-            {styleKey}
-            <div className="color-options">
-                {colorOptions.map((color) => (
-                    <button
-                        className="color-button"
-                        style={{ backgroundColor: color }}
-                        key={color}
-                        onClick={handleClick}
-                        value={color}
-                    ></button>
-                ))}
-            </div>
-        </div>
+        <MenuItem type="sub" iconName={icon} style={{ color }}>
+            <ColorPallete defaultOptions={colors} color={color} onChange={handleChange} />
+        </MenuItem>
     );
 };
 

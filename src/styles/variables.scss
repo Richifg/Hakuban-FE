@@ -2,15 +2,20 @@
 $color-primary: #285b9e;
 $color-primary-light: #3375cc;
 $color-primary-lighter: #c0d0e4;
-$color-primary-contrast: #ffffff; // text written over primary
+$color-primary-dark: #11468a;
+$color-primary-contrast: #ffffff;
 
 $color-secondary: #333333;
-$color-seconrady-light: #4d4d4d;
-$color-secondary-contrast: #ffffff; // text written over secondary
+$color-secondary-light: #4d4d4d;
+$color-secondary-lighter: #919191;
+$color-secondary-contrast: #ffffff;
 
-$color-background: #e6ecf0;
+$color-background: #e6ecf0; // blue tintent background
 $color-background-light: #ebeff1;
-$color-background-ligther: #edf4f6;
+$color-background-lighter: #edf4f6;
+
+$color-background-canvas: #f5f5f5; // no tint light gray
+$color-selected: #1db1c8;
 
 
 $page-max-width: 2000px

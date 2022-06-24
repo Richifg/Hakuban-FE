@@ -1,0 +1,17 @@
+@import '../../../styles/variables.scss';
+
+.toolsMenu {
+    top: 15px;
+    left: 15px;
+    flex-direction: column;
+    font-size: 20px;
+    padding: 10px 0;
+    
+    .shapesMenu {
+        font-size: 22px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 5px;
+        padding: 5px;
+    }
+}

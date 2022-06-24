@@ -50,7 +50,8 @@ class CanvasManager {
 
         if (isTextItem(item) && item.text) {
             const coordinates = getTextAreaCoordinates(item);
-            drawText(item.text, coordinates, this.ctx);
+            const placeholder = item.type === 'text' && !item.text.content;
+            drawText(item.text, coordinates, this.ctx, placeholder);
         }
 
         this.ctx.restore();

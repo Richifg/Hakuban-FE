@@ -1,6 +1,7 @@
 import React from 'react';
 import { BoardItem } from '../../../../../interfaces';
 import { useSelector } from '../../../../../hooks';
+import { MenuItem } from '../../../../common';
 
 const KEY: keyof BoardItem = 'zIndex';
 
@@ -16,10 +17,10 @@ const ZIndexSelector = ({ onChange }: ZIndexSelector): React.ReactElement => {
     };
 
     return (
-        <div className="z-index-selector">
-            <button onClick={handleChange(minZIndex - 1)}>back</button>
-            <button onClick={handleChange(maxZIndex + 1)}>front</button>
-        </div>
+        <>
+            <MenuItem iconName="sendBottom" type="button" onClick={handleChange(minZIndex - 1)} />
+            <MenuItem iconName="sendTop" type="button" onClick={handleChange(maxZIndex + 1)} />
+        </>
     );
 };
 

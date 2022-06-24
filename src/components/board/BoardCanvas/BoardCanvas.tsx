@@ -1,7 +1,7 @@
 import React, { useRef, useMemo } from 'react';
 import { setCurrentAction, translateCanvas } from '../../../store/slices/boardSlice';
 import { useCanvas, useDispatch, useSelector, useCameraSlide } from '../../../hooks';
-import './BoardCanvas.scss';
+import styles from './BoardCanvas.module.scss';
 
 const BoardCanvas = (): React.ReactElement => {
     const dispatch = useDispatch();
@@ -11,6 +11,7 @@ const BoardCanvas = (): React.ReactElement => {
     const { width, height } = canvasSize;
 
     const orderedItems = useMemo(
+        // items are ordered by zIndex first and then creation date (new ones should be on top)
         () =>
             Object.values(items).sort((a, b) =>
                 a.zIndex > b.zIndex || (a.zIndex === b.zIndex && a.creationDate > b.creationDate) ? 1 : -1,
@@ -32,14 +33,14 @@ const BoardCanvas = (): React.ReactElement => {
     return (
         <canvas
             role="application"
-            className="canvas"
+            className={styles.canvas}
             id="items"
             ref={canvasRef}
             width={width}
             height={height}
             onContextMenu={(e) => e.preventDefault()}
         >
-            <p>This application requires the use of a canvas supporting browser</p>
+            <p className={styles.noSupport}>This application requires the use of a canvas supporting browser</p>
         </canvas>
     );
 };

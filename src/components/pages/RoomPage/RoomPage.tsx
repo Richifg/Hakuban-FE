@@ -3,9 +3,9 @@ import { useParams, useHistory } from 'react-router';
 
 import { useSelector, useDispatch } from '../../../hooks';
 import { connectToRoom } from '../../../store/slices/connectionSlice';
-import { BoardCanvas, BoardUI, TestChat, ToolsMenu, ZoomControls, AvatarMenu } from '../../board';
+import { BoardCanvas, BoardUI, ToolsMenu, StylesMenu, Chat, ZoomMenu } from '../../board';
 
-import './RoomPage.scss';
+import styles from './RoomPage.module.scss';
 
 const RoomPage = (): React.ReactElement => {
     const dispatch = useDispatch();
@@ -19,30 +19,18 @@ const RoomPage = (): React.ReactElement => {
     }, [roomId, password]);
 
     return (
-        <div className="room-page">
+        <div className={styles.roomPage}>
             {isConnected && (
                 <>
-                    <div className="canvas-container">
-                        <BoardCanvas />
-                        <BoardUI />
-                    </div>
-                    <div className="ui-container">
-                        <div className="tools-container">
-                            <ToolsMenu />
-                        </div>
-                        <div className="chat-container">
-                            <TestChat />
-                        </div>
-                        <div className="zoom-container">
-                            <ZoomControls />
-                        </div>
-                        <div className="avatar-menu-container">
-                            <AvatarMenu />
-                        </div>
-                    </div>
+                    <BoardCanvas />
+                    <BoardUI />
+                    <ToolsMenu />
+                    <StylesMenu />
+                    <ZoomMenu />
+                    <Chat />
                 </>
             )}
-            {isLoading && <h1>LOADING</h1>}
+            {isLoading && <h1>Connecting</h1>}
             {error && (
                 <>
                     <h1>Error: {error}</h1>

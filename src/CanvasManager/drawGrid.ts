@@ -25,7 +25,7 @@ function drawGrid(ctx: CanvasRenderingContext2D): void {
             const [offsetX, offsetY] = [dX % scaledGridSize, dY % scaledGridSize];
 
             // the smaller the subdivisions the lighter they are drawn
-            const lightness = 95 + 5 * (MIN_GRID_RENDER_SIZE / scaledGridSize);
+            const lightness = 90 + 5 * (MIN_GRID_RENDER_SIZE / scaledGridSize);
             ctx.strokeStyle = `hsl(0, 0%, ${lightness}%)`;
 
             ctx.beginPath();

@@ -1,17 +1,38 @@
 import React, { useLayoutEffect } from 'react';
 import { useSelector, useDebouncedCallback } from '../../../hooks';
-import { EditPoints, TextEditor, StylesMenu } from '../';
+import { EditPoints, TextEditor } from '../';
 
 import SM from '../../../BoardStateMachine/BoardStateMachine';
-import './BoardUI.scss';
+import styles from './BoardUI.module.scss';
+
+// handle user inputs with BoardStateMachine
+const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault(); // stop native drag behaviour
+    e.persist();
+    SM.mouseDown(e);
+};
+const handleMouseUp = (e: React.MouseEvent) => {
+    e.persist();
+    SM.mouseUp(e);
+};
+const handleWheel = (e: React.WheelEvent) => {
+    e.persist();
+    SM.wheelScroll(e);
+};
+const handleKeyboard = (e: React.KeyboardEvent) => {
+    e.persist();
+    SM.keyPress(e);
+};
+const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    return false; // stops context menu from opening
+};
 
 const CanvasUI = (): React.ReactElement => {
-    const { canvasSize, cursorPosition, currentAction } = useSelector((s) => s.board);
-    const { isWriting } = useSelector((s) => s.board);
+    const { canvasSize, currentAction } = useSelector((s) => s.board);
     const { selectedTool } = useSelector((s) => s.tools);
     const { width, height } = canvasSize;
-    const tool = selectedTool.toLowerCase();
-    const action = currentAction.toLowerCase();
 
     // update canvas size on every window resize
     useLayoutEffect(() => {
@@ -21,25 +42,7 @@ const CanvasUI = (): React.ReactElement => {
         return () => window.removeEventListener('resize', resizeHandler);
     }, []);
 
-    // handle user with BoardStateMachine
-    const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-        e.preventDefault(); // stop native drag behaviour
-        e.persist();
-        SM.mouseDown(e);
-    };
-    const handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
-        e.persist();
-        SM.mouseUp(e);
-    };
-    const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
-        e.persist();
-        SM.wheelScroll(e);
-    };
-    const handleKeyboard = (e: React.KeyboardEvent<HTMLDivElement>) => {
-        e.persist();
-        SM.keyPress(e);
-    };
-    // 5ms debounc on mouse move
+    // 5ms debounce on mouse move
     const handleMouseMove = useDebouncedCallback((e: React.MouseEvent<HTMLDivElement>) => {
         e.persist;
         SM.mouseMove(e);
@@ -48,7 +51,7 @@ const CanvasUI = (): React.ReactElement => {
     return (
         <div
             role="application"
-            className={`board-ui ${tool} ${action}`}
+            className={`${styles.boardUI} ${styles[selectedTool]} ${styles[currentAction]}`}
             style={{ width, height }}
             onMouseMove={handleMouseMove}
             onMouseDown={handleMouseDown}
@@ -59,14 +62,10 @@ const CanvasUI = (): React.ReactElement => {
             onKeyPressCapture={handleKeyboard}
             onKeyPress={handleKeyboard}
             onWheel={handleWheel}
+            onContextMenu={handleContextMenu}
         >
-            <p className="temp">Work In Progress!</p>
-            <p className="cursor-position">
-                X: {cursorPosition.x} Y:{cursorPosition.y} {currentAction} {isWriting.toString()}
-            </p>
             <EditPoints />
             <TextEditor />
-            <StylesMenu />
         </div>
     );
 };

@@ -1,0 +1,21 @@
+@import '../../../styles/variables.scss';
+
+.menuContainer {
+    cursor: default;
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    background-color: white;
+    color: $color-secondary;
+    border-radius: 8px;
+    font-size: 20px;
+    box-shadow: 5px 5px 20px -15px black;
+    padding: 0px 10px;
+
+    & > * {
+        padding: 10px;
+    }
+    & .menuContainer > * {
+        padding: 0;
+    }
+}

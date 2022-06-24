@@ -18,7 +18,7 @@ import {
 import { store } from '../../store/store';
 const { dispatch, getState } = store;
 
-function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
+function handleMouseMove(e: MouseEvent): void {
     const { selectedTool } = getState().tools;
     const { currentAction, cursorPosition, canvasTransform, hasCursorMoved, mouseButton } = getState().board;
     const { items, selectedItemIds, draggedItemId, selectedPoint, dragOffset, lineConnections } = getState().items;
@@ -71,6 +71,10 @@ function handleMouseMove(e: MouseEvent<HTMLDivElement>): void {
                     let newItem: BoardItem | undefined = undefined;
                     if (selectedTool === 'SHAPE') {
                         newItem = getNewItem(boardX, boardY, 'shape');
+                        dispatch(setSelectedPoint('P2'));
+                        dispatch(setCurrentAction('RESIZE'));
+                    } else if (selectedTool === 'TEXT') {
+                        newItem = getNewItem(boardX, boardY, 'text');
                         dispatch(setSelectedPoint('P2'));
                         dispatch(setCurrentAction('RESIZE'));
                     } else if (selectedTool === 'PEN') {

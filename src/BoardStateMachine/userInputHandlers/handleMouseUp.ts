@@ -1,6 +1,6 @@
 import { MouseEvent } from 'react';
 import { setNoteStyle } from '../../store/slices/toolSlice';
-import { setDraggedItemId, setInProgress } from '../../store/slices/itemsSlice';
+import { setDraggedItemId, setInProgress, setSelectedItemIds } from '../../store/slices/itemsSlice';
 import { setCurrentAction, setIsWriting, setMouseButton } from '../../store/slices/boardSlice';
 import { isMainPoint, getBoardCoordinates, getRelativeDrawing, getItemAtPosition, getNewItem } from '../../utils';
 import { MouseButton, BoardItem, UpdateData } from '../../interfaces';
@@ -10,7 +10,7 @@ import { disconnectItem, connectItem, processItemUpdates, selectItems, selectQui
 import { store } from '../../store/store';
 const { dispatch, getState } = store;
 
-function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
+function handleMouseUp(e: MouseEvent): void {
     const { selectedTool } = getState().tools;
     const { items, selectedItemIds, selectedPoint } = getState().items;
     const { currentAction, canvasTransform, isWriting, hasCursorMoved } = getState().board;
@@ -88,6 +88,15 @@ function handleMouseUp(e: MouseEvent<HTMLDivElement>): void {
                         connectionUpdates.push(...connectItem(itemUnderCursor, selectedItem, selectedPoint, boardX, boardY));
                     } else connectionUpdates.push(disconnectItem(selectedItem, selectedPoint));
                     connectionUpdates.length && itemUpdates.push(...(connectionUpdates.filter((i) => !!i) as UpdateData[]));
+                } else if (selectedTool === 'TEXT') {
+                    const itemUnderCursor = getItemAtPosition(boardX, boardY, Object.values(items));
+                    if (itemUnderCursor?.type === 'text') {
+                        dispatch(setSelectedItemIds([itemUnderCursor.id]));
+                        if (!hasCursorMoved) dispatch(setIsWriting(true));
+                    } else {
+                        dispatch(setSelectedItemIds([]));
+                        dispatch(setIsWriting(false));
+                    }
                 }
                 dispatch(setCurrentAction('EDIT'));
                 break;

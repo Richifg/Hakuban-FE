@@ -1,0 +1,16 @@
+.textEditor {
+    box-sizing: border-box;
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform-origin: top left;
+    overflow: hidden;
+
+    .textBox {
+        height: inherit;
+        display: table-cell;
+        word-break: break-word;
+        outline: none;
+        cursor: text;
+    }
+}

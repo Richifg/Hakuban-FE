@@ -1,20 +1,23 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { Tool } from '../../interfaces/board';
 import type { ShapeStyle, TextStyle, ShapeType, NoteStyle, LineStyle, DrawingStyle } from '../../interfaces/items';
+import { MAX_CUSTOM_COLORS } from '../../constants';
 
 interface ToolsState {
     selectedTool: Tool;
-    shapeType: ShapeType;
+    selectedShapeType: ShapeType;
     shapeStyle: ShapeStyle;
     textStyle: TextStyle;
     noteStyle: NoteStyle;
     lineStyle: LineStyle;
     drawingStyle: DrawingStyle;
+    customColors: string[];
+    newColorIndex: number;
 }
 
 const initialState: ToolsState = {
     selectedTool: 'POINTER',
-    shapeType: 'rect',
+    selectedShapeType: 'rect',
     shapeStyle: {
         lineWidth: 1,
         linePattern: 0,
@@ -24,7 +27,7 @@ const initialState: ToolsState = {
     textStyle: {
         fontSize: 20,
         fontFamily: 'serif',
-        textColor: 'black',
+        fontColor: 'black',
         hAlign: 'center',
         vAlign: 'center',
         bold: false,
@@ -43,10 +46,12 @@ const initialState: ToolsState = {
         arrow2Type: 'simple',
     },
     drawingStyle: {
-        lineWidth: 1,
+        lineWidth: 3,
         lineColor: 'black',
         linePattern: 0,
     },
+    customColors: [],
+    newColorIndex: 0,
 };
 
 export const slice = createSlice({
@@ -56,8 +61,8 @@ export const slice = createSlice({
         setSelectedTool: (state, action: PayloadAction<Tool>) => {
             state.selectedTool = action.payload;
         },
-        setShapeType: (state, action: PayloadAction<ShapeType>) => {
-            state.shapeType = action.payload;
+        setSelectedShapeType: (state, action: PayloadAction<ShapeType>) => {
+            state.selectedShapeType = action.payload;
         },
         setShapeStyle: (state, action: PayloadAction<ShapeStyle>) => {
             state.shapeStyle = action.payload;
@@ -74,9 +79,24 @@ export const slice = createSlice({
         setDrawingStyle: (state, action: PayloadAction<DrawingStyle>) => {
             state.drawingStyle = action.payload;
         },
+        updateNewColorIndex: (state) => {
+            state.newColorIndex = Math.min(state.customColors.length, MAX_CUSTOM_COLORS - 1);
+        },
+        addCustomColor: (state, action: PayloadAction<string>) => {
+            state.customColors.splice(state.newColorIndex, 1, action.payload);
+        },
     },
 });
 
-export const { setSelectedTool, setShapeType, setShapeStyle, setTextStyle, setNoteStyle, setDrawingStyle } = slice.actions;
+export const {
+    setSelectedTool,
+    setSelectedShapeType,
+    setShapeStyle,
+    setTextStyle,
+    setNoteStyle,
+    setDrawingStyle,
+    updateNewColorIndex,
+    addCustomColor,
+} = slice.actions;
 
 export default slice.reducer;

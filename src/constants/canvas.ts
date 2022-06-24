@@ -18,8 +18,11 @@ export const SHAPE_CLICK_TOLERANCE = 0; // px
 // tolerance around line for a succesfull click
 export const LINE_CLICK_TOLERNACE = 10; // px
 
-// arrow size for 1px line-width Lines
+// arrow size for 1px line-width Lines (arrow size grows with line-width)
 export const ARROW_SIZE = 4; // px
+
+// maximun line width for all stroke items
+export const MAX_LINE_WIDTH = 25; // px
 
 // line patterns used for the canvas setDashLine function
 export const LINE_PATTERNS = {
@@ -28,3 +31,34 @@ export const LINE_PATTERNS = {
     2: [10, 10],
     3: [2, 2],
 };
+
+// maximun slots available for adding custom colors to the palette
+export const MAX_CUSTOM_COLORS = 8;
+
+// default font colors for text Items
+export const TEXT_COLORS = [
+    '#ffffff',
+    '#D3D3D3',
+    '#6d6d6d',
+    '#000000',
+    '#ffbc00',
+    '#f9f037',
+    '#bae22d',
+    '#3fca1f',
+    '#008053',
+    '#e63108',
+    '#de1e86',
+    '#7546b5',
+    '#2283d5',
+    '#46e0dc',
+    '#a1550e',
+];
+
+// default stroke and fill colors for Items
+export const FILL_STROKE_COLORS = ['transparent', ...TEXT_COLORS];
+
+// default fill colors for Notes
+export const NOTE_COLORS = ['#f1f58f', '#dcff46', '#74ed4b', '#7afcff', '#a9edf1', '#ffa930', '#ff32b2', '#ff7eb9'];
+
+// placeholder text Item text
+export const PLACE_HOLDER_TEXT = 'Type somenthing here';

@@ -1,0 +1,23 @@
+@import '../../../styles/variables.scss';
+
+.subMenuButton {
+    cursor: pointer;
+    padding: 2px;
+    background-color: transparent;
+    border: 2px solid transparent;
+    border-radius: 5px;
+    font-size: inherit;
+    line-height: 0;
+
+    &.selected {
+        border-color: $color-selected;
+    } 
+    
+    &:hover { 
+        background-color: $color-background-lighter;
+    }
+
+    &:active {
+        background-color: $color-background;
+    }
+}

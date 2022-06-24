@@ -3,19 +3,18 @@ import { useDispatch, useSelector } from '../../../../hooks';
 import { setCurrentAction } from '../../../../store/slices/boardSlice';
 import { Align, BoardItem, Shape, Line, Text } from '../../../../interfaces';
 import { processItemDeletions, processItemUpdates } from '../../../../BoardStateMachine/BoardStateMachineUtils';
+import { isTextItem } from '../../../../utils';
+import { MenuItem, MenuSeparator } from '../../../common';
 import {
     AlignmentSelector,
     ColorSelector,
     FontSizeSelector,
-    WidthSelector,
     TextStyleSelector,
     ArrowSelector,
     LineTypeSelector,
-    LinePatternSelector,
+    StrokeStyleSelector,
     ZIndexSelector,
 } from '.';
-import './MenuOptions.scss';
-import { isTextItem } from '../../../../utils';
 
 interface MenuOptions {
     items: BoardItem[];
@@ -55,8 +54,6 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
         dispatch(setCurrentAction('IDLE'));
     };
 
-    const stopMouseDown = (e: React.MouseEvent) => e.stopPropagation();
-
     // only when all items have the appropiate attribute does the attribute style selector gets shown
     const show = useMemo(() => {
         let [fillColor, strokeStyles, textStyles, lineStyles, deleteButton] = Array(6).fill(true);
@@ -72,41 +69,70 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
 
     const item = items[0];
     return (
-        <div className="menu-options" onMouseDown={stopMouseDown}>
-            {show.fillColor && <ColorSelector onChange={handleChange} styleKey="fillColor" color={(item as Shape).fillColor} />}
+        <>
+            {show.fillColor && (
+                <>
+                    <ColorSelector
+                        type={item.type === 'note' ? 'note' : 'fill'}
+                        onChange={handleChange}
+                        color={(item as Shape).fillColor}
+                    />
+                    {!show.strokeStyles && <MenuSeparator />}
+                </>
+            )}
             {show.strokeStyles && (
                 <>
-                    <ColorSelector onChange={handleChange} styleKey="lineColor" color={(item as Shape).lineColor} />
-                    <WidthSelector onChange={handleChange} width={(item as Shape).lineWidth} />
-                    <LinePatternSelector onChange={handleChange} pattern={(item as Shape).linePattern} />
+                    <ColorSelector type="stroke" onChange={handleChange} color={(item as Shape).lineColor} />
+                    <MenuSeparator />
+                    <StrokeStyleSelector
+                        onChange={handleChange}
+                        pattern={(item as Shape).linePattern}
+                        width={(item as Shape).lineWidth}
+                    />
+                    <MenuSeparator />
                 </>
             )}
             {show.lineStyles && (
                 <>
                     <LineTypeSelector onChange={handleChange} lineType={(item as Line).lineType} />
+                    <MenuSeparator />
                     <ArrowSelector
                         onChange={handleChange}
                         arrow0Type={(item as Line).arrow0Type}
                         arrow2Type={(item as Line).arrow2Type}
                     />
+                    <MenuSeparator />
                 </>
             )}
             {show.textStyles && (
                 <>
-                    <AlignmentSelector onChange={handleNestedChange} styleKey="vAlign" align={(item as Text).text.vAlign} />
-                    <AlignmentSelector onChange={handleNestedChange} styleKey="hAlign" align={(item as Text).text.hAlign} />
-                    <ColorSelector onChange={handleNestedChange} styleKey="textColor" color={(item as Text).text.textColor} />
-                    <FontSizeSelector onChange={handleNestedChange} fontSize={(item as Text).text.fontSize} />
+                    <ColorSelector type="text" onChange={handleNestedChange} color={(item as Text).text.fontColor} />
+                    <AlignmentSelector
+                        onChange={handleNestedChange}
+                        vAlign={(item as Text).text.vAlign}
+                        hAlign={(item as Text).text.hAlign}
+                    />
+                    <FontSizeSelector
+                        onChange={handleNestedChange}
+                        fontSize={(item as Text).text.fontSize}
+                        fontFamily={(item as Text).text.fontFamily}
+                    />
                     <TextStyleSelector
                         onChange={handleNestedChange}
                         bold={(item as Text).text.bold}
                         italic={(item as Text).text.italic}
                     />
+                    <MenuSeparator />
                 </>
             )}
             <ZIndexSelector onChange={handleChange} />
-            {show.deleteButton && <button onClick={handleDelete}>DEL</button>}
-        </div>
+            {show.deleteButton && (
+                <>
+                    <MenuSeparator />
+                    <MenuItem iconName="trash" type="button" onClick={handleDelete} />
+                </>
+            )}
+        </>
     );
 };
 
