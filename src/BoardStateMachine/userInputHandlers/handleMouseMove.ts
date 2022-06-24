@@ -73,6 +73,10 @@ function handleMouseMove(e: MouseEvent): void {
                         newItem = getNewItem(boardX, boardY, 'shape');
                         dispatch(setSelectedPoint('P2'));
                         dispatch(setCurrentAction('RESIZE'));
+                    } else if (selectedTool === 'TEXT') {
+                        newItem = getNewItem(boardX, boardY, 'text');
+                        dispatch(setSelectedPoint('P2'));
+                        dispatch(setCurrentAction('RESIZE'));
                     } else if (selectedTool === 'PEN') {
                         newItem = getNewItem(boardX, boardY, 'drawing');
                         dispatch(setCurrentAction('DRAW'));

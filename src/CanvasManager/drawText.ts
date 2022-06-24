@@ -1,23 +1,25 @@
+import { PLACE_HOLDER_TEXT } from '../constants';
 import { TextData, Coordinates } from '../interfaces';
 import { getWrappedTextLines } from '../utils';
 
 const LINE_HEIGHT = 1.1; // em
 
-function drawText(text: TextData, coordinates: Coordinates, ctx: CanvasRenderingContext2D): void {
+function drawText(text: TextData, coordinates: Coordinates, ctx: CanvasRenderingContext2D, placeholder = false): void {
     if (text.skipRendering) return;
 
     const { content, fontColor, fontFamily, fontSize, vAlign, hAlign, bold, italic } = text;
     const { x0, y0, x2, y2 } = coordinates;
     // initial settings
     ctx.font = `${italic ? 'italic' : 'normal'} ${bold ? 'bold' : 'normal'} ${fontSize}px ${fontFamily}`;
-    ctx.fillStyle = fontColor;
+    ctx.fillStyle = placeholder ? 'gray' : fontColor;
     ctx.textAlign = hAlign;
     ctx.textBaseline = 'top';
     const [maxWidth, maxHeight] = [Math.abs(x2 - x0), Math.abs(y2 - y0)];
     const [minX, minY] = [Math.min(x0, x2), Math.min(y0, y2)];
 
     // cut text into wrapped lines
-    const textLines = getWrappedTextLines(content, maxWidth, ctx);
+    const testToUse = placeholder ? PLACE_HOLDER_TEXT : content;
+    const textLines = getWrappedTextLines(testToUse, maxWidth, ctx);
     const lineHeight = fontSize * LINE_HEIGHT;
     const fullTextHeight = lineHeight * textLines.length;
 

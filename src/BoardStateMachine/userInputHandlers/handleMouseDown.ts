@@ -20,15 +20,16 @@ function handleMouseDown(e: MouseEvent): void {
     const { selectedTool } = getState().tools;
 
     const [screenX, screenY] = [e.clientX, e.clientY];
-    dispatch(setCursorPosition([screenX, screenY]));
+    const [boardX, boardY] = getBoardCoordinates(screenX, screenY, canvasTransform);
+
     hasCursorMoved && dispatch(setHasCursorMoved(false));
     dispatch(setMouseButton(e.button));
     dispatch(setInProgress(true));
+    dispatch(setCursorPosition([screenX, screenY]));
 
     if (e.button === MouseButton.Left) {
         switch (selectedTool) {
             case 'POINTER':
-                const [boardX, boardY] = getBoardCoordinates(screenX, screenY, canvasTransform);
                 let clickedOutside = true;
 
                 if (selectedItemIds.length) {

@@ -55,7 +55,14 @@ const Chat = (): React.ReactElement => {
                     ))}
                 </ol>
                 <div className={styles.inputArea}>
-                    <input type="text" className={styles.input} onChange={handleChange} value={text} onKeyPress={handleKey} />
+                    <input
+                        type="text"
+                        className={styles.input}
+                        onChange={handleChange}
+                        value={text}
+                        onKeyPress={handleKey}
+                        placeholder="Type here"
+                    />
                     <button className={styles.button} onClick={handleSendMessage} disabled={!text}>
                         <Icon name="send" />
                     </button>

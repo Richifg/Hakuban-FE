@@ -59,3 +59,6 @@ export const FILL_STROKE_COLORS = ['transparent', ...TEXT_COLORS];
 
 // default fill colors for Notes
 export const NOTE_COLORS = ['#f1f58f', '#dcff46', '#74ed4b', '#7afcff', '#a9edf1', '#ffa930', '#ff32b2', '#ff7eb9'];
+
+// placeholder text Item text
+export const PLACE_HOLDER_TEXT = 'Type somenthing here';
