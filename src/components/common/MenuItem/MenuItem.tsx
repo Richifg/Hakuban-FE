@@ -5,10 +5,11 @@ import { IconName } from '../../../interfaces';
 import styles from './MenuItem.module.scss';
 
 interface MenuItem extends React.HTMLProps<HTMLDivElement> {
-    iconName: IconName;
+    iconName?: IconName;
     selected?: boolean;
     onClick?: () => void;
     type?: 'button' | 'sub' | 'misc';
+    direction?: 'down' | 'right';
 }
 
 const MenuItem: React.FC<MenuItem> = ({
@@ -18,6 +19,7 @@ const MenuItem: React.FC<MenuItem> = ({
     selected,
     onClick,
     type = 'button',
+    direction = 'down',
     ...rest
 }): React.ReactElement => {
     const handleClick = (e: React.MouseEvent) => {
@@ -26,10 +28,16 @@ const MenuItem: React.FC<MenuItem> = ({
     };
 
     return (
-        <div className={`${styles.menuItem} ${className} ${selected ? styles.selected : ''}`} onClick={handleClick} {...rest}>
+        <div
+            className={`${styles.menuItem} ${className} ${selected ? styles.selected : ''} ${
+                type === 'button' ? styles.button : ''
+            }`}
+            onClick={handleClick}
+            {...rest}
+        >
             {type === 'misc' && children}
-            {type !== 'misc' && <Icon name={iconName} />}
-            {type === 'sub' && <MenuContainer className={styles.subMenu}>{children}</MenuContainer>}
+            {type !== 'misc' && <Icon name={iconName || 'circle'} />}
+            {type === 'sub' && <MenuContainer className={`${styles.subMenu} ${styles[direction]}`}>{children}</MenuContainer>}
         </div>
     );
 };

@@ -1,0 +1,18 @@
+.zoomMenu {
+    right: 15px;
+    top: 15px;
+    font-size: 22px;
+}
+
+.zoomPercentage {
+    cursor: default;
+    padding: 0px 5px;
+    font-size: 12px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+
+    &:hover {
+        background-color: transparent;
+    }
+}

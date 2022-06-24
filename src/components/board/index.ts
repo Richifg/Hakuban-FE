@@ -6,6 +6,6 @@ import StylesMenu from './StylesMenu/StylesMenu';
 import Chat from './Chat/Chat';
 import TextEditor from './TextEditor/TextEditor';
 import ToolsMenu from './ToolsMenu/ToolsMenu';
-import ZoomControls from './ZoomControls/ZoomControls';
+import ZoomMenu from './ZoomMenu/ZoomMenu';
 
-export { AvatarMenu, BoardUI, BoardCanvas, EditPoints, StylesMenu, Chat, TextEditor, ToolsMenu, ZoomControls };
+export { AvatarMenu, BoardUI, BoardCanvas, EditPoints, StylesMenu, Chat, TextEditor, ToolsMenu, ZoomMenu };

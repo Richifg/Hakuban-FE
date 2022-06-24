@@ -1,14 +1,15 @@
 import React from 'react';
 import { getBoardCoordinates } from '../../../utils';
 import { useSelector, useDispatch } from '../../../hooks';
-import { setCanvasScale, centerCanvasAt, toggleGrid } from '../../../store/slices/boardSlice';
+import { setCanvasScale, centerCanvasAt } from '../../../store/slices/boardSlice';
+import { MenuContainer, MenuItem, MenuSeparator } from '../../common';
 
-import './ZoomControls.scss';
+import styles from './ZoomMenu.module.scss';
 
 // steps for a smooth zoom to fit animation
 const STEPS = 20;
 
-const ZoomControls = (): React.ReactElement => {
+const ZoomMenu = (): React.ReactElement => {
     const dispatch = useDispatch();
     const { canvasTransform, canvasSize, boardLimits } = useSelector((s) => s.board);
     const zoomPercentage = Math.floor(canvasTransform.scale * 100) + '%';
@@ -45,7 +46,7 @@ const ZoomControls = (): React.ReactElement => {
         smoothScaleAndCenter(scale, x, y);
     };
 
-    const handleZoomInOrOut = (sign: 1 | -1) => {
+    const handleZoomInOrOut = (sign: 1 | -1) => () => {
         const { scale } = canvasTransform;
         // round current scale to nearest 0.1 (10%)
         const roundedScale = Math.round(scale * 10) * 0.1;
@@ -58,20 +59,16 @@ const ZoomControls = (): React.ReactElement => {
     };
 
     return (
-        <div className="zoom-controls">
-            <button onClick={() => dispatch(toggleGrid())}>GRID</button>
-            <button className="fit-button" onClick={handleFitScreen}>
-                fit
-            </button>
-            <button className="zoom-button" onClick={() => handleZoomInOrOut(1)}>
-                +
-            </button>
-            <p className="zoom-display">{zoomPercentage}</p>
-            <button className="zoom-button" onClick={() => handleZoomInOrOut(-1)}>
-                -
-            </button>
-        </div>
+        <MenuContainer className={styles.zoomMenu}>
+            <MenuItem type="button" iconName="zoomIn" onClick={handleZoomInOrOut(1)} />
+            <MenuItem type="misc" className={styles.zoomPercentage}>
+                {zoomPercentage}
+            </MenuItem>
+            <MenuItem type="button" iconName="zoomOut" onClick={handleZoomInOrOut(-1)} />
+            <MenuSeparator />
+            <MenuItem type="button" iconName="zoomFit" onClick={handleFitScreen} />
+        </MenuContainer>
     );
 };
 
-export default ZoomControls;
+export default ZoomMenu;

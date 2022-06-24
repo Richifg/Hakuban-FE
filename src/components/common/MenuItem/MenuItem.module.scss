@@ -20,23 +20,31 @@
     &:active {
         background-color: $color-background;
     }
+    &.button:active {
+        color: $color-selected;
+        box-shadow: inset 4px 4px 10px -10px black,
+                    inset -4px -4px 10px -10px white;
+    }
     
+    $subMenu-distance: 5px;
      &:focus, &:hover {
         .subMenu {
             pointer-events: all;
             opacity: 1;
-            transform: translate(-50%, 0px);
             transition-delay: 50ms;
+            &.down {
+                transform: translate(-50%, $subMenu-distance);
+            }
+            &.right {
+                transform: translateX($subMenu-distance);
+            }
         }
     }
 
-    $subMenu-distance: 5px;
+    
     .subMenu {
         pointer-events: none;
-        top: calc(100% + $subMenu-distance);
-        left: 50%;
         border-radius: 8px;
-        transform: translate(-50%, -$subMenu-distance);
         opacity: 0;
         transition: 50ms transform, 50ms opacity;
         padding: 5px !important;
@@ -45,13 +53,33 @@
             border-radius: 0px;
         }
 
+        &.down {
+            top: 100%;
+            left: 50%;
+            transform: translate(-50%, 0);
+        }
+        &.right {
+            top: 0;
+            left: 100%;
+            transform: translateX(0px);
+        }
+        
         // to bridge the gap between menuItem and subMenu so hover effect on menuItem is maintained
-        &::after {
+        &.down::after {
             content: '';
             position: absolute;
-            bottom: 100%;
-            height: $subMenu-distance;
+            left: 0;
+            top: -$subMenu-distance;
             width: 100%;
+            height: $subMenu-distance;
+        }
+        &.right::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -$subMenu-distance;
+            height: 100%;
+            width: $subMenu-distance;
         }
     }
 }

@@ -34,6 +34,7 @@ const ToolsMenu = (): React.ReactElement => {
                 <MenuItem
                     key={tool}
                     type={tool === 'SHAPE' ? 'sub' : 'button'}
+                    direction="right"
                     iconName={toolIcon}
                     onClick={tool === 'SHAPE' ? undefined : () => handleToolSelect(tool)}
                     selected={selectedTool === tool}

@@ -95,6 +95,7 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
             {show.lineStyles && (
                 <>
                     <LineTypeSelector onChange={handleChange} lineType={(item as Line).lineType} />
+                    <MenuSeparator />
                     <ArrowSelector
                         onChange={handleChange}
                         arrow0Type={(item as Line).arrow0Type}
