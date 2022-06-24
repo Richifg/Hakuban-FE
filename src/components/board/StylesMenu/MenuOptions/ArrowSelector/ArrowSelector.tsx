@@ -4,7 +4,7 @@ import { MenuItem, SubMenuButton } from '../../../../common';
 import styles from './ArrowSelector.module.scss';
 
 const arrowIcons: { [key in ArrowType]: IconName } = {
-    none: 'arrowTriangle',
+    none: 'arrowNone',
     triangle: 'arrowTriangle',
     simple: 'arrowSimple',
     circle: 'arrowCircle',
@@ -43,7 +43,7 @@ const ArrowSelector = ({ onChange, arrow0Type, arrow2Type }: ArrowSelector): Rea
                     ))}
                 </div>
             </MenuItem>
-            <MenuItem type="button" iconName="circle" onClick={handleSwap} />
+            <MenuItem type="button" iconName="swap" onClick={handleSwap} />
             <MenuItem type="sub" className={styles.arrowSelector} iconName={arrowIcons[arrow2Type]}>
                 <div className={styles.arrowOptions}>
                     {Object.entries(arrowIcons).map(([type, icon]) => (

@@ -13,6 +13,7 @@ export type IconName =
     | 'arrowSimple'
     | 'arrowCircle'
     | 'arrowTriangle'
+    | 'swap'
     | 'sendBottom'
     | 'sendTop'
     | 'bold'
@@ -43,4 +44,10 @@ export type IconName =
     | 'zoomIn'
     | 'zoomOut'
     | 'hashtag'
-    | 'plus';
+    | 'plus'
+    | 'clock'
+    | 'arrowNone'
+    | 'lineCurved'
+    | 'lineStraight'
+    | 'lineStepped'
+    | 'send';

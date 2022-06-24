@@ -5,9 +5,9 @@ import { LineType, LineStyle, IconName } from '../../../../../interfaces';
 import styles from './LineTypeSelector.module.scss';
 
 const lineTypeIcons: { [key in LineType]: IconName } = {
-    straight: 'arrowCircle',
-    stepped: 'arrowCircle',
-    curved: 'arrowCircle',
+    straight: 'lineStraight',
+    stepped: 'lineStepped',
+    curved: 'lineCurved',
 };
 
 interface LineTypeSelector {
