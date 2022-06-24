@@ -1,13 +1,16 @@
 import React, { useState, useRef, useMemo, useLayoutEffect } from 'react';
-import { useSelector } from '../../../hooks';
+import { useSelector, useDispatch } from '../../../hooks';
+import { setShowChat } from '../../../store/slices/UISlice';
 import { MenuContainer, Icon } from '../../common';
 import webSocket from '../../../services/WebSocket/WebSocket';
 
 import styles from './Chat.module.scss';
 
 const Chat = (): React.ReactElement => {
+    const dispatch = useDispatch();
     const [text, setText] = useState('');
     const { users, ownUser } = useSelector((s) => s.users);
+    const { showChat } = useSelector((s) => s.UI);
     const { messages } = useSelector((s) => s.chat);
     const chatBoxRef = useRef<HTMLOListElement>(null);
 
@@ -36,8 +39,14 @@ const Chat = (): React.ReactElement => {
     };
 
     return (
-        <MenuContainer className={styles.chatMenu}>
+        <MenuContainer className={`${styles.chatMenu} ${showChat ? styles.show : ''}`}>
+            <button className={`${styles.button} ${styles.maximizeButton}`} onClick={() => dispatch(setShowChat(true))}>
+                <Icon name="bubble" />
+            </button>
             <div className={styles.chatContainer}>
+                <button className={`${styles.button} ${styles.minimizeButton}`} onClick={() => dispatch(setShowChat(false))}>
+                    <Icon name="arrowNone" />
+                </button>
                 <ol className={styles.messageArea} ref={chatBoxRef}>
                     {sortedMessages.map(({ fromId, fromUsername, content }, index) => (
                         <li
