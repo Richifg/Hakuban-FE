@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Point, Action } from '../../../interfaces';
 import { useSelector, useDispatch } from '../../../hooks';
 import { setSelectedPoint, setInProgress } from '../../../store/slices/itemsSlice';
-import { setCurrentAction, setIsWriting, setMouseButton } from '../../../store/slices/boardSlice';
+import { setCurrentAction, setMouseButton } from '../../../store/slices/boardSlice';
 
 import styles from './EditPoints.module.scss';
 import getEditPoints from './getEditPoints';
@@ -12,7 +12,7 @@ const EditPointsActions: Action[] = ['EDIT', 'RESIZE'];
 const EditPoints = (): React.ReactElement => {
     const dispatch = useDispatch();
     const { items, selectedItemIds } = useSelector((s) => s.items);
-    const { canvasTransform, currentAction, isWriting } = useSelector((s) => s.board);
+    const { canvasTransform, currentAction } = useSelector((s) => s.board);
     const selectedItem = selectedItemIds.length === 1 ? items[selectedItemIds[0]] : undefined;
 
     const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -23,7 +23,6 @@ const EditPoints = (): React.ReactElement => {
         dispatch(setSelectedPoint(point));
         dispatch(setCurrentAction('RESIZE'));
         dispatch(setInProgress(true));
-        isWriting && dispatch(setIsWriting(false));
     };
 
     const points = useMemo(

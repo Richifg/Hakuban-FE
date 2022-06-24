@@ -49,10 +49,6 @@
         transition: 50ms transform, 50ms opacity;
         padding: 5px !important;
 
-        & > :first-child, & > :last-child {
-            border-radius: 0px;
-        }
-
         &.down {
             top: 100%;
             left: 50%;

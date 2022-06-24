@@ -9,20 +9,13 @@
     color: $color-secondary;
     border-radius: 8px;
     font-size: 20px;
-    box-shadow: 5px 5px 20px -10px black;
+    box-shadow: 5px 5px 20px -15px black;
+    padding: 0px 10px;
 
     & > * {
         padding: 10px;
     }
     & .menuContainer > * {
         padding: 0;
-    }
-
-    & > :first-child {
-        // child border radius instead of [overflow:hidden] to let submenus be visible outside of container
-        border-radius: 8px 0 0 8px;
-    }
-    & > :last-child {
-        border-radius: 0 8px 8px 0;
     }
 }

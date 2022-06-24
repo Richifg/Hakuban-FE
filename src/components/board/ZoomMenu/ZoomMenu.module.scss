@@ -1,7 +1,11 @@
 .zoomMenu {
     right: 15px;
     top: 15px;
-    font-size: 22px;
+    font-size: 26px;
+
+    & > * {
+        padding: 4px 5px;
+    }
 }
 
 .zoomPercentage {

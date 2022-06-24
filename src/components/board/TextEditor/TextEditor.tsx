@@ -50,7 +50,7 @@ const TextEditor = (): React.ReactElement => {
             textBoxRef.current?.focus();
             if (isTextItem(selectedItem) && selectedItem.text) processTextUpdate(selectedItem, { skipRendering: true });
         }
-    }, [isWriting]);
+    }, [isWriting, selectedItem?.id]);
 
     // handles update of item's text
     const handleTextChange = useDebouncedCallback((e: React.ChangeEvent<HTMLDivElement>) => {

@@ -92,7 +92,10 @@ function handleMouseUp(e: MouseEvent): void {
                     const itemUnderCursor = getItemAtPosition(boardX, boardY, Object.values(items));
                     if (itemUnderCursor?.type === 'text') {
                         dispatch(setSelectedItemIds([itemUnderCursor.id]));
-                        dispatch(setIsWriting(true));
+                        if (!hasCursorMoved) dispatch(setIsWriting(true));
+                    } else {
+                        dispatch(setSelectedItemIds([]));
+                        dispatch(setIsWriting(false));
                     }
                 }
                 dispatch(setCurrentAction('EDIT'));
