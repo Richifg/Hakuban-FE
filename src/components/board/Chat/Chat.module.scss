@@ -41,9 +41,10 @@ $chat-max-height: 420px;
  
 .messageArea {
     border-radius: 8px;
+    padding: 10px;
+    min-height: 100px;
     display: flex;
     flex-direction: column;
-    padding: 5px;
     overflow-y: auto;
     overflow-x: hidden;
     box-shadow: inset 4px 4px 16px -16px black,
@@ -51,24 +52,10 @@ $chat-max-height: 420px;
 }
 .messageContainer {
     display: flex;
-    margin-right: 10px;
+    flex-direction: column;
     &:not(:first-child) {
         margin-top: 10px;
     }
-}
-
-.avatar {
-    flex-shrink: 0;
-    font-size: 28px;
-    padding: 3px 5px 0px 5px;
-    margin-right: 5px;
-}
-
-.textArea {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
 }
 
 .username {
@@ -79,12 +66,13 @@ $chat-max-height: 420px;
 }
 .message {
     cursor: text;
+    padding-left: 3px;
     font-size: 14px;
-    margin: 0;
+    margin: 0 0 0 6px;
     word-wrap: break-word;
     background-color: $color-background;
     border-radius: 0 4px 4px 4px;
-    padding: 2px;
+    padding: 2px 5px;
     max-width: fit-content;
     position: relative;
 
@@ -120,7 +108,7 @@ $chat-max-height: 420px;
 .button {
     cursor: pointer;
     outline: none;
-    border: 2px solid $color-background;
+    border: 2px solid black;
     border-radius: 8px;
     background-color: transparent;
     font-size: 20px;
@@ -165,18 +153,11 @@ $chat-max-height: 420px;
 
 
 .sameUser {
-    .avatar {
-        visibility: hidden;
-        height: 0;
+    &.messageContainer {
+        margin-top: 2px;
     }
     .username {
         display: none;
-    }
-    .textArea {
-        margin-top: 2px;
-    }
-    &.messageContainer {
-        margin-top: 0;
     }
     .message {
         &::after {
@@ -187,15 +168,11 @@ $chat-max-height: 420px;
 }
 
 .ownMessage {
-    .avatar {
-        visibility: hidden;
-        height: 0;
+    &.messageContainer {
+        align-items: end
     }
     .username {
         display: none;
-    }
-    .textArea {
-        align-items: end;
     }
     .message {
         &::after {
@@ -205,7 +182,7 @@ $chat-max-height: 420px;
         }
         border-top-right-radius: 0;
         border-top-left-radius: 4px;
-        margin-left: 10px;
+        margin: 0 6px 0 0;
 
     }
 }

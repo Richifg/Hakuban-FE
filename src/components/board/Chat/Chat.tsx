@@ -48,20 +48,22 @@ const Chat = (): React.ReactElement => {
                     <Icon name="arrowNone" />
                 </button>
                 <ol className={styles.messageArea} ref={chatBoxRef}>
-                    {sortedMessages.map(({ fromId, fromUsername, content }, index) => (
-                        <li
-                            key={index}
-                            className={`${styles.messageContainer} ${ownUser?.id === fromId ? styles.ownMessage : ''} ${
-                                index > 0 && sortedMessages[index - 1].fromId === fromId ? styles.sameUser : ''
-                            }`}
-                        >
-                            <Icon name="circle" className={styles.avatar} />
-                            <div className={styles.textArea}>
-                                <p className={styles.username}>{users?.[fromId]?.username || fromUsername}</p>
+                    {sortedMessages.map(({ fromId, fromUsername, content }, index) => {
+                        const user = users?.[fromId];
+                        return (
+                            <li
+                                key={index}
+                                className={`${styles.messageContainer} ${ownUser?.id === fromId ? styles.ownMessage : ''} ${
+                                    index > 0 && sortedMessages[index - 1].fromId === fromId ? styles.sameUser : ''
+                                }`}
+                            >
+                                <p className={styles.username} style={{ color: user?.color || 'black' }}>
+                                    {user?.username || fromUsername}
+                                </p>
                                 <p className={styles.message}>{content}</p>
-                            </div>
-                        </li>
-                    ))}
+                            </li>
+                        );
+                    })}
                 </ol>
                 <div className={styles.inputArea}>
                     <input

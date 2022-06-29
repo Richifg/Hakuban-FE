@@ -8,7 +8,6 @@ function drawDrawing(drawing: Drawing, ctx: CanvasRenderingContext2D): void {
     if (points.length > 1) {
         ctx.strokeStyle = drawing.lineColor;
         ctx.lineWidth = drawing.lineWidth;
-        ctx.lineCap = 'round';
         ctx.setLineDash(LINE_PATTERNS[drawing.linePattern]);
 
         // new drawings have absolute coordinates up until they are finished
