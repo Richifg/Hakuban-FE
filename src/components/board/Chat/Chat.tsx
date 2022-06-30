@@ -57,7 +57,7 @@ const Chat = (): React.ReactElement => {
                                     index > 0 && sortedMessages[index - 1].fromId === fromId ? styles.sameUser : ''
                                 }`}
                             >
-                                <p className={styles.username} style={{ color: user?.color || 'black' }}>
+                                <p className={styles.username} style={{ color: user?.color || '$color-background-contrast' }}>
                                     {user?.username || fromUsername}
                                 </p>
                                 <p className={styles.message}>{content}</p>

@@ -3,6 +3,7 @@
 .menuItem {
     cursor: pointer;
     background-color: transparent;
+    color: $color-background-contrast;
     outline: none;
     border: none;
     position: relative; 
@@ -11,7 +12,7 @@
     
     &.selected {
         background-color: $color-background-lighter;
-        color: $color-selected;
+        color: $color-active;
         font-weight: bold;
     }
     &:hover {
@@ -21,7 +22,7 @@
         background-color: $color-background;
     }
     &.button:active {
-        color: $color-selected;
+        color: $color-active;
         box-shadow: inset 4px 4px 10px -10px black,
                     inset -4px -4px 10px -10px white;
     }

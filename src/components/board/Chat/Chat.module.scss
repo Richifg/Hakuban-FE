@@ -13,6 +13,7 @@ $chat-max-height: 420px;
     max-height: $chat-max-height;
     transition: width 0.5s, max-height 0.5s;
     overflow: hidden;
+    padding: 0;
     
     &:not(.show) {
         width: 50px;
@@ -83,7 +84,7 @@ $chat-max-height: 420px;
         left: 0px;
         top: 0px;
         transform: translateX(-100%);
-        border-color: $color-background $color-background white white;
+        border-color: $color-background $color-background $color-background-lightest $color-background-lightest;
         border-width: 3px;
         border-style: solid;
         
@@ -95,11 +96,12 @@ $chat-max-height: 420px;
     display: flex;
 }
 .input {
+    background-color: $color-background;
+    color: $color-background-contrast;
     border: none;
     flex-grow: 1;
     border-radius: 8px;
     margin-right: 10px;
-    font-size: 124x;
     padding: 8px;
     box-shadow: inset 2px 2px 5px -3px #464646,
                 inset 6px 6px 15px rgba(255, 255, 255, 0.5);
@@ -108,7 +110,8 @@ $chat-max-height: 420px;
 .button {
     cursor: pointer;
     outline: none;
-    border: 2px solid black;
+    border: 2px solid $color-background-contrast;
+    color: $color-background-contrast;
     border-radius: 8px;
     background-color: transparent;
     font-size: 20px;
@@ -141,6 +144,7 @@ $chat-max-height: 420px;
     width: fit-content;
     transform: scaleX(0.9);
     border-width: 0;
+    align-self: end;
 }
 
 .maximizeButton {

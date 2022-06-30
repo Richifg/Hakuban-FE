@@ -5,8 +5,8 @@
     position: absolute;
     display: flex;
     flex-direction: row;
-    background-color: white;
-    color: $color-secondary;
+    background-color: $color-background-lightest;
+    color: $color-background-contrast;
     border-radius: 8px;
     font-size: 20px;
     box-shadow: 5px 5px 20px -15px black;
