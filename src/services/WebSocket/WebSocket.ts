@@ -1,6 +1,6 @@
 import { store } from '../../store/store';
 import { setUserId, setError } from '../../store/slices/connectionSlice';
-import { addMessage, setMessages } from '../../store/slices/chatSlice';
+import { addMessage, increaseUnreadMessages, setMessages } from '../../store/slices/chatSlice';
 import { BoardItem, UpdateData, WSMessage, LockData, User, ChatMessage } from '../../interfaces';
 import { processItemDeletions, processItemLocks, processItemUpdates } from '../../BoardStateMachine/BoardStateMachineUtils';
 import { addUsers, removeUser, setOwnUser, setIsLoading } from '../../store/slices/usersSlice';
@@ -77,9 +77,11 @@ class WebSocketService {
                             break;
 
                         case 'chat':
-                            console.log('aint getting nothing');
                             const chatMessage = message.content;
                             store.dispatch(addMessage(chatMessage));
+                            if (chatMessage.fromId !== this.id && !store.getState().UI.showChat) {
+                                store.dispatch(increaseUnreadMessages());
+                            }
                             break;
 
                         case 'lock':

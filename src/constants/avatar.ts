@@ -5,7 +5,6 @@ export const userAnimals = [
     'Ape',
     'Axolotl',
     'Baboon',
-    'Bat',
     'Bear',
     'Beetle',
     'Boar',
@@ -17,7 +16,6 @@ export const userAnimals = [
     'Crane',
     'Crow',
     'Dingo',
-    'Dog',
     'Donkey',
     'Dragon',
     'Eagle',
@@ -28,7 +26,6 @@ export const userAnimals = [
     'Gibbon',
     'Gopher',
     'Gorilla',
-    'Hog',
     'Lemur',
     'Leopard',
     'Lion',
@@ -43,16 +40,13 @@ export const userAnimals = [
     'Ox',
     'Pelican',
     'Penguin',
-    'Pig',
     'Quail',
     'Rabbit',
     'Raccoon',
-    'Rat',
     'Rhino',
     'Scorpion',
     'Seal',
     'Shark',
-    'Slug',
     'Snake',
     'Squid',
     'Squirrel',
@@ -63,4 +57,4 @@ export const userAnimals = [
     'Wolf',
 ];
 
-export const userColors = ['#FFB5E8', '#D5AAFF', '#85E3FF', '#BFFCC6', '#FFFFD1', '#FFABAB'];
+export const userColors = ['#FFB5E8', '#D5AAFF', '#62a8bd', '#6fb076', '#adad45', '#ba5b5b'];
