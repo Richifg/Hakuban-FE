@@ -128,8 +128,8 @@
 }
 
 @media (max-aspect-ratio: 5/4) {
-    .landingPage {
-        color: $color-secondary;
+    .landingPage { 
+        color: $color-background-contrast;
         background-color: $color-background;
 
         .landingPageContent {
