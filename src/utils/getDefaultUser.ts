@@ -1,5 +1,5 @@
 import { User } from '../interfaces';
-import { avatarColors, avatarIcons, avatarColorsValue } from '../constants';
+import { userAnimals, userColors } from '../constants';
 import seedRandom from 'seedrandom';
 
 // user avatar options only exist on FE so a seeded random generator is used
@@ -7,14 +7,13 @@ import seedRandom from 'seedrandom';
 
 function getDefaultUser(id: string): User {
     const rng = seedRandom(id);
-    const color = avatarColors[Math.floor(rng() * avatarColors.length)].color;
-    const icon = avatarIcons[Math.floor(rng() * avatarIcons.length)].name;
-    const username = `${avatarColorsValue[color]} ${icon}`;
+    const animal = userAnimals[Math.floor(rng() * userAnimals.length)];
+    const color = userColors[Math.floor(rng() * userColors.length)];
+    const username = `Anonymous ${animal}`;
     return {
         id,
         username,
         color,
-        icon,
     };
 }
 

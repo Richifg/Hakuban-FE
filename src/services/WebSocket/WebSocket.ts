@@ -1,9 +1,9 @@
 import { store } from '../../store/store';
 import { setUserId, setError } from '../../store/slices/connectionSlice';
-import { addMessage, setMessages } from '../../store/slices/chatSlice';
+import { addMessage, increaseUnreadMessages, setMessages } from '../../store/slices/chatSlice';
 import { BoardItem, UpdateData, WSMessage, LockData, User, ChatMessage } from '../../interfaces';
 import { processItemDeletions, processItemLocks, processItemUpdates } from '../../BoardStateMachine/BoardStateMachineUtils';
-import { addUsers, removeUser, setOwnUser } from '../../store/slices/usersSlice';
+import { addUsers, removeUser, setOwnUser, setIsLoading } from '../../store/slices/usersSlice';
 import { getSanitizedData, getDefaultUser, getNewId } from '../../utils';
 
 const url = process.env.REACT_APP_SERVER_URL;
@@ -38,7 +38,8 @@ class WebSocketService {
                 // only process broadcasts from other users except for
                 // own locks which need to be confirmed before data can be synced
                 // own chats which are only displayed until broacasted by BE
-                if (userId !== this.id || type === 'lock' || type === 'chat') {
+                // own user updates which need to be confirmed before display
+                if (userId !== this.id || ['lock', 'chat', 'user'].includes(type)) {
                     switch (type) {
                         case 'init':
                             const { items, ownId, users } = message.content;
@@ -76,9 +77,11 @@ class WebSocketService {
                             break;
 
                         case 'chat':
-                            console.log('aint getting nothing');
                             const chatMessage = message.content;
                             store.dispatch(addMessage(chatMessage));
+                            if (chatMessage.fromId !== this.id && !store.getState().UI.showChat) {
+                                store.dispatch(increaseUnreadMessages());
+                            }
                             break;
 
                         case 'lock':
@@ -146,6 +149,7 @@ class WebSocketService {
     }
 
     updateUser(user: User): void {
+        store.dispatch(setIsLoading(true));
         this.sendMessage({
             userId: this.id,
             type: 'user',

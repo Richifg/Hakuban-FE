@@ -11,13 +11,13 @@
     &.DRAW { cursor: default; }
     &.EDIT { cursor: default; }
     &.SLIDE { cursor: default; }
-    &.RESIZE  { cursor: default !important; }
+    &.RESIZE  { cursor: default; }
 
     // tools
-    &.PEN { cursor: alias; }
+    &.PEN { cursor: url('../../../assets/images/cursorPen.png') 0 16, alias !important;  }
     &.POINTER { cursor: pointer; }
-    &.SHAPE { cursor: crosshair; }
-    &.TEXT { cursor: default; }
-    &.NOTE { cursor: default; }
-    &.LINE { cursor: default; }
+    &.SHAPE { cursor: crosshair !important; }
+    &.TEXT { cursor: url('../../../assets/images/cursorText.png'), text !important; }
+    &.NOTE { cursor: url('../../../assets/images/cursorNote.png'), default; }
+    &.LINE { cursor: crosshair !important; }
 }

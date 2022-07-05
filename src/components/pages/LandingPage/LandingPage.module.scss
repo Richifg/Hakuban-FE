@@ -107,35 +107,12 @@
 
     .input {
         font-size: 0.8em;
-        border-radius: .75em;
-        border: none;
-        padding: .75em 1.5em;
         margin-bottom: 1em;
-        outline: none;
-        color: $color-secondary;
-        background-color: $color-background-lighter;
-        box-shadow: inset 2px 2px 5px -3px #464646,
-                    inset 6px 6px 15px rgba(255, 255, 255, 0.5);
     }
 
     .button {
-        cursor: pointer;
         align-self: end;
         font-size: .75em;
-        font-weight: 700; 
-        padding: .5em 1em;
-        color: $color-primary;
-        border: .15em solid $color-primary;
-        background-color: transparent;
-        border-radius: .75em;
-        &:hover {
-            background-color: $color-primary-lighter;
-        }
-        
-        &:focus {
-            background-color: $color-primary;
-            color: $color-primary-contrast
-        }
     }
 
     .backgroundLogo {

@@ -4,6 +4,7 @@ import { ChatMessage } from '../../interfaces/items';
 interface ChatState {
     messages: ChatMessage[];
     unreadMessageCount: number;
+    lastReadMessageId?: string;
 }
 
 const initialState: ChatState = {
@@ -30,9 +31,13 @@ const slice = createSlice({
         increaseUnreadMessages: (state) => {
             state.unreadMessageCount++;
         },
+        setLastReadMessageId: (state, action: PayloadAction<string>) => {
+            state.lastReadMessageId = action.payload;
+        },
     },
 });
 
-export const { setMessages, addMessage, deleteMessage, resetUnreadMessages, increaseUnreadMessages } = slice.actions;
+export const { setMessages, addMessage, deleteMessage, resetUnreadMessages, increaseUnreadMessages, setLastReadMessageId } =
+    slice.actions;
 
 export default slice.reducer;

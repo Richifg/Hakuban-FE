@@ -1,3 +1,5 @@
+@import '../../../styles/variables.scss';
+
 @font-face {
   font-family: 'icomoon';
   src:  url('../../../assets/fonts/icomoon.eot?5ql364');
@@ -51,28 +53,28 @@
   content: "\e905";
 }
 .icon-justifyRight:before {
-  content: "\e906";
+  content: "\e906"; 
 }
 .icon-alignTop:before {
   content: "\e907";
 }
 .icon-fill:before {
   content: "\e908";
-  color: black;
+  color: $color-background-contrast;
 }
 .icon-fill:after {
   content: "\e909";
 }
 .icon-outline:before {
   content: "\e90a";
-  color: black;
+  color: $color-background-contrast;
 }
 .icon-outline:after {
   content: "\e90b";
 }
 .icon-textColor:before {
   content: "\e90c";
-  color: black;
+  color: $color-background-contrast;
 }
 .icon-textColor:after {
   content: "\e90d";

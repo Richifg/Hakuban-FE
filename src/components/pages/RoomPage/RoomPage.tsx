@@ -3,7 +3,7 @@ import { useParams, useHistory } from 'react-router';
 
 import { useSelector, useDispatch } from '../../../hooks';
 import { connectToRoom } from '../../../store/slices/connectionSlice';
-import { BoardCanvas, BoardUI, ToolsMenu, StylesMenu, Chat, ZoomMenu } from '../../board';
+import { BoardCanvas, BoardUI, ToolsMenu, StylesMenu, Chat, ZoomMenu, WelcomeModal } from '../../board';
 
 import styles from './RoomPage.module.scss';
 
@@ -12,6 +12,7 @@ const RoomPage = (): React.ReactElement => {
     const history = useHistory();
     const { roomId } = useParams<{ roomId: string }>();
     const { isLoading, isConnected, error } = useSelector((s) => s.connection);
+    const { showWelcomeModal } = useSelector((s) => s.UI);
     const password = new URLSearchParams(location.search).get('password') || undefined;
 
     useEffect(() => {
@@ -24,10 +25,11 @@ const RoomPage = (): React.ReactElement => {
                 <>
                     <BoardCanvas />
                     <BoardUI />
-                    <ToolsMenu />
                     <StylesMenu />
-                    <ZoomMenu />
-                    <Chat />
+                    <ToolsMenu className={showWelcomeModal ? styles.hiddenLeft : ''} />
+                    <ZoomMenu className={showWelcomeModal ? styles.hiddenTop : ''} />
+                    <Chat className={showWelcomeModal ? styles.hiddenRight : ''} />
+                    {showWelcomeModal && <WelcomeModal />}
                 </>
             )}
             {isLoading && <h1>Connecting</h1>}

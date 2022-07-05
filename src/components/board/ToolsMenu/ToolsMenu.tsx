@@ -9,7 +9,11 @@ import type { Tool, ShapeType } from '../../../interfaces';
 import { toolOptions, shapeOptions } from './options';
 import styles from './ToolsMenu.module.scss';
 
-const ToolsMenu = (): React.ReactElement => {
+interface ToolsMenu {
+    className?: string;
+}
+
+const ToolsMenu = ({ className = '' }: ToolsMenu): React.ReactElement => {
     const dispatch = useDispatch();
     const { selectedTool, selectedShapeType } = useSelector((s) => s.tools);
 
@@ -29,7 +33,7 @@ const ToolsMenu = (): React.ReactElement => {
     };
 
     return (
-        <MenuContainer className={styles.toolsMenu}>
+        <MenuContainer className={`${styles.toolsMenu} ${className}`}>
             {toolOptions.map(([toolIcon, tool]) => (
                 <MenuItem
                     key={tool}

@@ -9,7 +9,11 @@ import styles from './ZoomMenu.module.scss';
 // steps for a smooth zoom to fit animation
 const STEPS = 20;
 
-const ZoomMenu = (): React.ReactElement => {
+interface ZoomMenu {
+    className?: string;
+}
+
+const ZoomMenu = ({ className = '' }: ZoomMenu): React.ReactElement => {
     const dispatch = useDispatch();
     const { canvasTransform, canvasSize, boardLimits } = useSelector((s) => s.board);
     const zoomPercentage = Math.floor(canvasTransform.scale * 100) + '%';
@@ -59,7 +63,7 @@ const ZoomMenu = (): React.ReactElement => {
     };
 
     return (
-        <MenuContainer className={styles.zoomMenu}>
+        <MenuContainer className={`${styles.zoomMenu} ${className}`}>
             <MenuItem type="button" iconName="zoomIn" onClick={handleZoomInOrOut(1)} />
             <MenuItem type="misc" className={styles.zoomPercentage}>
                 {zoomPercentage}

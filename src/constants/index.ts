@@ -1,3 +1,3 @@
 export * from './canvas';
 export * from './keys';
-export * from './avatars';
+export * from './avatar';

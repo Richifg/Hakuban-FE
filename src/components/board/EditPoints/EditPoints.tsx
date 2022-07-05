@@ -13,6 +13,7 @@ const EditPoints = (): React.ReactElement => {
     const dispatch = useDispatch();
     const { items, selectedItemIds } = useSelector((s) => s.items);
     const { canvasTransform, currentAction } = useSelector((s) => s.board);
+    const { selectedTool } = useSelector((s) => s.tools);
     const selectedItem = selectedItemIds.length === 1 ? items[selectedItemIds[0]] : undefined;
 
     const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -30,6 +31,7 @@ const EditPoints = (): React.ReactElement => {
         [canvasTransform, selectedItem],
     );
 
+    const isPointer = selectedTool === 'POINTER';
     return (
         <div className={styles.editPoints}>
             {EditPointsActions.includes(currentAction) &&
@@ -37,7 +39,7 @@ const EditPoints = (): React.ReactElement => {
                     <div
                         key={point}
                         id={point}
-                        className={styles.point}
+                        className={`${styles.point} ${isPointer ? styles.grab : ''}`}
                         style={{ left: x, top: y }}
                         onMouseDown={handleMouseDown}
                     />

@@ -1,15 +1,21 @@
 import React, { useState, useRef, useMemo, useLayoutEffect } from 'react';
 import { useSelector, useDispatch } from '../../../hooks';
 import { setShowChat } from '../../../store/slices/UISlice';
-import { MenuContainer, Icon } from '../../common';
+import { MenuContainer, Icon, Input } from '../../common';
 import webSocket from '../../../services/WebSocket/WebSocket';
 
 import styles from './Chat.module.scss';
+import { resetUnreadMessages, setLastReadMessageId } from '../../../store/slices/chatSlice';
 
-const Chat = (): React.ReactElement => {
+interface Chat {
+    className?: string;
+}
+
+const Chat = ({ className = '' }: Chat): React.ReactElement => {
     const dispatch = useDispatch();
     const [text, setText] = useState('');
     const { users, ownUser } = useSelector((s) => s.users);
+    const { unreadMessageCount, lastReadMessageId } = useSelector((s) => s.chat);
     const { showChat } = useSelector((s) => s.UI);
     const { messages } = useSelector((s) => s.chat);
     const chatBoxRef = useRef<HTMLOListElement>(null);
@@ -18,11 +24,13 @@ const Chat = (): React.ReactElement => {
 
     // scroll after change in messages has been rendered
     useLayoutEffect(() => {
-        chatBoxRef.current?.scroll({
-            top: chatBoxRef.current.scrollHeight,
-            behavior: 'smooth',
-        });
-    }, [messages]);
+        if (showChat) {
+            chatBoxRef.current?.scroll({
+                top: chatBoxRef.current.scrollHeight,
+                behavior: 'smooth',
+            });
+        }
+    }, [messages, showChat]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = e.currentTarget;
@@ -38,33 +46,51 @@ const Chat = (): React.ReactElement => {
         if (e.key === 'Enter') handleSendMessage();
     };
 
+    const handleOpenChat = () => {
+        dispatch(setShowChat(true));
+        dispatch(resetUnreadMessages());
+    };
+
+    const handleCloseChat = () => {
+        dispatch(setShowChat(false));
+        dispatch(setLastReadMessageId(sortedMessages[sortedMessages.length - 1].id));
+    };
+
     return (
-        <MenuContainer className={`${styles.chatMenu} ${showChat ? styles.show : ''}`}>
-            <button className={`${styles.button} ${styles.maximizeButton}`} onClick={() => dispatch(setShowChat(true))}>
+        <MenuContainer className={`${styles.chatMenu} ${showChat ? styles.show : ''} ${className}`}>
+            {unreadMessageCount > 0 && <div className={styles.unreadCounter}>{unreadMessageCount}</div>}
+            <button className={`${styles.button} ${styles.maximizeButton}`} onClick={handleOpenChat}>
                 <Icon name="bubble" />
             </button>
             <div className={styles.chatContainer}>
-                <button className={`${styles.button} ${styles.minimizeButton}`} onClick={() => dispatch(setShowChat(false))}>
+                <button className={`${styles.button} ${styles.minimizeButton}`} onClick={handleCloseChat}>
                     <Icon name="arrowNone" />
                 </button>
                 <ol className={styles.messageArea} ref={chatBoxRef}>
-                    {sortedMessages.map(({ fromId, fromUsername, content }, index) => (
-                        <li
-                            key={index}
-                            className={`${styles.messageContainer} ${ownUser?.id === fromId ? styles.ownMessage : ''} ${
-                                index > 0 && sortedMessages[index - 1].fromId === fromId ? styles.sameUser : ''
-                            }`}
-                        >
-                            <Icon name="circle" className={styles.avatar} />
-                            <div className={styles.textArea}>
-                                <p className={styles.username}>{users?.[fromId]?.username || fromUsername}</p>
-                                <p className={styles.message}>{content}</p>
-                            </div>
-                        </li>
-                    ))}
+                    {sortedMessages.map(({ id, fromId, fromUsername, content }, index) => {
+                        const user = users?.[fromId];
+                        const isLastRead = lastReadMessageId === id && index !== sortedMessages.length - 1;
+                        const isSameUser = index > 0 && sortedMessages[index - 1].fromId === fromId;
+                        return (
+                            <>
+                                <li
+                                    key={index}
+                                    className={`${styles.messageContainer} ${ownUser?.id === fromId ? styles.ownMessage : ''} ${
+                                        isSameUser ? styles.sameUser : ''
+                                    }`}
+                                >
+                                    <p className={styles.username} style={{ color: user?.color || '$color-background-contrast' }}>
+                                        {user?.username || fromUsername}
+                                    </p>
+                                    <p className={styles.message}>{content}</p>
+                                </li>
+                                {isLastRead && <span className={styles.lastMsgSeparator}>---Last read message----</span>}
+                            </>
+                        );
+                    })}
                 </ol>
                 <div className={styles.inputArea}>
-                    <input
+                    <Input
                         type="text"
                         className={styles.input}
                         onChange={handleChange}
