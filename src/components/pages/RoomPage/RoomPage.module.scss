@@ -5,5 +5,21 @@
     display: flex;
     justify-content: center;
     align-items: center;
+
+    .hidden {
+        transition: transform 100ms;
+    }
+
+    .hiddenLeft {
+        transform: translateX(-200%);
+    }
+
+    .hiddenRight {
+        transform: translateX(200%);
+    }
+
+    .hiddenTop {
+        transform: translateY(-200%)
+    }
 }
   

@@ -3,11 +3,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 interface UIState {
     showAvatarMenu: boolean;
     showChat: boolean;
+    showWelcomeModal: boolean;
 }
 
 const initialState: UIState = {
     showAvatarMenu: false,
     showChat: false,
+    showWelcomeModal: true,
 };
 
 const slice = createSlice({
@@ -20,9 +22,12 @@ const slice = createSlice({
         setShowChat: (state, action: PayloadAction<boolean>) => {
             state.showChat = action.payload;
         },
+        setShowWelcomeModal: (state, action: PayloadAction<boolean>) => {
+            state.showWelcomeModal = action.payload;
+        },
     },
 });
 
-export const { setShowAvatarMenu, setShowChat } = slice.actions;
+export const { setShowAvatarMenu, setShowChat, setShowWelcomeModal } = slice.actions;
 
 export default slice.reducer;

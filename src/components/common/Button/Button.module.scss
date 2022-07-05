@@ -1,0 +1,33 @@
+@import '../../../styles/variables.scss';
+
+.button {
+    cursor: pointer;
+    border-radius: 10px;
+    outline: none;
+    border: 2px solid $color-primary;
+    background-color: $color-primary;
+    color: $color-primary-contrast;
+    font-size: 18px;
+    font-weight: 700; 
+    padding: .5em 1em;
+    
+    &:hover:not(:disabled) {
+        background-color: $color-primary-light;
+    };
+    
+    &:active:not(:disabled) {
+        background-color: $color-primary-lighter;
+        border-color: $color-primary;
+        color: $color-primary;
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        color: $color-background-contrast;
+        background-color: $color-background;
+        border-color: $color-background-contrast;
+        &:hover {
+            background-color: $color-background-light;
+        };
+    }
+}

@@ -3,7 +3,7 @@ import { useHistory } from 'react-router';
 
 import { useDispatch, useSelector } from '../../../hooks';
 import { createRoom } from '../../../store/slices/connectionSlice';
-import { Icon, PageWrapper, Carousel } from '../../common';
+import { Icon, PageWrapper, Carousel, Button, Input } from '../../common';
 
 import styles from './LandingPage.module.scss';
 
@@ -54,14 +54,14 @@ const HomePage = (): React.ReactElement => {
                     <div className={styles.formContainer}>
                         <form className={styles.form}>
                             <h2 className={styles.title2}>Create a new board</h2>
-                            <input className={styles.input} type="text" placeholder="Password (optional)" />
-                            <button className={styles.button}>Create</button>
+                            <Input className={styles.input} type="text" placeholder="Password (optional)" />
+                            <Button className={styles.button}>Create</Button>
                         </form>
                         <form className={styles.form}>
                             <h2 className={styles.title2}>Join a board</h2>
-                            <input className={styles.input} type="text" placeholder="Board #" />
-                            <input className={styles.input} type="password" placeholder="Password" />
-                            <button className={styles.button}>Join</button>
+                            <Input className={styles.input} type="text" placeholder="Board #" />
+                            <Input className={styles.input} type="password" placeholder="Password" />
+                            <Button className={styles.button}>Join</Button>
                         </form>
                     </div>
                 </div>

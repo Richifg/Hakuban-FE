@@ -1,12 +1,16 @@
 import React, { useState, useRef, useMemo, useLayoutEffect } from 'react';
 import { useSelector, useDispatch } from '../../../hooks';
 import { setShowChat } from '../../../store/slices/UISlice';
-import { MenuContainer, Icon } from '../../common';
+import { MenuContainer, Icon, Input } from '../../common';
 import webSocket from '../../../services/WebSocket/WebSocket';
 
 import styles from './Chat.module.scss';
 
-const Chat = (): React.ReactElement => {
+interface Chat {
+    className?: string;
+}
+
+const Chat = ({ className = '' }: Chat): React.ReactElement => {
     const dispatch = useDispatch();
     const [text, setText] = useState('');
     const { users, ownUser } = useSelector((s) => s.users);
@@ -39,7 +43,7 @@ const Chat = (): React.ReactElement => {
     };
 
     return (
-        <MenuContainer className={`${styles.chatMenu} ${showChat ? styles.show : ''}`}>
+        <MenuContainer className={`${styles.chatMenu} ${showChat ? styles.show : ''} ${className}`}>
             <button className={`${styles.button} ${styles.maximizeButton}`} onClick={() => dispatch(setShowChat(true))}>
                 <Icon name="bubble" />
             </button>
@@ -66,7 +70,7 @@ const Chat = (): React.ReactElement => {
                     })}
                 </ol>
                 <div className={styles.inputArea}>
-                    <input
+                    <Input
                         type="text"
                         className={styles.input}
                         onChange={handleChange}

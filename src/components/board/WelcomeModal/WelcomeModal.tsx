@@ -1,0 +1,65 @@
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from '../../../hooks';
+import { setShowWelcomeModal } from '../../../store/slices/UISlice';
+import { WSService } from '../../../services';
+import { userAnimals } from '../../../constants';
+import { Icon, Button, Input } from '../../common';
+
+import styles from './WelcomeModal.module.scss';
+
+const WelcomeModal = (): React.ReactElement => {
+    const dispatch = useDispatch();
+    const { ownUser, isLoading } = useSelector((s) => s.users);
+    const [username, setUsername] = useState(ownUser?.username || '');
+    const [waitingConfirm, setWaitingConfirm] = useState(false);
+
+    useEffect(() => {
+        let id: NodeJS.Timeout;
+        if (!isLoading && waitingConfirm) {
+            id = setTimeout(() => dispatch(setShowWelcomeModal(false)), 500);
+        }
+        return () => clearTimeout(id);
+    }, [isLoading, waitingConfirm]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = e.currentTarget;
+        setUsername(value);
+    };
+
+    const handleRandom = () => {
+        const randomAnimal = userAnimals[Math.floor(Math.random() * userAnimals.length)];
+        setUsername(`Anonymous ${randomAnimal}`);
+    };
+
+    const handleEnter = () => {
+        if (ownUser) {
+            WSService.updateUser({ ...ownUser, username });
+            setWaitingConfirm(true);
+        }
+    };
+
+    return (
+        <div className={`${styles.welcomeModal} ${waitingConfirm && !isLoading ? styles.animate : ''}`}>
+            <form className={styles.form}>
+                <span className={styles.background}>
+                    <h1>Welcome!</h1>
+                    <Icon className={styles.logo} name="logo" />
+                </span>
+                <span className={styles.content}>
+                    <p>Choose a username:</p>
+                    <span>
+                        <Button className={styles.randomButton} onClick={handleRandom}>
+                            <Icon name="circle" />
+                        </Button>
+                        <Input type="text" className={styles.input} value={username} onChange={handleChange} />
+                    </span>
+                    <Button className={styles.enterButton} disabled={isLoading || !ownUser || !username} onClick={handleEnter}>
+                        Enter
+                    </Button>
+                </span>
+            </form>
+        </div>
+    );
+};
+
+export default WelcomeModal;
