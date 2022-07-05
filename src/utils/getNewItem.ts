@@ -40,7 +40,7 @@ function getNewItem(x: number, y: number, type: BoardItemType): BoardItem {
                 ...noteStyle,
             };
         case 'shape':
-            const { shapeStyle, shapeType } = store.getState().tools;
+            const { shapeStyle, selectedShapeType } = store.getState().tools;
             return {
                 ...itemBase,
                 type,
@@ -48,7 +48,7 @@ function getNewItem(x: number, y: number, type: BoardItemType): BoardItem {
                 y0: y,
                 x2: x,
                 y2: y,
-                shapeType,
+                shapeType: selectedShapeType,
                 ...shapeStyle,
             };
         case 'drawing':

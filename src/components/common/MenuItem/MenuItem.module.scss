@@ -1,0 +1,82 @@
+@import '../../../styles/variables.scss';
+
+.menuItem {
+    cursor: pointer;
+    background-color: transparent;
+    color: $color-background-contrast;
+    outline: none;
+    border: none;
+    position: relative; 
+    line-height: 0;
+
+    
+    &.selected {
+        background-color: $color-background-lighter;
+        color: $color-active;
+        font-weight: bold;
+    }
+    &:hover {
+        background-color: $color-background-light;    
+    }
+    &:active {
+        background-color: $color-background;
+    }
+    &.button:active {
+        color: $color-active;
+        box-shadow: inset 4px 4px 10px -10px black,
+                    inset -4px -4px 10px -10px white;
+    }
+    
+    $subMenu-distance: 5px;
+     &:focus, &:hover {
+        .subMenu {
+            pointer-events: all;
+            opacity: 1;
+            transition-delay: 50ms;
+            &.down {
+                transform: translate(-50%, $subMenu-distance);
+            }
+            &.right {
+                transform: translateX($subMenu-distance);
+            }
+        }
+    }
+
+    
+    .subMenu {
+        pointer-events: none;
+        border-radius: 8px;
+        opacity: 0;
+        transition: 50ms transform, 50ms opacity;
+        padding: 5px !important;
+
+        &.down {
+            top: 100%;
+            left: 50%;
+            transform: translate(-50%, 0);
+        }
+        &.right {
+            top: 0;
+            left: 100%;
+            transform: translateX(0px);
+        }
+        
+        // to bridge the gap between menuItem and subMenu so hover effect on menuItem is maintained
+        &.down::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: -$subMenu-distance;
+            width: 100%;
+            height: $subMenu-distance;
+        }
+        &.right::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -$subMenu-distance;
+            height: 100%;
+            width: $subMenu-distance;
+        }
+    }
+}

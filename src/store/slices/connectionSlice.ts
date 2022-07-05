@@ -65,7 +65,7 @@ const slice = createSlice({
                 else updates.push(data as UpdateData);
             });
             // new items are sent first so updates that reference new items make sense
-            // (e.g. connecting a new Line to and old Item)
+            // (e.g. connecting a new Line to an existing Item)
             items.length && WSService.addItems(items);
             updates.length && WSService.updateItems(updates);
             state.dataToSync = {};

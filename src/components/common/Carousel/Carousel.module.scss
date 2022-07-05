@@ -1,0 +1,44 @@
+.carousel {
+    width: inherit;
+    height: inherit;    
+
+    .slide {
+        width: inherit;
+        height: inherit;
+        position: absolute;
+        border-radius: 0.4em;
+        border: 0.5em solid #b4acac;
+        outline: rgba(110, 110, 110, 0.5) solid 0.2em ;
+        outline-offset: -0.2em;
+        box-shadow: 1em 1em 2em -1em black;
+        transition: transform 1s;
+    }
+    
+    .state0 {
+        transform: scale(0.5) skew(-2deg, 11deg) translate(-67%, -28%);
+        z-index: 1;
+    }
+    .state1 {
+        transform: scale(0.7) skew(3deg, 3deg) rotateY(2deg) rotateZ(2deg) translate(-56%, 20%);
+        z-index: 2;
+    }
+    .state2 {
+        transform: scale(1) skew(6deg, -10deg) rotateY(7deg) rotateZ(7deg) translate(20%, 5%);
+        z-index: 3;
+    }
+}
+@media (max-aspect-ratio: 5/4) {
+    .carousel {
+        .state0 {
+            transform: scale(0.7) skew(8deg, -10deg) rotateY(-25deg) rotateZ(5deg) translate(68%, 12%); 
+            z-index: 2;
+        }   
+        .state1 {
+            transform: scale(0.7) skew(-8deg, 10deg) rotateY(25deg) rotateZ(-5deg) translate(-68%, 12%); 
+            z-index: 1;
+        }   
+        .state2 {
+            transform: scale(1);
+        }   
+    }
+}

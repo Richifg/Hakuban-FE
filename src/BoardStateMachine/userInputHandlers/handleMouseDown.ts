@@ -14,21 +14,23 @@ import { selectItems, selectQuickDragItem } from '../BoardStateMachineUtils';
 import { store } from '../../store/store';
 const { dispatch, getState } = store;
 
-function handleMouseDown(e: MouseEvent<HTMLDivElement>): void {
+function handleMouseDown(e: MouseEvent): void {
     const { canvasTransform, isWriting, hasCursorMoved } = getState().board;
     const { items, lineConnections, selectedItemIds } = getState().items;
     const { selectedTool } = getState().tools;
 
     const [screenX, screenY] = [e.clientX, e.clientY];
-    dispatch(setCursorPosition([screenX, screenY]));
+    const [boardX, boardY] = getBoardCoordinates(screenX, screenY, canvasTransform);
+
     hasCursorMoved && dispatch(setHasCursorMoved(false));
     dispatch(setMouseButton(e.button));
     dispatch(setInProgress(true));
+    dispatch(setIsWriting(false));
+    dispatch(setCursorPosition([screenX, screenY]));
 
     if (e.button === MouseButton.Left) {
         switch (selectedTool) {
             case 'POINTER':
-                const [boardX, boardY] = getBoardCoordinates(screenX, screenY, canvasTransform);
                 let clickedOutside = true;
 
                 if (selectedItemIds.length) {

@@ -5,10 +5,12 @@ import { User } from '../../interfaces';
 interface UsersSliceState {
     users: { [id: string]: User };
     ownUser?: User;
+    isLoading: boolean;
 }
 
 const initialState: UsersSliceState = {
     users: {},
+    isLoading: false,
 };
 
 const slice = createSlice({
@@ -24,6 +26,10 @@ const slice = createSlice({
             users.forEach((user) => {
                 const nonEmptyUser = user.username ? user : getDefaultUser(user.id);
                 state.users[user.id] = nonEmptyUser;
+                if (user.id === state.ownUser?.id) {
+                    state.ownUser = nonEmptyUser;
+                    state.isLoading = false;
+                }
             });
         },
         removeUser(state, action: PayloadAction<string>) {
@@ -34,9 +40,12 @@ const slice = createSlice({
             state.ownUser = ownUser;
             state.users[ownUser.id] = ownUser;
         },
+        setIsLoading: (state, action: PayloadAction<boolean>) => {
+            state.isLoading = action.payload;
+        },
     },
 });
 
-export const { setUsers, addUsers, removeUser, setOwnUser } = slice.actions;
+export const { setUsers, addUsers, removeUser, setOwnUser, setIsLoading } = slice.actions;
 
 export default slice.reducer;
