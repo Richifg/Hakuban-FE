@@ -19,10 +19,10 @@ const handleWheel = (e: React.WheelEvent) => {
     e.persist();
     SM.wheelScroll(e);
 };
-const handleKeyboard = (e: React.KeyboardEvent) => {
-    e.persist();
-    SM.keyPress(e);
-};
+// const handleKeyboard = (e: React.KeyboardEvent) => {
+//     e.persist();
+//     SM.keyPress(e);
+// };
 const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -53,14 +53,10 @@ const CanvasUI = (): React.ReactElement => {
             role="application"
             className={`${styles.boardUI} ${styles[selectedTool]} ${styles[currentAction]}`}
             style={{ width, height }}
-            onMouseMove={handleMouseMove}
-            onMouseDown={handleMouseDown}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            onKeyDown={handleKeyboard}
-            onKeyDownCapture={handleKeyboard}
-            onKeyPressCapture={handleKeyboard}
-            onKeyPress={handleKeyboard}
+            onPointerMove={handleMouseMove}
+            onPointerDown={handleMouseDown}
+            onPointerUp={handleMouseUp}
+            onPointerLeave={handleMouseUp}
             onWheel={handleWheel}
             onContextMenu={handleContextMenu}
         >
