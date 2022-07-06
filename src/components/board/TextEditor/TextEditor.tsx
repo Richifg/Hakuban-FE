@@ -52,20 +52,31 @@ const TextEditor = (): React.ReactElement => {
         }
     }, [isWriting, selectedItem?.id]);
 
-    // handles update of item's text
-    const handleTextChange = useDebouncedCallback((e: React.ChangeEvent<HTMLDivElement>) => {
+    const handleTextChange = (e: React.ChangeEvent<HTMLDivElement>) => {
+        // need a extra handler with actual content so if div is unmounted while debounce timer is going
+        // the content from the last call is not lost
         const lastItem = lastSelectedItemRef.current;
-        if (!isWriting && isTextItem(lastItem)) {
-            // clean html from textbox
-            const content = e.target.innerHTML
-                .replace(/\<br\/?\>/g, '/n') // line breaks into new line chars
-                .replace(/\&nbsp;/g, ' ') // nbsp's into spaces
-                .replace(/(\<\/?span[^\>]*\>)/g, ''); // remove span tags
-            // add new text content to item
-            if (lastItem.text) processTextUpdate(lastItem, { content });
-            else processTextUpdate({ ...lastItem, text: { ...textStyle, content, skipRendering: true } }, {});
-        }
-    }, 200);
+        if (lastItem) processTextChange(e.target.innerHTML, lastItem);
+    };
+
+    // handles update of item's text
+    const processTextChange = useDebouncedCallback(
+        (rawContent: string, lastItem: BoardItem) => {
+            if (isTextItem(lastItem)) {
+                // clean html from textbox
+                const content = rawContent
+                    .replace(/\<br\/?\>/g, '/n') // line breaks into new line chars
+                    .replace(/\&nbsp;/g, ' ') // nbsp's into spaces
+                    .replace(/(\<\/?span[^\>]*\>)/g, ''); // remove span tags
+                // skipRendering might need to be turned back to false if debounce took longer than deselecting the item
+                const skipRendering = lastSelectedItemRef.current?.id === lastItem.id;
+                if (lastItem.text) processTextUpdate(lastItem, { content, skipRendering });
+                else processTextUpdate({ ...lastItem, text: { ...textStyle, content, skipRendering } }, {});
+            }
+        },
+        200,
+        [textStyle],
+    );
 
     // css style vars for texteditor
     const [color, font, textAlign, verticalAlign] = useMemo(() => {
