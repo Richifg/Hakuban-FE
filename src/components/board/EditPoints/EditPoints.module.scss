@@ -1,0 +1,14 @@
+.editPoints {
+    .point {
+        position: absolute;
+        border: 1px solid blue;
+        background-color: white;
+        width: 5px;
+        height: 5px;
+        border-radius: 5px;
+        transform: translate(-50%, -50%);
+    }
+    .grab {
+        cursor: grab;
+    }
+}

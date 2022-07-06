@@ -1,10 +1,10 @@
 import { store } from '../../store/store';
 import { setUserId, setError } from '../../store/slices/connectionSlice';
-import { addMessage } from '../../store/slices/chatSlice';
-import { BoardItem, UpdateData, WSMessage, LockData, User } from '../../interfaces';
+import { addMessage, increaseUnreadMessages, setMessages } from '../../store/slices/chatSlice';
+import { BoardItem, UpdateData, WSMessage, LockData, User, ChatMessage } from '../../interfaces';
 import { processItemDeletions, processItemLocks, processItemUpdates } from '../../BoardStateMachine/BoardStateMachineUtils';
-import { addUsers, removeUser, setOwnUser } from '../../store/slices/usersSlice';
-import { getSanitizedData, getDefaultUser } from '../../utils';
+import { addUsers, removeUser, setOwnUser, setIsLoading } from '../../store/slices/usersSlice';
+import { getSanitizedData, getDefaultUser, getNewId } from '../../utils';
 
 const url = process.env.REACT_APP_SERVER_URL;
 const protocol = process.env.NODE_ENV === 'production' ? 'wss' : 'ws';
@@ -35,18 +35,35 @@ class WebSocketService {
             socket.addEventListener('message', (event) => {
                 const message = JSON.parse(event.data) as WSMessage;
                 const { type, userId } = message;
-                // only process broadcasts from other user or of type lock
-                // own locks need to be confirmed before data can be synced
-                if (userId !== this.id || type === 'lock') {
+                // only process broadcasts from other users except for
+                // own locks which need to be confirmed before data can be synced
+                // own chats which are only displayed until broacasted by BE
+                // own user updates which need to be confirmed before display
+                if (userId !== this.id || ['lock', 'chat', 'user'].includes(type)) {
                     switch (type) {
+                        case 'init':
+                            const { items, ownId, users } = message.content;
+                            this.id = ownId;
+                            store.dispatch(setUserId(ownId));
+                            store.dispatch(setOwnUser(getDefaultUser(ownId)));
+                            store.dispatch(addUsers(users));
+                            // separate items in chat and boardItems
+                            const boardItems = items.filter((item) => item.type !== 'chat') as BoardItem[];
+                            processItemUpdates(boardItems, true);
+                            const chatItems = items.filter((item) => item.type === 'chat') as ChatMessage[];
+                            store.dispatch(setMessages(chatItems));
+                            // let promise know connection to room was successfull
+                            resolve();
+                            break;
+
                         case 'error':
                             store.dispatch(setError(message.content));
                             reject(message.content);
                             break;
 
                         case 'add':
-                            const items = message.content;
-                            processItemUpdates(items, true);
+                            const newItems = message.content;
+                            processItemUpdates(newItems, true);
                             break;
 
                         case 'update':
@@ -62,6 +79,9 @@ class WebSocketService {
                         case 'chat':
                             const chatMessage = message.content;
                             store.dispatch(addMessage(chatMessage));
+                            if (chatMessage.fromId !== this.id && !store.getState().UI.showChat) {
+                                store.dispatch(increaseUnreadMessages());
+                            }
                             break;
 
                         case 'lock':
@@ -71,15 +91,7 @@ class WebSocketService {
 
                         case 'user':
                             if (message.content.userAction === 'leave') store.dispatch(removeUser(message.content.id));
-                            else store.dispatch(addUsers(message.content.users));
-                            break;
-
-                        case 'id':
-                            this.id = message.content;
-                            store.dispatch(setUserId(message.content));
-                            store.dispatch(setOwnUser(getDefaultUser(this.id)));
-                            // resolve promise to indicate successfull connect
-                            resolve();
+                            else store.dispatch(addUsers([message.content.user]));
                             break;
                     }
                 }
@@ -89,16 +101,16 @@ class WebSocketService {
         return connectionPromise;
     }
 
-    // TODO: figure out creation date/ id TODO TODO
     addChatMessage(text: string): void {
         this.sendMessage({
             userId: this.id,
             type: 'chat',
             content: {
-                id: 'TEMP', // #TODO decide where ids are generated
+                id: getNewId(),
                 type: 'chat',
                 content: text,
-                from: this.id,
+                fromUsername: store.getState().users.ownUser?.username || '',
+                fromId: this.id,
                 creationDate: Date.now(),
             },
         });
@@ -137,10 +149,11 @@ class WebSocketService {
     }
 
     updateUser(user: User): void {
+        store.dispatch(setIsLoading(true));
         this.sendMessage({
             userId: this.id,
             type: 'user',
-            content: { userAction: 'update', users: [user] },
+            content: { userAction: 'update', user },
         });
     }
 

@@ -3,15 +3,16 @@ import { useParams, useHistory } from 'react-router';
 
 import { useSelector, useDispatch } from '../../../hooks';
 import { connectToRoom } from '../../../store/slices/connectionSlice';
-import { BoardCanvas, BoardUI, TestChat, ToolsMenu, ZoomControls, AvatarMenu } from '../../common';
+import { BoardCanvas, BoardUI, ToolsMenu, StylesMenu, Chat, ZoomMenu, WelcomeModal } from '../../board';
 
-import './RoomPage.scss';
+import styles from './RoomPage.module.scss';
 
 const RoomPage = (): React.ReactElement => {
     const dispatch = useDispatch();
     const history = useHistory();
     const { roomId } = useParams<{ roomId: string }>();
     const { isLoading, isConnected, error } = useSelector((s) => s.connection);
+    const { showWelcomeModal } = useSelector((s) => s.UI);
     const password = new URLSearchParams(location.search).get('password') || undefined;
 
     useEffect(() => {
@@ -19,30 +20,19 @@ const RoomPage = (): React.ReactElement => {
     }, [roomId, password]);
 
     return (
-        <div className="room-page">
+        <div className={styles.roomPage}>
             {isConnected && (
                 <>
-                    <div className="canvas-container">
-                        <BoardCanvas />
-                        <BoardUI />
-                    </div>
-                    <div className="ui-container">
-                        <div className="tools-container">
-                            <ToolsMenu />
-                        </div>
-                        <div className="chat-container">
-                            <TestChat />
-                        </div>
-                        <div className="zoom-container">
-                            <ZoomControls />
-                        </div>
-                        <div className="avatar-menu-container">
-                            <AvatarMenu />
-                        </div>
-                    </div>
+                    <BoardCanvas />
+                    <BoardUI />
+                    <StylesMenu />
+                    <ToolsMenu className={showWelcomeModal ? styles.hiddenLeft : ''} />
+                    <ZoomMenu className={showWelcomeModal ? styles.hiddenTop : ''} />
+                    <Chat className={showWelcomeModal ? styles.hiddenRight : ''} />
+                    {showWelcomeModal && <WelcomeModal />}
                 </>
             )}
-            {isLoading && <h1>LOADING</h1>}
+            {isLoading && <h1>Connecting</h1>}
             {error && (
                 <>
                     <h1>Error: {error}</h1>

@@ -1,0 +1,13 @@
+@import '../../../styles/variables.scss';
+
+.input {
+    font-size: 16px;
+    padding: .75em 1em;
+    border: none;
+    border-radius: .75em;
+    outline: none;
+    color: $color-background-contrast;
+    background-color: $color-background-lighter;
+    box-shadow: inset 2px 2px 5px -3px #464646,
+                inset 6px 6px 15px rgba(255, 255, 255, 0.5);
+}

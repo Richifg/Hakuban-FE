@@ -22,10 +22,7 @@ function drawNote(note: Note, ctx: CanvasRenderingContext2D): void {
     // glue part shadow
     ctx.beginPath();
     const glueHeight = 0.2 * size;
-    const shadowGradient = ctx.createLinearGradient(x0, 0, x2, glueHeight);
-    shadowGradient.addColorStop(0, 'rgba(0,0,0,0.001)');
-    shadowGradient.addColorStop(1, 'rgba(0,0,0,0.01)');
-    ctx.fillStyle = shadowGradient;
+    ctx.fillStyle = 'rgba(0,0,0,0.01)';
     ctx.moveTo(x0, y0);
     ctx.lineTo(x2, y0);
     ctx.lineTo(x2, y0 + glueHeight);
@@ -33,8 +30,7 @@ function drawNote(note: Note, ctx: CanvasRenderingContext2D): void {
     ctx.closePath();
     ctx.fill();
 
-    // remove shadows
-    // ## TODO is there other way to turn off shadows?
+    // remove shadows so text doens't have any (text is drawn next)
     ctx.shadowColor = 'transparent';
 }
 

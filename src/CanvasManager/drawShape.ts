@@ -20,7 +20,11 @@ function drawShape(shape: Shape, ctx: CanvasRenderingContext2D): void {
     else if (shapeType === 'romboid') drawRomboid(shape, ctx);
     else drawBubble(shape, ctx);
 
-    ctx.stroke();
+    if (shape.lineWidth !== 0 || shape.fillColor === 'transparent') {
+        // transparent shapes still need a stroke even chosen lineWidth is 0
+        // otherweise they would be completely invisible
+        ctx.stroke();
+    }
     ctx.fill();
 }
 

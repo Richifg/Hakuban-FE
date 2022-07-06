@@ -1,0 +1,27 @@
+@import '../../../styles/variables.scss';
+
+.menuSeparator {
+    background-color: $color-background;
+    width: 1px;
+    height: auto;
+    transform: scaleY(0.8);
+    transform-origin: center;
+    padding: 0 !important;
+}
+
+
+.full {
+    height: scaleY(1);
+}
+
+.horizontal {
+    transform: none;
+    display: block;
+    margin: 5px auto;
+
+    height: 1px;
+    width: 80%;
+    &.full {
+        width: 100%;
+    }
+}

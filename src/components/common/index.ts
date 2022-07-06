@@ -1,11 +1,25 @@
-import AvatarMenu from './AvatarMenu/AvatarMenu';
-import BoardUI from './BoardUI/BoardUI';
-import BoardCanvas from './BoardCanvas/BoardCanvas';
-import EditPoints from './EditPoints/EditPoints';
-import StylesMenu from './StylesMenu/StylesMenu';
-import TestChat from './TestChat/TestChat';
-import TextEditor from './TextEditor/TextEditor';
-import ToolsMenu from './ToolsMenu/ToolsMenu';
-import ZoomControls from './ZoomControls/ZoomControls';
+import Button from './Button/Button';
+import Carousel from './Carousel/Carousel';
+import ColorPallete from './ColorPallete/ColorPallete';
+import Icon from './Icon/Icon';
+import Input from './Input/Input';
+import MenuContainer from './MenuContainer/MenuContainer';
+import MenuItem from './MenuItem/MenuItem';
+import MenuSeparator from './MenuSeparator/MenuSeparator';
+import PageWrapper from './PageWrapper/PageWrapper';
+import RangeInput from './RangeInput/RangeInput';
+import SubMenuButton from './SubMenuButton/SubMenuButton';
 
-export { AvatarMenu, BoardUI, BoardCanvas, EditPoints, StylesMenu, TestChat, TextEditor, ToolsMenu, ZoomControls };
+export {
+    Button,
+    Carousel,
+    ColorPallete,
+    Icon,
+    Input,
+    MenuContainer,
+    MenuSeparator,
+    MenuItem,
+    PageWrapper,
+    RangeInput,
+    SubMenuButton,
+};

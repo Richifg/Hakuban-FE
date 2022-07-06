@@ -1,0 +1,19 @@
+.arrowSelector {
+    .arrowOptions {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-gap: 10px;
+
+        font-size: 30px;
+        i {
+            line-height: 0.4;
+        }
+    }
+
+    // why isnt this class taking effect????>
+
+}
+
+.flipIcon {
+    transform: scaleX(-1);
+}

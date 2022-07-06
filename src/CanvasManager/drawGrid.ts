@@ -1,8 +1,5 @@
 import { store } from '../store/store';
-
-const INIT_GRID_SIZE = 20; //px
-const MIN_GRID_RENDER_SIZE = 20; //px
-const MAX_GRID_RENDER_SIZE = 250; //px
+import { INIT_GRID_SIZE, MIN_GRID_RENDER_SIZE, MAX_GRID_RENDER_SIZE } from '../constants';
 
 function drawGrid(ctx: CanvasRenderingContext2D): void {
     const { canvasSize, canvasTransform } = store.getState().board;
@@ -14,7 +11,7 @@ function drawGrid(ctx: CanvasRenderingContext2D): void {
     while (smallGridSize * scale < MIN_GRID_RENDER_SIZE) {
         smallGridSize *= 5;
     }
-    // big gridSize is always 5 times as big as smaller one
+    // 5x5 cells make up a cell of the bigger grid
     const bigGridSize = 5 * smallGridSize;
 
     ctx.save();
@@ -28,7 +25,7 @@ function drawGrid(ctx: CanvasRenderingContext2D): void {
             const [offsetX, offsetY] = [dX % scaledGridSize, dY % scaledGridSize];
 
             // the smaller the subdivisions the lighter they are drawn
-            const lightness = 95 + 5 * (MIN_GRID_RENDER_SIZE / scaledGridSize);
+            const lightness = 90 + 5 * (MIN_GRID_RENDER_SIZE / scaledGridSize);
             ctx.strokeStyle = `hsl(0, 0%, ${lightness}%)`;
 
             ctx.beginPath();
