@@ -94,6 +94,7 @@ export const {
     setShapeStyle,
     setTextStyle,
     setNoteStyle,
+    setLineStyle,
     setDrawingStyle,
     updateNewColorIndex,
     addCustomColor,

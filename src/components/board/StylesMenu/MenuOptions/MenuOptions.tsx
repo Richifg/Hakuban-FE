@@ -2,7 +2,7 @@ import React, { useMemo, useLayoutEffect } from 'react';
 import { useDispatch, useSelector } from '../../../../hooks';
 import { setCurrentAction } from '../../../../store/slices/boardSlice';
 import { Align, BoardItem, Shape, Line, Text } from '../../../../interfaces';
-import { processItemDeletions, processItemUpdates } from '../../../../BoardStateMachine/BoardStateMachineUtils';
+import { processItemDeletions, processItemUpdates, updateStyles } from '../../../../BoardStateMachine/BoardStateMachineUtils';
 import { isTextItem } from '../../../../utils';
 import { MenuItem, MenuSeparator } from '../../../common';
 import {
@@ -34,6 +34,7 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
     const handleChange = (value: string | number, key: string) => {
         const updateData = items.map(({ id }) => ({ id, [key]: value }));
         processItemUpdates(updateData);
+        if (items.length === 1) updateStyles(items[0].type, key, value);
     };
 
     // nested change is only used for the text property of items
@@ -45,6 +46,7 @@ const MenuOptions = ({ items, onRender }: MenuOptions): React.ReactElement => {
                 return { id: item.id, text: newText };
             });
             processItemUpdates(updateData);
+            if (items.length === 1) updateStyles(items[0].type, key, value);
         }
     };
 
