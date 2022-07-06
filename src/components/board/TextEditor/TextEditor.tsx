@@ -68,9 +68,10 @@ const TextEditor = (): React.ReactElement => {
                     .replace(/\<br\/?\>/g, '/n') // line breaks into new line chars
                     .replace(/\&nbsp;/g, ' ') // nbsp's into spaces
                     .replace(/(\<\/?span[^\>]*\>)/g, ''); // remove span tags
-                // add new text content to item
-                if (lastItem.text) processTextUpdate(lastItem, { content });
-                else processTextUpdate({ ...lastItem, text: { ...textStyle, content, skipRendering: true } }, {});
+                // skipRendering might need to be turned back to false if debounce took longer than deselecting the item
+                const skipRendering = lastSelectedItemRef.current?.id === lastItem.id;
+                if (lastItem.text) processTextUpdate(lastItem, { content, skipRendering });
+                else processTextUpdate({ ...lastItem, text: { ...textStyle, content, skipRendering } }, {});
             }
         },
         200,
