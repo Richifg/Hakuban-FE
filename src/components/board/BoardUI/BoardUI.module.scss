@@ -14,10 +14,10 @@
     &.RESIZE  { cursor: default; }
 
     // tools
-    &.PEN { cursor: url('../../../assets/images/cursorPen.png') 0 16, alias !important;  }
+    &.PEN { cursor: url('../../../assets/images/cursors/pen.png') 0 16, alias !important;  }
     &.POINTER { cursor: pointer; }
     &.SHAPE { cursor: crosshair !important; }
-    &.TEXT { cursor: url('../../../assets/images/cursorText.png'), text !important; }
-    &.NOTE { cursor: url('../../../assets/images/cursorNote.png'), default; }
+    &.TEXT { cursor: url('../../../assets/images/cursors/text.png'), text !important; }
+    &.NOTE { cursor: url('../../../assets/images/cursors/note.png'), default; }
     &.LINE { cursor: crosshair !important; }
 }
