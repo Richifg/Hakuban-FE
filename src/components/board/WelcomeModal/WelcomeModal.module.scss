@@ -49,13 +49,44 @@
     flex-direction: column;
 }
 
+.inputContainer {
+    display: flex;
+    align-items: center;
+}
 
-.input {
-}
 .randomButton {
-    margin-right: 1em;
+    cursor: pointer;
+    margin-right: 10px;
+    background-color: transparent;
+    color: $color-primary;
+    outline: none;
+    border: none;
+    font-size: 30px;
+    padding: 2px 4px;
+    display: flex;
+    align-items: center;
+    border-radius: 4px;
+    i {
+        transition: transform 0.2s;
+    }
+    &:hover {
+        background-color:  $color-background-light;
+    };
+    &:active {
+        background-color: $color-background;
+        i {
+            animation: tumble 0.1s infinite;
+        }
+    }
 }
+@keyframes tumble {
+    33% { transform: translateY(3px) rotate(90deg)}
+    66% { transform: translateY(-3px) rotate(180deg)}
+    100% { transform: translateY(0px) rotate(270deg); }
+}
+
+
 .enterButton {
     align-self: end;
-    margin-top: 1em;
+    margin-top: 10px;
 }
