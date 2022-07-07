@@ -2,14 +2,14 @@
 
 .button {
     cursor: pointer;
-    border-radius: 10px;
+    border-radius: 8px;
     outline: none;
     border: 2px solid $color-primary;
     background-color: $color-primary;
     color: $color-primary-contrast;
-    font-size: 18px;
-    font-weight: 700; 
-    padding: .5em 1em;
+    font-size: inherit;
+    font-weight: bold; 
+    padding: .3em .8em;
     
     &:hover:not(:disabled) {
         background-color: $color-primary-light;

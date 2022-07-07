@@ -1,10 +1,16 @@
 .carousel {
     width: inherit;
-    height: inherit;    
+    height: 0;
+    position: relative;
+    height: 0;
+    padding-bottom: 65%;
+    top: 50%;
+    transform: translateY(-50%);
 
     .slide {
-        width: inherit;
-        height: inherit;
+        width: 100%;
+        width: 100%;
+        height: auto;
         position: absolute;
         border-radius: 0.4em;
         border: 0.5em solid #b4acac;
@@ -15,30 +21,31 @@
     }
     
     .state0 {
-        transform: scale(0.5) skew(-2deg, 11deg) translate(-67%, -28%);
+        transform: scale(0.6) skew(1deg, -8deg) translate(37%, -32%);
         z-index: 1;
     }
     .state1 {
-        transform: scale(0.7) skew(3deg, 3deg) rotateY(2deg) rotateZ(2deg) translate(-56%, 20%);
+        transform: scale(0.7) skew(-2deg, -2deg) rotateY(-2deg) rotateZ(-2deg) translate(46%, 15%);
         z-index: 2;
     }
     .state2 {
-        transform: scale(1) skew(6deg, -10deg) rotateY(7deg) rotateZ(7deg) translate(20%, 5%);
+        transform: scale(1) skew(-6deg, 8deg) rotateY(-2deg) rotateZ(-6deg) translate(-9%, 4%);
         z-index: 3;
     }
 }
-@media (max-aspect-ratio: 5/4) {
+
+@media (max-width: 1000px) {
     .carousel {
         .state0 {
-            transform: scale(0.7) skew(8deg, -10deg) rotateY(-25deg) rotateZ(5deg) translate(68%, 12%); 
+            transform: scale(0.5) skew(-5deg, 9deg) rotateY(25deg) rotateZ(-5deg) translate(-72%, 12%);
             z-index: 2;
         }   
         .state1 {
-            transform: scale(0.7) skew(-8deg, 10deg) rotateY(25deg) rotateZ(-5deg) translate(-68%, 12%); 
+            transform: scale(0.5) skew(5deg, -9deg) rotateY(-25deg) rotateZ(5deg) translate(72%, 12%);
             z-index: 1;
         }   
         .state2 {
-            transform: scale(1);
+            transform: scale(0.8);
         }   
     }
 }
