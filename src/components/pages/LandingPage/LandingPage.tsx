@@ -3,8 +3,7 @@ import { useHistory } from 'react-router';
 
 import { useDispatch, useSelector } from '../../../hooks';
 import { createRoom } from '../../../store/slices/connectionSlice';
-import { Icon, Carousel, Button, Input } from '../../common';
-import collabImage from '../../../assets/images/collaboration.png';
+import { Icon, Carousel, Button, Input, Animation } from '../../common';
 
 import styles from './LandingPage.module.scss';
 
@@ -44,7 +43,9 @@ const HomePage = (): React.ReactElement => {
                         Online <br></br>
                         <span className={styles.big}>Whiteboard</span>
                     </h1>
-                    <img src={collabImage} className={styles.collaborationImage} />
+                    <div className={styles.animationContainer}>
+                        <Animation />
+                    </div>
                     <div className={styles.formContainer}>
                         <div className={styles.formContent}>
                             <form className={styles.form}>

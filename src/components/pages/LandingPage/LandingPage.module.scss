@@ -52,7 +52,7 @@ $content-width: 1200px;
     grid-row-gap: 100px;
     grid-template-areas:
     "title title title title form form"
-    "img  img  img img form form"
+    "anim  anim  anim anim form form"
     "list  list list carousel carousel carousel"
     "cta cta cta cta cta cta"
 }
@@ -74,12 +74,14 @@ $content-width: 1200px;
 
 
 // ---------------
-// ---- IMG  -----
+// -- ANIMATION --
 // ---------------
-.collaborationImage {
-    grid-area: img;
+.animationContainer {
+    grid-area: anim;
     max-width: 80%;
+    width: 100%;
     margin: 0 auto;
+    position: relative;
 }
 
 

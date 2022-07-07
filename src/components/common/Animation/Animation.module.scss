@@ -1,0 +1,89 @@
+.animation {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+
+    .base {
+        width: 100%;
+        position: static;
+        // opacity: 50%;
+        // border: 1px solid red; 
+    }
+
+    .container, img:not(.base) {
+        display: block;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        // border: 1px solid red;
+    }
+
+}
+
+
+// -----------------
+// ---Animation 1---
+// -----------------
+$animation1-duration: 12s;
+$animation1-delay: 0s;
+.arm1 {
+    transform-origin:  5% 31%;
+    animation: arm1 $animation1-duration $animation1-delay forwards infinite;
+}
+
+.forearm1 {
+    transform-origin: 11% 43%;
+    animation: forearm1 $animation1-duration $animation1-delay forwards infinite;
+}
+
+.item1 {
+    transform-origin: 16.4% 26.6%;
+    animation: item1 $animation1-duration $animation1-delay forwards infinite;
+}
+
+@keyframes arm1 {
+     5% { transform: rotate(0deg) }
+    10% { transform: rotate(-20deg) }
+    15% { transform: rotate(-20deg) }
+    20% { transform: rotate(0deg) }
+    80% { transform: rotate(0deg) }
+    85% { transform: rotate(-20deg) }
+    90% { transform: rotate(-20deg) }
+    95% { transform: rotate(0deg) }
+   100% { transform: rotate(0deg) }
+}
+
+@keyframes forearm1 {
+     5% { transform: rotate(0deg); }
+    10% { transform: rotate(40deg); }
+    15% { transform: rotate(40deg); }
+    20% { transform: rotate(0deg); }
+    25% { transform: rotate(-20deg); }
+    75% { transform: rotate(-20deg); }
+    80% { transform: rotate(0deg); }
+    85% { transform: rotate(40deg); }
+    90% { transform: rotate(40deg); }
+    95% { transform: rotate(-10deg); }
+   100% { transform: rotate(0deg); }
+}
+
+@keyframes item1 {
+    5% { transform: translateX(0%); }
+    10% { transform: translateX(5%); }
+    90% { transform: translateX(5%); }
+    95% { transform: translateX(0%); }
+}
+
+
+// &::after {
+//     content: '';
+//     position: absolute;
+//     left: 10%;
+//     top: 35%;
+//     width: 5px;
+//     height: 5px;
+//     background-color: red;
+// }
+
