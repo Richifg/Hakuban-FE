@@ -41,7 +41,7 @@ const EditPoints = (): React.ReactElement => {
                         id={point}
                         className={`${styles.point} ${isPointer ? styles.grab : ''}`}
                         style={{ left: x, top: y }}
-                        onMouseDown={handleMouseDown}
+                        onPointerDown={handleMouseDown}
                     />
                 ))}
         </div>
