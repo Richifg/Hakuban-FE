@@ -130,7 +130,7 @@ $content-width: 1200px;
         width: 30%;
         height: 1px;
         background-color: currentColor;
-        opacity: 50%;
+        opacity: 0.25;
     }
     &::before {
         left: 10%;
@@ -256,6 +256,7 @@ $content-width: 1200px;
     }
     .formContainer {
         width: 100%;
+        margin-top: 0;
     }
     .formContent {
         width: min(100%, 400px);
@@ -265,6 +266,7 @@ $content-width: 1200px;
         font-size: min(12vw, 75px);
         align-self: start;
         margin-left: 15px;
+        margin-top: 25px;
     }
     .featureList {
         max-width: min(100%, 600px);
