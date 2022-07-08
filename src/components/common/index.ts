@@ -1,3 +1,4 @@
+import Animation from './Animation/Animation';
 import Button from './Button/Button';
 import Carousel from './Carousel/Carousel';
 import ColorPallete from './ColorPallete/ColorPallete';
@@ -11,6 +12,7 @@ import RangeInput from './RangeInput/RangeInput';
 import SubMenuButton from './SubMenuButton/SubMenuButton';
 
 export {
+    Animation,
     Button,
     Carousel,
     ColorPallete,

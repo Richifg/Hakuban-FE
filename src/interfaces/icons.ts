@@ -50,4 +50,10 @@ export type IconName =
     | 'lineCurved'
     | 'lineStraight'
     | 'lineStepped'
-    | 'send';
+    | 'send'
+    | 'clock'
+    | 'noMoney'
+    | 'cog'
+    | 'dice'
+    | 'infinite'
+    | 'connect';

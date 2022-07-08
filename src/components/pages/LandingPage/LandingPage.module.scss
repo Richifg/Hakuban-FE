@@ -1,162 +1,302 @@
 @import '../../../styles/variables.scss';
 
- 
+$page-width: 1400px;
+$content-width: 1200px;
+
 .landingPage {
-    color: $color-primary;
-    background: linear-gradient(90deg, $color-primary 0 60%, $color-background 60% 100%);
-    position: relative;
-
-    .landingPageContent {
-        background: url('../../../assets/images/backgroundMask.svg'); 
-        background-size: 100% 100%;
-    }
-
-    .navbar {
-        width: 100%;
-        flex-shrink: 0;
-        padding: 1em 4em;
-    }
-
-    .link {
-        font-size: 1.5em;
-        font-weight: 900;
-        color: currentColor;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-    }
-
-    .logoIcon {
-        color: $color-primary-contrast;
-        margin-right: .8em;
-        font-size: 1.2em;
-    }
-    
-    .main {
-        width: 100%;
-        flex-grow: 1;
-        display: flex;
-    }
-
-    .col {
-        flex-basis: 50%;
-        display: flex;
-        flex-direction: column; 
-        justify-content: center;
-        align-items: center;
-        position: relative;
-        
-        &:first-of-type {
-            color: $color-primary-contrast;
-            align-items: start;
-            margin-left: 7em;
-        }
-    
-    }
-
-    .title1 {
-        font-size: 5em;
-        font-weight: 900;
-        line-height: 0.85;
-        margin: 0 0 0.5em 0;
-        color: $color-primary-contrast; 
-
-        .big {
-            font-size: 1.2em;
-            font-weight: 300
-        }
-    }
-
-    .carouselContainer {
-        width: 30em;
-        height: 18em;
-        margin-bottom: 2em;
-        position: relative;
-        left: 6em;
-    }
-    
-    .subtitle1 {
-        font-size: 2em;
-        font-weight: 400;
-        font-style: italic;
-    }
-
-    .formContainer {
-        background-color: $color-background-light;
-        border-radius: 1em;
-        padding: 2em;
-        box-shadow: 4px 4px 15px -2px rgb(50 50 50 / 30%);
-        position: relative;
-    }
-
-    .form {
-        display: flex;
-        flex-direction: column;
-
-        &:not(:last-child) {
-            margin-bottom: 2em;
-        }
-    }
-
-    .title2 {
-        font-size: 1.2em;
-        font-weight: 700;
-        margin: 0 0 1em 0;
-
-    }
-
-    .input {
-        font-size: 0.8em;
-        margin-bottom: 1em;
-    }
-
-    .button {
-        align-self: end;
-        font-size: .75em;
-    }
-
-    .backgroundLogo {
-        position: absolute;
-        right: 0;
-        bottom: 0;
-        transform: translate(17%, 20%);
-        font-size: 35em;
-        color: black;
-        opacity: 0.02;
-        filter: blur(4px);
-    }
+    background-color: $color-background;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
 }
 
-@media (max-aspect-ratio: 5/4) {
-    .landingPage { 
-        color: $color-background-contrast;
-        background-color: $color-background;
+// ---------------
+// ----NAVBAR-----
+// ---------------
+.navbar {
+    padding: 20px;
+    max-width: $page-width;
+    width: 100%;
+    box-sizing: border-box;
+}
+.link {
+    display: flex;
+    color: $color-primary;
+    font-size: 25px;
+    text-decoration: none;
+    font-weight: bold;
+}
+.logoIcon {
+    color: $color-background-contrast;
+    margin-right: 10px;
+    font-size: 1.3em;
+}
 
-        .landingPageContent {
-            background: none;
+// ---------------
+// ---- MAIN -----
+// ---------------
+.main {
+    max-width: $content-width;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 40px;
+    display: flex;
+    justify-content: center;
+}
+.grid {
+    display: grid;
+    grid-template-columns: repeat(6, 2fr);
+    grid-template-rows: repeat(4, auto);
+    grid-row-gap: 100px;
+    grid-template-areas:
+    "title title title title form form"
+    "anim  anim  anim anim form form"
+    "list  list list carousel carousel carousel"
+    "cta cta cta cta cta cta"
+}
+
+// ---------------
+// ---- TITLE ----
+// ---------------
+.title {
+    font-size: 80px;
+    line-height: 0.9;
+    grid-area: title;
+    margin: 50px 0 0 0;
+}
+.big {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: $color-primary;
+}
+
+
+// ---------------
+// -- ANIMATION --
+// ---------------
+.animationContainer {
+    grid-area: anim;
+    max-width: 80%;
+    width: 100%;
+    margin: 0 auto;
+    position: relative;
+}
+
+
+
+@mixin container { 
+    background-color: white;
+    border-radius: 6px;
+    box-shadow: 0px 0px 25px -15px black;
+}
+
+
+// ---------------
+// ---- FORM -----
+// ---------------
+.formContainer {
+    grid-area: form;
+    display: flex;
+    align-items: center;
+    margin-top: 50px;
+}
+.formContent {
+    @include container;
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+}
+.form {
+    display: flex;
+    flex-direction: column;
+    padding: 25px 30px;
+}
+.or {
+    width: 100%;
+    text-align: center;
+    margin: 15px 0;
+    color: gray;
+    position: relative;
+    margin: -5px 0;
+    font-size: 12px;
+    &::after, &::before {
+        content: '';
+        position: absolute;
+        right: 10%;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 30%;
+        height: 1px;
+        background-color: currentColor;
+        opacity: 50%;
+    }
+    &::before {
+        left: 10%;
+    }
+}
+.formTitle {
+    color: $color-primary;
+    font-weight: bold;
+    font-size: 22px;
+    margin-top: 0;
+}
+.input {
+    margin-bottom: 10px;
+}
+.button {
+    align-self: end;
+}
+
+// ---------------
+// ---- LIST -----
+// ---------------
+.listContainer {
+    grid-area: list;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.featureList {
+    list-style: none;
+    max-width: 80%;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+}
+.feature {
+    display: flex;
+    &:not(:last-child) {
+        margin-bottom: 20px;
+    }
+    font-size: 35px;
+}
+.featureContent { 
+    @include container;
+    padding: 10px 15px;
+    margin-left: 10px;
+    font-size: 18px;
+    flex-grow: 1;
+}
+.featureTitle {
+    color: $color-primary;
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 10px; 
+}
+.featureDescription {
+    margin: 0;
+}
+
+
+// ---------------
+// -- CAROUSEL ---
+// ---------------
+.carouselContainer {
+    grid-area: carousel;
+    display: flex;
+    justify-content: center;
+}
+.carouselContent {
+    width: 100%;
+    max-width: 75%;
+}
+
+// ---------------
+// ----  CTA -----
+// ---------------
+.ctaContainer {
+    grid-area: cta;
+    display: flex;
+    justify-content: center;
+}
+.cta {
+    margin: 75px 0;
+    font-size: 28px;
+    
+}
+
+// ---------------
+// --- FOOTER ----
+// ---------------
+.footer {
+    max-width: $page-width;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    font-size: 14px;
+}
+.footerText {
+    margin-left: 10px;
+}
+
+
+
+// --------------------
+// --- MOBILE VIEW ---- 
+// --------------------
+
+@media (max-width: 900px) {
+    .link {
+        font-size: min(5vw, 25px);
+    }
+    .main {
+        padding: 0 20px;
+    }
+    .grid {
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        grid-row-gap: min(100px, 10vw); 
+    }
+    .formContainer {
+        width: 100%;
+    }
+    .formContent {
+        width: min(100%, 400px);
+        margin: 0 auto;
+    }
+    .title {
+        font-size: min(12vw, 75px);
+        align-self: start;
+        margin-left: 15px;
+    }
+    .featureList {
+        max-width: min(100%, 600px);
+    }
+    .carouselContainer {
+        width: 100%;
+    }
+    .cta {
+        margin: 10px 0;
+    }
+
+    @media (min-width: 650px) {
+        .formContainer {
+            margin-top: 0;
+            width: 100%;
         }
-
-        .navbar {
-            background-color: $color-primary;
-            color: $color-primary-contrast;
+        .formContent {
+            box-shadow: none;
+            background-color: transparent;
+            flex-direction: row;
+            justify-content: space-around;
+            width: 100%;
         }
-
-        .main {
+        .form {
+            @include container;
+            display: flex;
             flex-direction: column;
+            padding: 25px;
         }
-
-        .col {
-            margin: 0 !important;
-
-            &:first-of-type {
-                align-items: center;
-                background-color: $color-primary;
-                color: $color-primary-contrast;
-            }
-        }
-
-        .carouselContainer {
-            left: auto;
+        .or {
+            display: none;
         }
     }
-};
+}
+ 
