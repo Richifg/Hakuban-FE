@@ -25,8 +25,8 @@ const HomePage = (): React.ReactElement => {
         history.push(`/room/${newRoomId}` + (password ? `?password=${password}` : ''));
     };
 
-    const handleCreateRoom = () => {
-        dispatch(createRoom(newPassword));
+    const handleCreateRoom = (password?: string) => () => {
+        dispatch(createRoom(password));
     };
 
     return (
@@ -50,15 +50,37 @@ const HomePage = (): React.ReactElement => {
                         <div className={styles.formContent}>
                             <form className={styles.form}>
                                 <h2 className={styles.formTitle}>Create a new board</h2>
-                                <Input className={styles.input} type="text" placeholder="Password (optional)" />
-                                <Button className={styles.button}>Create</Button>
+                                <Input
+                                    className={styles.input}
+                                    type="text"
+                                    placeholder="Password (optional)"
+                                    value={newPassword}
+                                    onChange={({ currentTarget }) => setNewPassword(currentTarget.value)}
+                                />
+                                <Button className={styles.button} onClick={handleCreateRoom(newPassword)} disabled={isLoading}>
+                                    Create
+                                </Button>
                             </form>
                             <span className={styles.or}>OR</span>
                             <form className={styles.form}>
                                 <h2 className={styles.formTitle}>Join a board</h2>
-                                <Input className={styles.input} type="text" placeholder="Board #" />
-                                <Input className={styles.input} type="password" placeholder="Password" />
-                                <Button className={styles.button}>Join</Button>
+                                <Input
+                                    className={styles.input}
+                                    type="text"
+                                    placeholder="Board #"
+                                    value={newRoomId}
+                                    onChange={({ currentTarget }) => setNewRoomId(currentTarget.value)}
+                                />
+                                <Input
+                                    className={styles.input}
+                                    type="password"
+                                    placeholder="Password"
+                                    value={password}
+                                    onChange={({ currentTarget }) => setPassword(currentTarget.value)}
+                                />
+                                <Button className={styles.button} onClick={handleJoinRoom} disabled={isLoading}>
+                                    Join
+                                </Button>
                             </form>
                         </div>
                     </div>
@@ -101,7 +123,9 @@ const HomePage = (): React.ReactElement => {
                         </div>
                     </div>
                     <div className={styles.ctaContainer}>
-                        <Button className={styles.cta}>Create a new board</Button>
+                        <Button className={styles.cta} onClick={handleCreateRoom()} disabled={isLoading}>
+                            Create a new board
+                        </Button>
                     </div>
                 </div>
             </main>
