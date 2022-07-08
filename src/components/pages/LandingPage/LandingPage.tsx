@@ -3,7 +3,7 @@ import { useHistory } from 'react-router';
 
 import { useDispatch, useSelector } from '../../../hooks';
 import { createRoom } from '../../../store/slices/connectionSlice';
-import { Icon, PageWrapper, Carousel, Button, Input } from '../../common';
+import { Icon, Carousel, Button, Input, Animation } from '../../common';
 
 import styles from './LandingPage.module.scss';
 
@@ -30,7 +30,7 @@ const HomePage = (): React.ReactElement => {
     };
 
     return (
-        <PageWrapper wrapperClassName={styles.landingPage} contentClassName={styles.landingPageContent}>
+        <div className={styles.landingPage}>
             <nav className={styles.navbar}>
                 <a href="/" className={styles.link}>
                     <Icon className={styles.logoIcon} name="logo" />
@@ -38,35 +38,78 @@ const HomePage = (): React.ReactElement => {
                 </a>
             </nav>
             <main className={styles.main}>
-                <Icon className={styles.backgroundLogo} name="logo" />
-                <div className={styles.col}>
-                    <h1 className={styles.title1}>
+                <div className={styles.grid}>
+                    <h1 className={styles.title}>
                         Online <br></br>
                         <span className={styles.big}>Whiteboard</span>
                     </h1>
-                    <div className={styles.carouselContainer}>
-                        <Carousel />
+                    <div className={styles.animationContainer}>
+                        <Animation />
                     </div>
-                    <p className={styles.subtitle1}>No sign-up required!</p>
-                    <p>Boards are deleted after 24h</p>
-                </div>
-                <div className={styles.col}>
                     <div className={styles.formContainer}>
-                        <form className={styles.form}>
-                            <h2 className={styles.title2}>Create a new board</h2>
-                            <Input className={styles.input} type="text" placeholder="Password (optional)" />
-                            <Button className={styles.button}>Create</Button>
-                        </form>
-                        <form className={styles.form}>
-                            <h2 className={styles.title2}>Join a board</h2>
-                            <Input className={styles.input} type="text" placeholder="Board #" />
-                            <Input className={styles.input} type="password" placeholder="Password" />
-                            <Button className={styles.button}>Join</Button>
-                        </form>
+                        <div className={styles.formContent}>
+                            <form className={styles.form}>
+                                <h2 className={styles.formTitle}>Create a new board</h2>
+                                <Input className={styles.input} type="text" placeholder="Password (optional)" />
+                                <Button className={styles.button}>Create</Button>
+                            </form>
+                            <span className={styles.or}>OR</span>
+                            <form className={styles.form}>
+                                <h2 className={styles.formTitle}>Join a board</h2>
+                                <Input className={styles.input} type="text" placeholder="Board #" />
+                                <Input className={styles.input} type="password" placeholder="Password" />
+                                <Button className={styles.button}>Join</Button>
+                            </form>
+                        </div>
+                    </div>
+                    <div className={styles.listContainer}>
+                        <ul className={styles.featureList}>
+                            <li className={styles.feature}>
+                                <Icon name="noMoney" />
+                                <span className={styles.featureContent}>
+                                    <p className={styles.featureTitle}>No sign-up required</p>
+                                    <p className={styles.featureDescription}>
+                                        Create a new board and start collaborating right away, no account required. *
+                                    </p>
+                                </span>
+                            </li>
+                            <li className={styles.feature}>
+                                <Icon name="infinite" />
+                                <span className={styles.featureContent}>
+                                    <p className={styles.featureTitle}>Infinite canvas</p>
+                                    <p className={styles.featureDescription}>
+                                        Dont let canvas size limit your creativity. Use as much space as you need on this
+                                        infinitely growing whiteboard.
+                                    </p>
+                                </span>
+                            </li>
+                            <li className={styles.feature}>
+                                <Icon name="connect" />
+                                <span className={styles.featureContent}>
+                                    <p className={styles.featureTitle}>Real-time collaboration</p>
+                                    <p className={styles.featureDescription}>
+                                        Brainstorming, sketching, wireframing. Hakuban is intuitive tool that lets you and your
+                                        team collaborate in real-time from anywhere around the world.
+                                    </p>
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div className={styles.carouselContainer}>
+                        <div className={styles.carouselContent}>
+                            <Carousel />
+                        </div>
+                    </div>
+                    <div className={styles.ctaContainer}>
+                        <Button className={styles.cta}>Create a new board</Button>
                     </div>
                 </div>
             </main>
-        </PageWrapper>
+            <footer className={styles.footer}>
+                <Icon name="clock" />
+                <p className={styles.footerText}>*Boards are deleted after 24h of creation.</p>
+            </footer>
+        </div>
     );
 };
 

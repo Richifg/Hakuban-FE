@@ -47,11 +47,11 @@ const WelcomeModal = (): React.ReactElement => {
                 </span>
                 <span className={styles.content}>
                     <p>Choose a username:</p>
-                    <span>
-                        <Button className={styles.randomButton} onClick={handleRandom}>
-                            <Icon name="circle" />
-                        </Button>
-                        <Input type="text" className={styles.input} value={username} onChange={handleChange} />
+                    <span className={styles.inputContainer}>
+                        <button type="button" className={styles.randomButton} onClick={handleRandom}>
+                            <Icon name="dice" />
+                        </button>
+                        <Input type="text" value={username} onChange={handleChange} />
                     </span>
                     <Button className={styles.enterButton} disabled={isLoading || !ownUser || !username} onClick={handleEnter}>
                         Enter

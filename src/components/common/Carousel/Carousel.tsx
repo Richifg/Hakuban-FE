@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import kanban from '../../../assets/images/kanban.png';
+import kanban from '../../../assets/images/boards/kanban.png';
 
 import styles from './Carousel.module.scss';
 
