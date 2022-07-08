@@ -3,7 +3,7 @@ import { useHistory } from 'react-router';
 
 import { useDispatch, useSelector } from '../../../hooks';
 import { createRoom } from '../../../store/slices/connectionSlice';
-import { Icon, Carousel, Button, Input, Animation } from '../../common';
+import { Icon, Carousel, Button, Input, Animation, LoadingScreen } from '../../common';
 
 import styles from './LandingPage.module.scss';
 
@@ -13,7 +13,7 @@ const HomePage = (): React.ReactElement => {
     const [newRoomId, setNewRoomId] = useState('');
     const [password, setPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
-    const { roomId, isLoading, error } = useSelector((s) => s.connection);
+    const { roomId, isLoading } = useSelector((s) => s.connection);
 
     useEffect(() => {
         if (roomId) {
@@ -133,6 +133,7 @@ const HomePage = (): React.ReactElement => {
                 <Icon name="clock" />
                 <p className={styles.footerText}>*Boards are deleted after 24h of creation.</p>
             </footer>
+            <LoadingScreen active={isLoading} text="Creating" />
         </div>
     );
 };

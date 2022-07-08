@@ -4,6 +4,7 @@ import { useParams, useHistory } from 'react-router';
 import { useSelector, useDispatch } from '../../../hooks';
 import { connectToRoom } from '../../../store/slices/connectionSlice';
 import { BoardCanvas, BoardUI, ToolsMenu, StylesMenu, Chat, ZoomMenu, WelcomeModal } from '../../board';
+import { LoadingScreen } from '../../common';
 
 import styles from './RoomPage.module.scss';
 
@@ -32,7 +33,7 @@ const RoomPage = (): React.ReactElement => {
                     {showWelcomeModal && <WelcomeModal />}
                 </>
             )}
-            {isLoading && <h1>Connecting</h1>}
+            <LoadingScreen active={isLoading} />
             {error && (
                 <>
                     <h1>Error: {error}</h1>

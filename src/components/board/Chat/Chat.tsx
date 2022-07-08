@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo, useLayoutEffect } from 'react';
+import React, { useState, useRef, useMemo, useLayoutEffect, Fragment } from 'react';
 import { useSelector, useDispatch } from '../../../hooks';
 import { setShowChat } from '../../../store/slices/UISlice';
 import { MenuContainer, Icon, Input } from '../../common';
@@ -72,9 +72,8 @@ const Chat = ({ className = '' }: Chat): React.ReactElement => {
                         const isLastRead = lastReadMessageId === id && index !== sortedMessages.length - 1;
                         const isSameUser = index > 0 && sortedMessages[index - 1].fromId === fromId;
                         return (
-                            <>
+                            <Fragment key={id}>
                                 <li
-                                    key={index}
                                     className={`${styles.messageContainer} ${ownUser?.id === fromId ? styles.ownMessage : ''} ${
                                         isSameUser ? styles.sameUser : ''
                                     }`}
@@ -85,7 +84,7 @@ const Chat = ({ className = '' }: Chat): React.ReactElement => {
                                     <p className={styles.message}>{content}</p>
                                 </li>
                                 {isLastRead && <span className={styles.lastMsgSeparator}>---Last read message----</span>}
-                            </>
+                            </Fragment>
                         );
                     })}
                 </ol>
