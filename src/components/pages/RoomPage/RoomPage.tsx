@@ -22,7 +22,7 @@ const RoomPage = (): React.ReactElement => {
 
     const handleErrorClose = () => {
         dispatch(setError(''));
-        history.push('/');
+        if (!isConnected) history.push('/');
     };
 
     return (
