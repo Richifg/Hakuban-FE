@@ -9,8 +9,8 @@
 
     .slide {
         width: 100%;
-        width: 100%;
         height: auto;
+        box-sizing: border-box;
         position: absolute;
         border-radius: 0.4em;
         border: 0.5em solid #b4acac;
@@ -37,11 +37,11 @@
 @media (max-width: 1000px) {
     .carousel {
         .state0 {
-            transform: scale(0.5) skew(-5deg, 9deg) rotateY(25deg) rotateZ(-5deg) translate(-72%, 12%);
+            transform: scale(0.5) skew(-5deg, 9deg) rotateY(25deg) rotateZ(-5deg) translate(-68%, 12%);
             z-index: 2;
         }   
         .state1 {
-            transform: scale(0.5) skew(5deg, -9deg) rotateY(-25deg) rotateZ(5deg) translate(72%, 12%);
+            transform: scale(0.5) skew(5deg, -9deg) rotateY(-25deg) rotateZ(5deg) translate(68%, 12%);
             z-index: 1;
         }   
         .state2 {

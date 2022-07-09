@@ -26,8 +26,8 @@ const RangeInput = ({ min, max, value, label, ...rest }: RangeInput): React.Reac
                     min={min}
                     max={max}
                     value={value}
-                    onMouseDown={() => dispatch(setInProgress(true))}
-                    onMouseUp={() => dispatch(setInProgress(false))}
+                    onPointerDown={() => dispatch(setInProgress(true))}
+                    onPointerUp={() => dispatch(setInProgress(false))}
                     {...rest}
                 />
                 <span className="fill" style={{ width: adjustedFill }} />

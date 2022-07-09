@@ -25,7 +25,6 @@ function handleMouseDown(e: MouseEvent): void {
     hasCursorMoved && dispatch(setHasCursorMoved(false));
     dispatch(setMouseButton(e.button));
     dispatch(setInProgress(true));
-    dispatch(setIsWriting(false));
     dispatch(setCursorPosition([screenX, screenY]));
 
     if (e.button === MouseButton.Left) {

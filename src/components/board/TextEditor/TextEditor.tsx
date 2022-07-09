@@ -109,7 +109,7 @@ const TextEditor = (): React.ReactElement => {
         <div
             className={styles.textEditor}
             style={{ left, top, width, height, transform: `scale(${scale})` }}
-            onMouseDown={handleMouseDown}
+            onPointerDown={handleMouseDown}
         >
             <div
                 ref={textBoxRef}

@@ -56,4 +56,5 @@ export type IconName =
     | 'cog'
     | 'dice'
     | 'infinite'
-    | 'connect';
+    | 'connect'
+    | 'alert';

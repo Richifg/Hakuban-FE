@@ -1,0 +1,89 @@
+@import '../../../styles/variables.scss';
+
+.container {
+    position: absolute;
+    background-color: $color-background;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 90%; 
+    width: 300px;
+    background-color: $color-background-lighter;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 15px -12px black;
+    opacity: 0;
+    transition: opacity 200ms;
+}
+.show {
+    opacity: 1;
+}
+
+.icon {
+    font-size: 60px;
+    color: $color-error;
+    animation: shake .8s 1;
+    transform-origin: bottom;
+}
+@keyframes shake {
+    10% { transform: scale(1.1) translateY(-10%); }
+    20% { transform: scale(1.1) translateY(-10%) rotate(12deg); }
+    30% { transform: scale(1.1) translateY(-10%) rotate(-10deg); }
+    40% { transform: scale(1.1) translateY(-10%) rotate(8deg); }
+    50% { transform: scale(1.1) translateY(-10%) rotate(-6deg); }
+    60% { transform: scale(1.1) translateY(-10%) rotate(4deg); }
+    70% { transform: scale(1.1) translateY(-10%) rotate(-2deg); }
+    100% { transform: scale(1) translateY(0%) rotate(0deg); }
+
+}
+
+.title {
+    color: $color-error;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 15px 0 0;
+}
+.description {
+    margin: 0 0 25px;
+    font-size: 18px;
+    text-align: center;
+}
+.button {
+    background-color: transparent;
+    color: $color-primary;
+    &:hover {
+        color: white;
+    };
+}
+.closeButton {
+    cursor: pointer;
+    position: absolute;
+    top: 10px; 
+    right: 25px;
+    border: none;
+    outline: none;
+    color: $color-error;
+    background-color: transparent;
+    font-size: 18px;
+    &:hover {
+        & i::before {
+            transform: rotate(45deg) scale(1.2);
+        }
+    }
+    & i::before {
+        position: absolute; 
+        transform: rotate(45deg);
+    }
+}
