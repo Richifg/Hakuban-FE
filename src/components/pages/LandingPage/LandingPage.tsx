@@ -3,7 +3,7 @@ import { useHistory } from 'react-router';
 
 import { useDispatch, useSelector } from '../../../hooks';
 import { createRoom, setError } from '../../../store/slices/connectionSlice';
-import { Icon, Carousel, Button, Input, Animation, LoadingScreen, ErrorMessage } from '../../common';
+import { Icon, Carousel, Button, Input, Animation, LoadingScreen, ErrorScreen } from '../../common';
 
 import styles from './LandingPage.module.scss';
 
@@ -135,7 +135,7 @@ const HomePage = (): React.ReactElement => {
                 <Icon name="clock" />
                 <p className={styles.footerText}>*Boards are deleted after 24h of creation.</p>
             </footer>
-            <ErrorMessage text={error} onTryAgain={handleCreateRoom(lastPassword)} onClose={() => dispatch(setError(''))} />
+            <ErrorScreen text={error} onTryAgain={handleCreateRoom(lastPassword)} onClose={() => dispatch(setError(''))} />
             <LoadingScreen active={isLoading} text="Creating" />
         </div>
     );

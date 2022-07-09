@@ -2,9 +2,9 @@ import React, { useEffect } from 'react';
 import { useParams, useHistory } from 'react-router';
 
 import { useSelector, useDispatch } from '../../../hooks';
-import { connectToRoom } from '../../../store/slices/connectionSlice';
+import { connectToRoom, setError } from '../../../store/slices/connectionSlice';
 import { BoardCanvas, BoardUI, ToolsMenu, StylesMenu, Chat, ZoomMenu, WelcomeModal } from '../../board';
-import { LoadingScreen } from '../../common';
+import { LoadingScreen, ErrorScreen } from '../../common';
 
 import styles from './RoomPage.module.scss';
 
@@ -20,6 +20,11 @@ const RoomPage = (): React.ReactElement => {
         if (roomId) dispatch(connectToRoom(roomId, password));
     }, [roomId, password]);
 
+    const handleErrorClose = () => {
+        dispatch(setError(''));
+        history.push('/');
+    };
+
     return (
         <div className={styles.roomPage}>
             {isConnected && (
@@ -34,13 +39,7 @@ const RoomPage = (): React.ReactElement => {
                 </>
             )}
             <LoadingScreen active={isLoading} closeDelay={1500} />
-            {error && (
-                <>
-                    <h1>Error: {error}</h1>
-                    <button onClick={() => location.reload()}>Try again</button>
-                    <button onClick={() => history.goBack()}>Back to Menu</button>
-                </>
-            )}
+            <ErrorScreen text={error} onTryAgain={() => location.reload()} onClose={handleErrorClose} />
         </div>
     );
 };

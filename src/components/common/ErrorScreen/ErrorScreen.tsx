@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Icon, Button } from '../../common';
+import { Icon, Button } from '..';
 
-import styles from './ErrorMessage.module.scss';
+import styles from './ErrorScreen.module.scss';
 
-interface ErrorMessage {
+interface ErrorScreen {
     text: string;
     title?: string;
     onClose(): void;
     onTryAgain(): void;
 }
 
-const ErrorMessage = ({ text, title = 'Error', onClose, onTryAgain }: ErrorMessage): React.ReactElement => {
+const ErrorScreen = ({ text, title = 'Error', onClose, onTryAgain }: ErrorScreen): React.ReactElement => {
     const [mount, setMount] = useState(false);
     const [show, setShow] = useState(false);
 
@@ -50,4 +50,4 @@ const ErrorMessage = ({ text, title = 'Error', onClose, onTryAgain }: ErrorMessa
     );
 };
 
-export default ErrorMessage;
+export default ErrorScreen;
