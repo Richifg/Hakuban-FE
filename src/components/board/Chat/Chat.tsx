@@ -53,7 +53,9 @@ const Chat = ({ className = '' }: Chat): React.ReactElement => {
 
     const handleCloseChat = () => {
         dispatch(setShowChat(false));
-        dispatch(setLastReadMessageId(sortedMessages[sortedMessages.length - 1].id));
+        if (sortedMessages.length) {
+            dispatch(setLastReadMessageId(sortedMessages[sortedMessages.length - 1].id));
+        }
     };
 
     return (

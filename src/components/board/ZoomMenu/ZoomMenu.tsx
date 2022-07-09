@@ -16,6 +16,7 @@ interface ZoomMenu {
 const ZoomMenu = ({ className = '' }: ZoomMenu): React.ReactElement => {
     const dispatch = useDispatch();
     const { canvasTransform, canvasSize, boardLimits } = useSelector((s) => s.board);
+    const { items } = useSelector((s) => s.items);
     const zoomPercentage = Math.floor(canvasTransform.scale * 100) + '%';
 
     const smoothScaleAndCenter = (finalScale: number, finalX: number, finalY: number) => {
@@ -38,16 +39,18 @@ const ZoomMenu = ({ className = '' }: ZoomMenu): React.ReactElement => {
     };
 
     const handleFitScreen = () => {
-        const { width: canvasWidth, height: canvasHeight } = canvasSize;
-        const { top, left, bottom, right } = boardLimits;
-        const [limitWidth, limitHeight] = [Math.abs(right.extent - left.extent), Math.abs(bottom.extent - top.extent)];
+        if (Object.keys(items).length) {
+            const { width: canvasWidth, height: canvasHeight } = canvasSize;
+            const { top, left, bottom, right } = boardLimits;
+            const [limitWidth, limitHeight] = [Math.abs(right.extent - left.extent), Math.abs(bottom.extent - top.extent)];
 
-        // scale canvas so that everything is visible
-        const scale = Math.min(canvasHeight / limitHeight, canvasWidth / limitWidth);
-        // center canvas at the middle of the board limits
-        const x = (right.extent + left.extent) * 0.5;
-        const y = (bottom.extent + top.extent) * 0.5;
-        smoothScaleAndCenter(scale, x, y);
+            // scale canvas so that everything is visible
+            const scale = Math.min(canvasHeight / limitHeight, canvasWidth / limitWidth);
+            // center canvas at the middle of the board limits
+            const x = (right.extent + left.extent) * 0.5;
+            const y = (bottom.extent + top.extent) * 0.5;
+            smoothScaleAndCenter(scale, x, y);
+        }
     };
 
     const handleZoomInOrOut = (sign: 1 | -1) => () => {
