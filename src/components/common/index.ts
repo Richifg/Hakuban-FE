@@ -2,6 +2,7 @@ import Animation from './Animation/Animation';
 import Button from './Button/Button';
 import Carousel from './Carousel/Carousel';
 import ColorPallete from './ColorPallete/ColorPallete';
+import ErrorMessage from './ErrorMessage/ErrorMessage';
 import Icon from './Icon/Icon';
 import Input from './Input/Input';
 import LoadingScreen from './LoadingScreen/LoadingScreen';
@@ -17,6 +18,7 @@ export {
     Button,
     Carousel,
     ColorPallete,
+    ErrorMessage,
     Icon,
     Input,
     LoadingScreen,

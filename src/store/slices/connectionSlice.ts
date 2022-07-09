@@ -94,6 +94,7 @@ export const {
 export const connectToRoom =
     (roomId: string, password?: string): AppThunk =>
     async (dispatch) => {
+        dispatch(setError(''));
         dispatch(setIsLoading(true));
         dispatch(setIsConnected(false));
         try {
@@ -109,6 +110,7 @@ export const connectToRoom =
 export const createRoom =
     (password?: string): AppThunk =>
     async (dispatch) => {
+        dispatch(setError(''));
         dispatch(setIsLoading(true));
         dispatch(setIsConnected(false));
         dispatch(setRoomId(''));

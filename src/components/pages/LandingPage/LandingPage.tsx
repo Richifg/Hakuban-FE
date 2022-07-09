@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 
 import { useDispatch, useSelector } from '../../../hooks';
-import { createRoom } from '../../../store/slices/connectionSlice';
-import { Icon, Carousel, Button, Input, Animation, LoadingScreen } from '../../common';
+import { createRoom, setError } from '../../../store/slices/connectionSlice';
+import { Icon, Carousel, Button, Input, Animation, LoadingScreen, ErrorMessage } from '../../common';
 
 import styles from './LandingPage.module.scss';
 
@@ -11,9 +11,10 @@ const HomePage = (): React.ReactElement => {
     const history = useHistory();
     const dispatch = useDispatch();
     const [newRoomId, setNewRoomId] = useState('');
-    const [password, setPassword] = useState('');
+    const [joinPassword, setJoinPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
-    const { roomId, isLoading } = useSelector((s) => s.connection);
+    const [lastPassword, setLastPassword] = useState<string | undefined>('');
+    const { roomId, isLoading, error } = useSelector((s) => s.connection);
 
     useEffect(() => {
         if (roomId) {
@@ -22,10 +23,11 @@ const HomePage = (): React.ReactElement => {
     }, [roomId]);
 
     const handleJoinRoom = () => {
-        history.push(`/room/${newRoomId}` + (password ? `?password=${password}` : ''));
+        history.push(`/room/${newRoomId}` + (joinPassword ? `?password=${joinPassword}` : ''));
     };
 
     const handleCreateRoom = (password?: string) => () => {
+        setLastPassword(password);
         dispatch(createRoom(password));
     };
 
@@ -75,8 +77,8 @@ const HomePage = (): React.ReactElement => {
                                     className={styles.input}
                                     type="password"
                                     placeholder="Password"
-                                    value={password}
-                                    onChange={({ currentTarget }) => setPassword(currentTarget.value)}
+                                    value={joinPassword}
+                                    onChange={({ currentTarget }) => setJoinPassword(currentTarget.value)}
                                 />
                                 <Button className={styles.button} onClick={handleJoinRoom} disabled={isLoading}>
                                     Join
@@ -133,6 +135,7 @@ const HomePage = (): React.ReactElement => {
                 <Icon name="clock" />
                 <p className={styles.footerText}>*Boards are deleted after 24h of creation.</p>
             </footer>
+            <ErrorMessage text={error} onTryAgain={handleCreateRoom(lastPassword)} onClose={() => dispatch(setError(''))} />
             <LoadingScreen active={isLoading} text="Creating" />
         </div>
     );

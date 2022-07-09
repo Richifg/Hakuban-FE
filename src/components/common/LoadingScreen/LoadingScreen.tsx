@@ -4,9 +4,10 @@ import styles from './LoadingScreen.module.scss';
 interface LoadingScreen {
     text?: string;
     active?: boolean;
+    closeDelay?: number; // ms
 }
 
-const LoadingScreen = ({ text, active }: LoadingScreen): React.ReactElement => {
+const LoadingScreen = ({ text, active, closeDelay = 0 }: LoadingScreen): React.ReactElement => {
     const [mount, setMount] = useState(false); // mounts or dismounts the whole component
     const [animate, setAnimate] = useState(false); // phase in or out (opacity)
     const [buffer, setBuffer] = useState(true); // avoids a loading screen from showing for too short of a time (flicker)
@@ -18,7 +19,7 @@ const LoadingScreen = ({ text, active }: LoadingScreen): React.ReactElement => {
             setMount(true);
             id = setTimeout(() => setAnimate(true), 0);
         } else {
-            id = setTimeout(() => setBuffer(false), 1500);
+            id = setTimeout(() => setBuffer(false), closeDelay);
         }
         return () => clearTimeout(id);
     }, [active]);
@@ -63,5 +64,4 @@ export default LoadingScreen;
 LoadingScreen.defaultProps = {
     text: 'Connecting',
     active: false,
-    showDots: true,
 };

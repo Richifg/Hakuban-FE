@@ -33,7 +33,7 @@ const RoomPage = (): React.ReactElement => {
                     {showWelcomeModal && <WelcomeModal />}
                 </>
             )}
-            <LoadingScreen active={isLoading} />
+            <LoadingScreen active={isLoading} closeDelay={1500} />
             {error && (
                 <>
                     <h1>Error: {error}</h1>
