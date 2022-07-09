@@ -23,7 +23,7 @@ const BoardStateMachine = {
     keyPress: handleKeyboard,
 
     windowResize(): void {
-        store.dispatch(setCanvasSize({ width: window.innerWidth, height: window.innerHeight }));
+        store.dispatch(setCanvasSize({ width: screen.availWidth, height: screen.availHeight }));
     },
 };
 
