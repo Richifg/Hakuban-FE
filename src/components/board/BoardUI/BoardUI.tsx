@@ -56,7 +56,7 @@ const CanvasUI = (): React.ReactElement => {
             onPointerMove={handleMouseMove}
             onPointerDown={handleMouseDown}
             onPointerUp={handleMouseUp}
-            onPointerLeave={handleMouseUp}
+            onMouseLeave={handleMouseUp}
             onWheel={handleWheel}
             onContextMenu={handleContextMenu}
         >
