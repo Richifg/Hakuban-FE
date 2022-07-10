@@ -5,8 +5,8 @@ import flow from '../../../assets/images/boards/flow.png';
 
 import styles from './Carousel.module.scss';
 
-const slides = [kanban, mindMap, flow];
-const alts = ['whiteboard kanban example', 'whiteboard mind map example', 'whiteboard flow example'];
+const slides = [mindMap, kanban, flow];
+const alts = ['whiteboard mind map example', 'whiteboard kanban example', 'whiteboard flow example'];
 
 const Carousel = (): React.ReactElement => {
     const [slideOffset, setSlideOffset] = useState(0);
