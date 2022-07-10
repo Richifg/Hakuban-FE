@@ -2,7 +2,9 @@
 
 .input {
     font-size: inherit;
+    text-overflow: ellipsis;
     padding: .4em .8em;
+    min-width: 0;
     border: 1px solid gray;
     border-radius: 8px;
     outline: none;

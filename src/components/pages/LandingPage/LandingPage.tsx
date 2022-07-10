@@ -3,6 +3,7 @@ import { useHistory } from 'react-router';
 
 import { useDispatch, useSelector } from '../../../hooks';
 import { createRoom, setError } from '../../../store/slices/connectionSlice';
+import { setShowShareLink } from '../../../store/slices/UISlice';
 import { Icon, Carousel, Button, Input, Animation, LoadingScreen, ErrorScreen } from '../../common';
 
 import styles from './LandingPage.module.scss';
@@ -17,12 +18,14 @@ const HomePage = (): React.ReactElement => {
     const { roomId, isLoading, error } = useSelector((s) => s.connection);
 
     useEffect(() => {
+        dispatch(setShowShareLink(true));
         if (roomId) {
             history.push(`/room/${roomId}` + (newPassword ? `?password=${newPassword}` : ''));
         }
     }, [roomId]);
 
     const handleJoinRoom = () => {
+        dispatch(setShowShareLink(false));
         history.push(`/room/${newRoomId}` + (joinPassword ? `?password=${joinPassword}` : ''));
     };
 

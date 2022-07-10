@@ -100,6 +100,7 @@ export const connectToRoom =
         try {
             await WSService.connect(roomId, password);
             dispatch(setIsConnected(true));
+            dispatch(setRoomId(roomId));
         } catch (e) {
             dispatch(setError(e as string));
         } finally {
