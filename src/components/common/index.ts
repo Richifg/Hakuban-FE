@@ -9,6 +9,7 @@ import LoadingScreen from './LoadingScreen/LoadingScreen';
 import MenuContainer from './MenuContainer/MenuContainer';
 import MenuItem from './MenuItem/MenuItem';
 import MenuSeparator from './MenuSeparator/MenuSeparator';
+import Popup from './Popup/Popup';
 import RangeInput from './RangeInput/RangeInput';
 import SubMenuButton from './SubMenuButton/SubMenuButton';
 
@@ -23,6 +24,7 @@ export {
     LoadingScreen,
     MenuContainer,
     MenuSeparator,
+    Popup,
     MenuItem,
     RangeInput,
     SubMenuButton,

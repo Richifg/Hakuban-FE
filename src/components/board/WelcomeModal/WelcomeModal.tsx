@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from '../../../hooks';
 import { setShowWelcomeModal } from '../../../store/slices/UISlice';
 import { WSService } from '../../../services';
 import { userAnimals } from '../../../constants';
-import { Icon, Button, Input } from '../../common';
+import { Icon, Button, Input, Popup } from '../../common';
 
 import styles from './WelcomeModal.module.scss';
 
@@ -64,17 +64,21 @@ const WelcomeModal = (): React.ReactElement => {
                         <>
                             <p className={styles.subtitle}>Room ID:</p>
                             <span className={styles.inputContainer}>
-                                <button type="button" onClick={handleCopy(roomId)}>
-                                    <Icon name="copy" className={styles.copyButton} />
-                                </button>
+                                <Popup text="ID copied!">
+                                    <button type="button" onClick={handleCopy(roomId)}>
+                                        <Icon name="copy" className={styles.copyButton} />
+                                    </button>
+                                </Popup>
                                 <p className={styles.roomId}>{roomId}</p>
                             </span>
 
                             <p className={styles.subtitle}>Share link:</p>
                             <span className={styles.inputContainer}>
-                                <button type="button" onClick={handleCopy(location.href)}>
-                                    <Icon name="copy" className={styles.copyButton} />
-                                </button>
+                                <Popup text="Link copied!">
+                                    <button type="button" onClick={handleCopy(location.href)}>
+                                        <Icon name="copy" className={styles.copyButton} />
+                                    </button>
+                                </Popup>
                                 <Input value={location.href} />
                             </span>
                         </>
