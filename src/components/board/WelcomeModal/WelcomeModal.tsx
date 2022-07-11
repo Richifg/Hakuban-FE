@@ -52,7 +52,7 @@ const WelcomeModal = (): React.ReactElement => {
                     <Icon className={styles.logo} name="logo" />
                 </span>
                 <span className={styles.content}>
-                    <p className={styles.subtitle}>Choose a username</p>
+                    <p className={styles.sectionTitle}>Choose a username</p>
                     <span className={styles.inputContainer}>
                         <button type="button" className={styles.randomButton} onClick={handleRandom}>
                             <Icon name="dice" />
@@ -62,7 +62,8 @@ const WelcomeModal = (): React.ReactElement => {
 
                     {showShareLink && (
                         <>
-                            <p className={styles.subtitle}>Room ID:</p>
+                            <p className={styles.sectionTitle}>Let others join</p>
+                            <p className={styles.subtitle}>Room ID</p>
                             <span className={styles.inputContainer}>
                                 <Popup text="ID copied!">
                                     <button type="button" onClick={handleCopy(roomId)}>
@@ -71,8 +72,7 @@ const WelcomeModal = (): React.ReactElement => {
                                 </Popup>
                                 <p className={styles.roomId}>{roomId}</p>
                             </span>
-
-                            <p className={styles.subtitle}>Share link:</p>
+                            <p className={styles.subtitle}>Share link</p>
                             <span className={styles.inputContainer}>
                                 <Popup text="Link copied!">
                                     <button type="button" onClick={handleCopy(location.href)}>

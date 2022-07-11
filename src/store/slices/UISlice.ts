@@ -11,7 +11,7 @@ const initialState: UIState = {
     showAvatarMenu: false,
     showChat: false,
     showWelcomeModal: true,
-    showShareLink: true,
+    showShareLink: false,
 };
 
 const slice = createSlice({
