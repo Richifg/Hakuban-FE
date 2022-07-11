@@ -1,23 +1,51 @@
+import getBoardCoordinates from './getBoardCoordinates';
+import getCanvasCoordinates from './getCanvasCoordinates';
 import getDebouncedFunction from './getDebouncedFunction';
-import getDetransformedCoordinates from './getDetransformedCoordinates';
-import getItemResizePoints from './getItemResizePoints';
-import getItemTransformedPoints from './getItemTransformedPoints';
-import getItemTranslatePoints from './getItemTranslatePoints';
+import getDefaultUser from './getDefaultUser';
+import getFarthestLimitFromItems from './getFarthestLimitFromItems';
+import getItemAtPosition from './getItemAtPosition';
+import getPositionCSSVars from './getPositionCSSVars';
+import getRelativeDrawing from './getRelativeDrawing';
+import getResizedCoordinates from './getResizedCoordinates';
+import getSanitizedData from './getSanitizedData';
+import getTranslatedCoordinates from './getTranslatedCoordinates';
+import getMaxCoordinates from './getMaxCoordinates';
 import getNewId from './getNewId';
-import getNewShape from './getNewShape';
-import getTransformedCoordinates from './getTransformedCoodinates';
+import getNewItem from './getNewItem';
+import getTextAreaCoordinates from './getTextAreaCoordinates';
 import getWrappedTextLines from './getWrappedTextLines';
-import isPointInsideItem from './isPointInsideItem';
+import isAreaInsideArea from './isAreaInsideArea';
+import isConnectableItem from './isConnectableItem';
+import isItemDraggable from './isItemDraggable';
+import isMainPoint from './isMainPoint';
+import isPointInsideArea from './isPointInsideArea';
+import isPointInsideLine from './isPointInsideLine';
+import isTextItem from './isTextItem';
+import isUpdateDataValid from './isUpdateDataValid';
 
 export {
+    getBoardCoordinates,
+    getCanvasCoordinates,
     getDebouncedFunction,
-    getDetransformedCoordinates,
-    getItemResizePoints,
-    getItemTransformedPoints,
-    getItemTranslatePoints,
+    getDefaultUser,
+    getFarthestLimitFromItems,
+    getItemAtPosition,
+    getPositionCSSVars,
+    getRelativeDrawing,
+    getResizedCoordinates,
+    getSanitizedData,
+    getTranslatedCoordinates,
+    getMaxCoordinates,
     getNewId,
-    getNewShape,
-    getTransformedCoordinates,
+    getNewItem,
+    getTextAreaCoordinates,
     getWrappedTextLines,
-    isPointInsideItem,
+    isAreaInsideArea,
+    isConnectableItem,
+    isItemDraggable,
+    isMainPoint,
+    isPointInsideArea,
+    isPointInsideLine,
+    isTextItem,
+    isUpdateDataValid,
 };

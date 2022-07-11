@@ -1,0 +1,15 @@
+@import '../../../styles/variables.scss';
+
+.input {
+    font-size: inherit;
+    text-overflow: ellipsis;
+    padding: .4em .8em;
+    min-width: 0;
+    border: 1px solid gray;
+    border-radius: 8px;
+    outline: none;
+    color: $color-background-contrast;
+    background-color: transparent;
+    box-shadow: inset 2px 2px 5px -3px #464646,
+                inset 6px 6px 15px rgba(255, 255, 255, 0.5);
+}

@@ -1,0 +1,42 @@
+.container {
+    position: relative;
+}
+
+.popup {
+    font-size: 13px;
+    width: max-content;
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    background-color: black;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    opacity: 0;
+    transform: translate(-50%, 10%);
+    transition: transform 100ms, opacity 200ms;
+    visibility: hidden;
+
+    &.show {
+        opacity: 1;
+        transform: translate(-50%, 0%);
+        visibility: visible;
+    }
+ 
+    &::after, &::before {
+        content: '';
+        position: absolute;
+        display: block;
+        top: 100%;
+        left: calc(50% + 2px);
+        transform: translateX(-50%);
+        border-color: black transparent transparent black;
+        border-width: 2px;
+        border-style: solid;
+    }
+    
+    &::before {
+        border-color: black black transparent transparent;
+        left: calc(50% - 2px);
+    }
+}

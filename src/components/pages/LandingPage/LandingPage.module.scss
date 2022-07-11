@@ -1,0 +1,304 @@
+@import '../../../styles/variables.scss';
+
+$page-width: 1400px;
+$content-width: 1200px;
+
+.landingPage {
+    background-color: $color-background;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+}
+
+// ---------------
+// ----NAVBAR-----
+// ---------------
+.navbar {
+    padding: 20px;
+    max-width: $page-width;
+    width: 100%;
+    box-sizing: border-box;
+}
+.link {
+    display: flex;
+    color: $color-primary;
+    font-size: 25px;
+    text-decoration: none;
+    font-weight: bold;
+}
+.logoIcon {
+    color: $color-background-contrast;
+    margin-right: 10px;
+    font-size: 1.3em;
+}
+
+// ---------------
+// ---- MAIN -----
+// ---------------
+.main {
+    max-width: $content-width;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 40px;
+    display: flex;
+    justify-content: center;
+}
+.grid {
+    display: grid;
+    grid-template-columns: repeat(6, 2fr);
+    grid-template-rows: repeat(4, auto);
+    grid-row-gap: 100px;
+    grid-template-areas:
+    "title title title title form form"
+    "anim  anim  anim anim form form"
+    "list  list list carousel carousel carousel"
+    "cta cta cta cta cta cta"
+}
+
+// ---------------
+// ---- TITLE ----
+// ---------------
+.title {
+    font-size: 80px;
+    line-height: 0.9;
+    grid-area: title;
+    margin: 50px 0 0 0;
+}
+.big {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: $color-primary;
+}
+
+
+// ---------------
+// -- ANIMATION --
+// ---------------
+.animationContainer {
+    grid-area: anim;
+    max-width: 80%;
+    width: 100%;
+    margin: 0 auto;
+    position: relative;
+}
+
+
+
+@mixin container { 
+    background-color: white;
+    border-radius: 6px;
+    box-shadow: 0px 0px 25px -15px black;
+}
+
+
+// ---------------
+// ---- FORM -----
+// ---------------
+.formContainer {
+    grid-area: form;
+    display: flex;
+    align-items: center;
+    margin-top: 50px;
+}
+.formContent {
+    @include container;
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+}
+.form {
+    display: flex;
+    flex-direction: column;
+    padding: 25px 30px;
+}
+.or {
+    width: 100%;
+    text-align: center;
+    margin: 15px 0;
+    color: gray;
+    position: relative;
+    margin: -5px 0;
+    font-size: 12px;
+    &::after, &::before {
+        content: '';
+        position: absolute;
+        right: 10%;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 30%;
+        height: 1px;
+        background-color: currentColor;
+        opacity: 0.25;
+    }
+    &::before {
+        left: 10%;
+    }
+}
+.formTitle {
+    color: $color-primary;
+    font-weight: bold;
+    font-size: 22px;
+    margin-top: 0;
+}
+.input {
+    margin-bottom: 10px;
+}
+.button {
+    align-self: end;
+}
+
+// ---------------
+// ---- LIST -----
+// ---------------
+.listContainer {
+    grid-area: list;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.featureList {
+    list-style: none;
+    max-width: 80%;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+}
+.feature {
+    display: flex;
+    &:not(:last-child) {
+        margin-bottom: 20px;
+    }
+    font-size: 35px;
+}
+.featureContent { 
+    @include container;
+    padding: 10px 15px;
+    margin-left: 10px;
+    font-size: 18px;
+    flex-grow: 1;
+}
+.featureTitle {
+    color: $color-primary;
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 10px; 
+}
+.featureDescription {
+    margin: 0;
+}
+
+
+// ---------------
+// -- CAROUSEL ---
+// ---------------
+.carouselContainer {
+    grid-area: carousel;
+    display: flex;
+    justify-content: center;
+}
+.carouselContent {
+    width: 100%;
+    max-width: 75%;
+}
+
+// ---------------
+// ----  CTA -----
+// ---------------
+.ctaContainer {
+    grid-area: cta;
+    display: flex;
+    justify-content: center;
+}
+.cta {
+    margin: 75px 0;
+    font-size: 28px;
+    
+}
+
+// ---------------
+// --- FOOTER ----
+// ---------------
+.footer {
+    max-width: $page-width;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    font-size: 14px;
+}
+.footerText {
+    margin-left: 10px;
+}
+
+
+
+// --------------------
+// --- MOBILE VIEW ---- 
+// --------------------
+
+@media (max-width: 900px) {
+    .link {
+        font-size: min(5vw, 25px);
+    }
+    .main {
+        padding: 0 20px;
+    }
+    .grid {
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        grid-row-gap: min(100px, 10vw); 
+    }
+    .formContainer {
+        width: 100%;
+        margin-top: 0;
+    }
+    .formContent {
+        width: min(100%, 400px);
+        margin: 0 auto;
+    }
+    .title {
+        font-size: min(12vw, 75px);
+        align-self: start;
+        margin-left: 15px;
+        margin-top: 25px;
+    }
+    .featureList {
+        max-width: min(100%, 600px);
+    }
+    .carouselContainer {
+        width: 100%;
+    }
+    .cta {
+        margin: 10px 0;
+    }
+
+    @media (min-width: 650px) {
+        .formContainer {
+            margin-top: 0;
+            width: 100%;
+        }
+        .formContent {
+            box-shadow: none;
+            background-color: transparent;
+            flex-direction: row;
+            justify-content: space-around;
+            width: 100%;
+        }
+        .form {
+            @include container;
+            display: flex;
+            flex-direction: column;
+            padding: 25px;
+        }
+        .or {
+            display: none;
+        }
+    }
+}
+ 

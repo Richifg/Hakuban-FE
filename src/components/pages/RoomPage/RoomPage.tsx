@@ -1,46 +1,45 @@
 import React, { useEffect } from 'react';
-import { useParams } from 'react-router';
+import { useParams, useHistory } from 'react-router';
 
 import { useSelector, useDispatch } from '../../../hooks';
-import { connectToRoom } from '../../../store/slices/connectionSlice';
-import { CanvasItems, CanvasUserItems, BoardUI, TestChat, ToolsMenu, ZoomControls } from '../../common';
+import { connectToRoom, setError } from '../../../store/slices/connectionSlice';
+import { BoardCanvas, BoardUI, ToolsMenu, StylesMenu, Chat, ZoomMenu, WelcomeModal } from '../../board';
+import { LoadingScreen, ErrorScreen } from '../../common';
 
-import './RoomPage.scss';
+import styles from './RoomPage.module.scss';
 
 const RoomPage = (): React.ReactElement => {
     const dispatch = useDispatch();
-    const { isLoading, isConnected, error } = useSelector((s) => s.connection);
+    const history = useHistory();
     const { roomId } = useParams<{ roomId: string }>();
+    const { isLoading, isConnected, error } = useSelector((s) => s.connection);
+    const { showWelcomeModal } = useSelector((s) => s.UI);
     const password = new URLSearchParams(location.search).get('password') || undefined;
 
     useEffect(() => {
         if (roomId) dispatch(connectToRoom(roomId, password));
     }, [roomId, password]);
 
+    const handleErrorClose = () => {
+        dispatch(setError(''));
+        if (!isConnected) history.push('/');
+    };
+
     return (
-        <div className="room-page">
+        <div className={styles.roomPage}>
             {isConnected && (
                 <>
-                    <div className="canvas-container">
-                        <CanvasItems />
-                        <CanvasUserItems />
-                        <BoardUI />
-                    </div>
-                    <div className="ui-container">
-                        <div className="tools-container">
-                            <ToolsMenu />
-                        </div>
-                        <div className="chat-container">
-                            <TestChat />
-                        </div>
-                        <div className="zoom-container">
-                            <ZoomControls />
-                        </div>
-                    </div>
+                    <BoardCanvas />
+                    <BoardUI />
+                    <StylesMenu />
+                    <ToolsMenu className={showWelcomeModal ? styles.hiddenLeft : ''} />
+                    <ZoomMenu className={showWelcomeModal ? styles.hiddenTop : ''} />
+                    <Chat className={showWelcomeModal ? styles.hiddenRight : ''} />
+                    {showWelcomeModal && <WelcomeModal />}
                 </>
             )}
-            {isLoading && <h1>LOADING</h1>}
-            {error && <h1>Error: {error}</h1>}
+            <LoadingScreen active={isLoading} closeDelay={1500} />
+            <ErrorScreen text={error} onTryAgain={() => location.reload()} onClose={handleErrorClose} />
         </div>
     );
 };

@@ -1,70 +1,82 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { BoardItem, Point } from '../../interfaces/items';
+import { BoardItem, Point, UpdateData, StoreLineConnections } from '../../interfaces';
 
 interface ItemsState {
-    items: BoardItem[];
-    userItems: BoardItem[];
+    items: { [id: string]: BoardItem };
     dragOffset: { x: number; y: number };
-    selectedItem?: BoardItem;
+    selectedItemIds: string[];
+    draggedItemId?: string;
     selectedPoint?: Point;
+    lineConnections: StoreLineConnections;
+    inProgress: boolean;
 }
 
 const initialState: ItemsState = {
-    items: [],
-    userItems: [],
+    items: {},
     dragOffset: { x: 0, y: 0 },
+    selectedItemIds: [],
+    lineConnections: {},
+    inProgress: false,
 };
 
-const itemsSlice = createSlice({
+const slice = createSlice({
     name: 'items',
     initialState,
     reducers: {
         setItems: (state, action: PayloadAction<BoardItem[]>) => {
-            state.items = action.payload;
+            action.payload.forEach((item) => (state.items[item.id] = item));
         },
-        setUserItems: (state, action: PayloadAction<BoardItem[]>) => {
-            state.userItems = action.payload;
+        addItems: (state, action: PayloadAction<BoardItem[]>) => {
+            action.payload.forEach((item) => {
+                state.items[item.id] = item;
+            });
         },
-        addItem: (state, action: PayloadAction<BoardItem>) => {
-            const newItem = action.payload;
-            // check for duplicates before adding
-            const index = state.items.findIndex((item) => item.id === newItem.id);
-            if (index !== -1) state.items[index] = newItem;
-            else state.items.push(newItem);
-            // also delete duplicates on userItems
-            const userIndex = state.userItems.findIndex((item) => item.id === newItem.id);
-            if (userIndex !== -1) state.userItems.splice(userIndex, 1);
+        updateItem: (state, action: PayloadAction<UpdateData>) => {
+            const { id, ...data } = action.payload;
+            const oldItem = state.items[id];
+            if (oldItem) state.items[id] = { ...oldItem, ...data };
         },
-        addUserItem(state, action: PayloadAction<BoardItem>) {
-            // check for duplicates before adding
-            const newItem = action.payload;
-            const index = state.userItems.findIndex((item) => item.id === newItem.id);
-            if (index !== -1) state.userItems[index] = newItem;
-            else state.userItems.push(newItem);
-            // also delete duplicates on regular items
-            const regularIndex = state.items.findIndex((item) => item.id === newItem.id);
-            if (regularIndex !== -1) state.items.splice(regularIndex, 1);
-            // updated selected item
-            state.selectedItem = newItem;
-        },
-        deleteItem: (state, action: PayloadAction<string>) => {
-            state.items = state.items.filter((item) => item.id !== action.payload);
-            state.userItems = state.items.filter((item) => item.id !== action.payload);
+        deleteItems: (state, action: PayloadAction<string[]>) => {
+            const ids = action.payload;
+            ids.forEach((id) => {
+                delete state.items[id];
+            });
+            state.selectedItemIds = state.selectedItemIds.filter((id) => !ids.includes(id));
+            if (state.draggedItemId && ids.includes(state.draggedItemId)) delete state.draggedItemId;
         },
         setDragOffset: (state, action: PayloadAction<[x: number, y: number]>) => {
             const [x, y] = action.payload;
             state.dragOffset = { x, y };
         },
-        setSelectedItem: (state, action: PayloadAction<BoardItem | undefined>) => {
-            state.selectedItem = action.payload;
+        setDraggedItemId: (state, action: PayloadAction<string | undefined>) => {
+            state.draggedItemId = action.payload;
+        },
+        setSelectedItemIds: (state, action: PayloadAction<string[]>) => {
+            state.selectedItemIds = action.payload;
         },
         setSelectedPoint: (state, action: PayloadAction<Point>) => {
             state.selectedPoint = action.payload;
         },
+        setLineConnections: (state, action: PayloadAction<StoreLineConnections>) => {
+            state.lineConnections = action.payload;
+        },
+        setInProgress: (state, action: PayloadAction<boolean>) => {
+            state.inProgress = action.payload;
+        },
     },
 });
 
-export const { setItems, addItem, addUserItem, deleteItem, setDragOffset, setSelectedItem, setSelectedPoint } =
-    itemsSlice.actions;
+export const {
+    setItems,
+    addItems,
+    updateItem,
+    deleteItems,
+    setDragOffset,
+    setDraggedItemId,
+    setSelectedItemIds,
+    setSelectedPoint,
+    setLineConnections,
+    setInProgress,
+} = slice.actions;
 
-export default itemsSlice.reducer;
+export default slice.reducer;

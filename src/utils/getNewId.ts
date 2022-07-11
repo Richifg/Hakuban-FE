@@ -1,5 +1,7 @@
 function getNewId(): string {
-    return Math.random().toString(36).substr(2, 9);
+    const now = Date.now().toString();
+    const random = Math.random().toString(10);
+    return random.substring(2, 7) + now.substring(8);
 }
 
 export default getNewId;

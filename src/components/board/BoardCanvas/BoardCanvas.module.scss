@@ -1,0 +1,17 @@
+@import '../../../styles/variables.scss';
+
+.canvas {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: $color-background-canvas; 
+
+    .noSupport {
+        color: rgb(175, 0, 0);
+        font-weight: 700;
+        font-size: 2em;
+    }
+}

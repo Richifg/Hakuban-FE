@@ -1,0 +1,225 @@
+@import '../../../styles/variables.scss';
+
+@font-face {
+  font-family: 'icomoon';
+  src:  url('../../../assets/fonts/icomoon.eot?n3d33z');
+  src:  url('../../../assets/fonts/icomoon.eot?n3d33z#iefix') format('embedded-opentype'),
+    url('../../../assets/fonts/icomoon.ttf?n3d33z') format('truetype'),
+    url('../../../assets/fonts/icomoon.woff?n3d33z') format('woff'),
+    url('../../../assets/fonts/icomoon.svg?n3d33z#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block; 
+}
+
+.icon {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  position: relative;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  &:after {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}
+
+.icon-textColor:before {
+  content: "\e908";
+  color: $color-background-contrast;
+}
+.icon-textColor:after {
+  content: "\e90a";
+}
+.icon-fill:before {
+  content: "\e90d";
+  color: $color-background-contrast;
+}
+.icon-fill:after {
+  content: "\e93c";
+}
+.icon-outline:before {
+  content: "\e90b";
+  color: $color-background-contrast;
+}
+.icon-outline:after {
+  content: "\e90c";
+}
+.icon-logo:before {
+  content: "\e900";
+}
+.icon-alignBottom:before {
+  content: "\e901";
+}
+.icon-alignCenter:before {
+  content: "\e902";
+}
+.icon-alignment:before {
+  content: "\e903";
+}
+.icon-justifyLeft:before {
+  content: "\e904";
+}
+.icon-justifyCenter:before {
+  content: "\e905";
+}
+.icon-justifyRight:before {
+  content: "\e906";
+}
+.icon-alignTop:before {
+  content: "\e907";
+}
+.icon-arrowSimple:before {
+  content: "\e90f";
+}
+.icon-arrowCircle:before {
+  content: "\e90e";
+}
+.icon-arrowTriangle:before {
+  content: "\e910";
+}
+.icon-swap:before {
+  content: "\e930";
+}
+.icon-sendBottom:before {
+  content: "\e911";
+}
+.icon-sendTop:before {
+  content: "\e912";
+}
+.icon-bold:before {
+  content: "\e913";
+}
+.icon-italic:before {
+  content: "\e914";
+}
+.icon-font1:before {
+  content: "\e915";
+}
+.icon-font2:before {
+  content: "\e916";
+}
+.icon-font3:before {
+  content: "\e917";
+}
+.icon-circle:before {
+  content: "\e918";
+}
+.icon-bubble:before {
+  content: "\e919";
+}
+.icon-romboid:before {
+  content: "\e91a";
+}
+.icon-roundedSquare:before {
+  content: "\e91b";
+}
+.icon-square:before {
+  content: "\e91c";
+}
+.icon-triangle:before {
+  content: "\e91d";
+}
+.icon-shapes:before {
+  content: "\e91e";
+}
+.icon-pen:before {
+  content: "\e91f";
+}
+.icon-cursor:before {
+  content: "\e920";
+}
+.icon-line:before {
+  content: "\e921";
+}
+.icon-text:before {
+  content: "\e922";
+}
+.icon-note:before {
+  content: "\e923";
+}
+.icon-lock:before {
+  content: "\e924";
+}
+.icon-pattern1:before {
+  content: "\e925";
+}
+.icon-pattern2:before {
+  content: "\e926";
+}
+.icon-pattern3:before {
+  content: "\e927";
+}
+.icon-pattern4:before {
+  content: "\e928";
+}
+.icon-lineWidth:before {
+  content: "\e929";
+}
+.icon-trash:before {
+  content: "\e92a";
+}
+.icon-zoomFit:before {
+  content: "\e92b";
+}
+.icon-zoomIn:before {
+  content: "\e92c";
+}
+.icon-zoomOut:before {
+  content: "\e92d";
+}
+.icon-hashtag:before {
+  content: "\e92e";
+}
+.icon-plus:before {
+  content: "\e92f";
+}
+.icon-arrowNone:before {
+  content: "\e932";
+}
+.icon-lineCurved:before {
+  content: "\e933";
+}
+.icon-lineStraight:before {
+  content: "\e934";
+}
+.icon-lineStepped:before {
+  content: "\e935";
+}
+.icon-send:before {
+  content: "\e936";
+}
+.icon-clock:before {
+  content: "\e931";
+}
+.icon-noMoney:before {
+  content: "\e937";
+}
+.icon-cog:before {
+  content: "\e938";
+}
+.icon-dice:before {
+  content: "\e939";
+}
+.icon-infinite:before {
+  content: "\e93a";
+}
+.icon-connect:before {
+  content: "\e93b";
+}
+.icon-alert:before {
+  content: "\e909";
+}
+.icon-copy:before {
+  content: "\e93d";
+}

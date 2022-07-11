@@ -1,9 +1,31 @@
-import BoardUI from './BoardUI/BoardUI';
-import CanvasItems from './CanvasItems/CanvasItems';
-import CanvasUserItems from './CanvasUserItems/CanvasUserItems';
-import EditPoints from './EditPoints/EditPoints';
-import TestChat from './TestChat/TestChat';
-import ToolsMenu from './ToolsMenu/ToolsMenu';
-import ZoomControls from './ZoomControls/ZoomControls';
+import Animation from './Animation/Animation';
+import Button from './Button/Button';
+import Carousel from './Carousel/Carousel';
+import ColorPallete from './ColorPallete/ColorPallete';
+import ErrorScreen from './ErrorScreen/ErrorScreen';
+import Icon from './Icon/Icon';
+import Input from './Input/Input';
+import LoadingScreen from './LoadingScreen/LoadingScreen';
+import MenuContainer from './MenuContainer/MenuContainer';
+import MenuItem from './MenuItem/MenuItem';
+import MenuSeparator from './MenuSeparator/MenuSeparator';
+import Popup from './Popup/Popup';
+import RangeInput from './RangeInput/RangeInput';
+import SubMenuButton from './SubMenuButton/SubMenuButton';
 
-export { CanvasItems, CanvasUserItems, EditPoints, BoardUI, TestChat, ToolsMenu, ZoomControls };
+export {
+    Animation,
+    Button,
+    Carousel,
+    ColorPallete,
+    ErrorScreen,
+    Icon,
+    Input,
+    LoadingScreen,
+    MenuContainer,
+    MenuSeparator,
+    Popup,
+    MenuItem,
+    RangeInput,
+    SubMenuButton,
+};

@@ -1,0 +1,25 @@
+.boardUI {
+    touch-action: pinch-zoom;
+    position: absolute;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+
+    // actions
+    &.IDLE { cursor: default; }
+    &.PAN, &.DRAG { cursor: grabbing !important; } 
+    &.DRAGSELECT { cursor: crosshair; }
+    &.BLOCKED { cursor: not-allowed !important; }
+    &.DRAW { cursor: default; }
+    &.EDIT { cursor: default; }
+    &.SLIDE { cursor: default; }
+    &.RESIZE  { cursor: default; }
+
+    // tools
+    &.PEN { cursor: url('../../../assets/images/cursors/pen.png') 0 16, alias !important;  }
+    &.POINTER { cursor: pointer; }
+    &.SHAPE { cursor: crosshair !important; }
+    &.TEXT { cursor: url('../../../assets/images/cursors/text.png'), text !important; }
+    &.NOTE { cursor: url('../../../assets/images/cursors/note.png'), default; }
+    &.LINE { cursor: crosshair !important; }
+}

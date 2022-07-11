@@ -1,118 +1,77 @@
-import type { Circle, Rect, Item, Text } from '../interfaces/items';
-import type { CanvasTransform, CanvasSize } from '../interfaces/board';
-import { getWrappedTextLines } from '../utils';
-
-const LINE_HEIGHT = 1.1; // em
+import type { BoardItem } from '../interfaces/items';
+import { store } from '../store/store';
+import drawShape from './drawShape';
+import drawText from './drawText';
+import drawNote from './drawNote';
+import drawDrawing from './drawDrawing';
+import drawGrid from './drawGrid';
+import drawLine from './drawLine';
+import drawItemHighlights from './drawItemHighlights';
+import drawLockHighlights from './drawLockHighlights';
+import drawDragSelectArea from './drawDragSelectArea';
+import { getTextAreaCoordinates, isTextItem } from '../utils';
 
 /*
     Manages the animation cycle of a canvas html element by constantly:
      - clearing screen
      - transforming canvas (scale, translate)
      - and drawing items on screen
-    Uses animationFrames to keep a consistent framerate 
 */
 
 class CanvasManager {
     private ctx: CanvasRenderingContext2D;
-    size: CanvasSize;
-    transform: CanvasTransform;
-    items: Item[];
+    items: BoardItem[];
     animationId?: number;
 
-    constructor(ctx: CanvasRenderingContext2D, size: CanvasSize, transform: CanvasTransform, items: Item[]) {
+    constructor(ctx: CanvasRenderingContext2D) {
         this.ctx = ctx;
-        this.size = size;
-        this.transform = transform;
-        this.items = items;
-    }
-
-    drawItem(item: Item): void {
-        this.ctx.save();
-        if (item.type === 'shape') {
-            this.ctx.strokeStyle = item.lineColor;
-            this.ctx.fillStyle = item.fillColor;
-            this.ctx.lineWidth = item.lineWidth;
-            if (item.shapeType === 'circle') this.drawCircle(item);
-            if (item.shapeType === 'rect') this.drawRect(item);
-        } else if (item.type === 'text') {
-            this.drawText(item);
-        }
-        this.ctx.restore();
-    }
-
-    drawCircle(circle: Circle): void {
-        const { x0, y0, x2, y2 } = circle;
-        this.ctx.beginPath();
-        const [cX, cY] = [Math.floor((x0 + x2) / 2), Math.floor((y0 + y2) / 2)];
-        const [rX, rY] = [Math.abs(x2 - cX), Math.abs(y2 - cY)];
-        this.ctx.ellipse(cX, cY, rX, rY, 0, 0, Math.PI * 2);
-        this.ctx.fill();
-        this.ctx.stroke();
-    }
-
-    drawRect(rect: Rect): void {
-        const { x0, y0, x2, y2 } = rect;
-        this.ctx.beginPath();
-        this.ctx.rect(x0, y0, x2 - x0, y2 - y0);
-        this.ctx.fill();
-        this.ctx.stroke();
-    }
-
-    drawText(text: Text): void {
-        const { content, x0, y0, x2, y2, fontFamily, fontSize, vAlign, hAlign } = text;
-        // initial settings
-        this.ctx.font = `${fontSize}px ${fontFamily}`;
-        this.ctx.textAlign = hAlign;
-        this.ctx.textBaseline = 'top';
-        const [maxWidth, maxHeight] = [Math.abs(x2 - x0), Math.abs(y2 - y0)];
-        const [minX, minY] = [Math.min(x0, x2), Math.min(y0, y2)];
-
-        // cut text into wrapped lines
-        const textLines = getWrappedTextLines(content, maxWidth, this.ctx);
-        const lineHeight = fontSize * LINE_HEIGHT;
-        const fullTextHeight = lineHeight * textLines.length;
-
-        // clipping region for rendering text
-        this.ctx.beginPath();
-        this.ctx.rect(minX, minY, maxWidth, maxHeight);
-        this.ctx.clip();
-
-        // calculate x position for all lines of text
-        let x: number;
-        if (hAlign === 'start') x = minX;
-        else if (hAlign === 'end') x = Math.max(x0, x2);
-        else x = minX + maxWidth / 2;
-
-        // calculate y position for the first line of text
-        let y: number;
-        if (vAlign === 'start') y = minY;
-        else if (vAlign === 'end') y = Math.max(y0, y2) - fullTextHeight;
-        else y = minY + (maxHeight - fullTextHeight) / 2;
-
-        // draw each line
-        textLines.forEach((text) => {
-            this.ctx.fillText(text, x, y);
-            y += lineHeight;
-        });
-    }
-
-    transformCanvas(): void {
-        const { scale, dX, dY } = this.transform;
-        this.ctx.setTransform(scale, 0, 0, scale, dX, dY);
+        this.items = [];
     }
 
     clear(): void {
-        const { width, height } = this.size;
-        this.ctx.save();
+        const { width, height } = store.getState().board.canvasSize;
         this.ctx.setTransform(1, 0, 0, 1, 0, 0);
         this.ctx.clearRect(0, 0, width, height);
+    }
+
+    transformCanvas(): void {
+        const { scale, dX, dY } = store.getState().board.canvasTransform;
+        this.ctx.setTransform(scale, 0, 0, scale, dX, dY);
+    }
+
+    drawItem(item: BoardItem): void {
+        this.ctx.save();
+
+        const { type } = item;
+        if (type === 'shape') drawShape(item, this.ctx);
+        else if (type === 'note') drawNote(item, this.ctx);
+        else if (type === 'drawing') drawDrawing(item, this.ctx);
+        else if (type === 'line') drawLine(item, this.ctx);
+
+        if (isTextItem(item) && item.text) {
+            const coordinates = getTextAreaCoordinates(item);
+            const placeholder = item.type === 'text' && !item.text.content;
+            drawText(item.text, coordinates, this.ctx, placeholder);
+        }
+
         this.ctx.restore();
     }
 
     animate(): void {
+        const { showGrid, currentAction } = store.getState().board;
+        const { selectedItemIds } = store.getState().items;
+        const { itemsLock } = store.getState().connection;
+
         this.clear();
+        showGrid && drawGrid(this.ctx);
+
         this.transformCanvas();
         this.items.forEach((item) => this.drawItem(item));
+
+        selectedItemIds.length && drawItemHighlights(this.ctx);
+        currentAction === 'DRAGSELECT' && drawDragSelectArea(this.ctx);
+        Object.keys(itemsLock).length && drawLockHighlights(this.ctx);
+
         this.animationId = requestAnimationFrame(this.animate.bind(this));
     }
 

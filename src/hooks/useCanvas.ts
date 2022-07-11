@@ -1,37 +1,26 @@
-import { useLayoutEffect, useEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import CanvasManager from '../CanvasManager/CanvasManager';
-import type { CanvasSize, CanvasTransform, Item } from '../interfaces';
+import type { BoardItem } from '../interfaces';
 
-function useCanvas(
-    canvasRef: React.RefObject<HTMLCanvasElement>,
-    canvasSize: CanvasSize,
-    canvasTransform: CanvasTransform,
-    items: Item[],
-): void {
+function useCanvas(canvasRef: React.RefObject<HTMLCanvasElement>, items: BoardItem[]): void {
     const [manager, setManager] = useState<CanvasManager>();
 
-    // capture the rendering context before first render
+    // captures the rendering context before first render
     useLayoutEffect(() => {
         const renderingContext = canvasRef.current?.getContext('2d');
         if (renderingContext) {
-            const manager = new CanvasManager(renderingContext, canvasSize, canvasTransform, items);
+            const manager = new CanvasManager(renderingContext);
             setManager(manager);
             manager.animate();
         }
-        // stop animation when unmounting
+        // stops animation when unmounting
         return () => {
             manager?.stop();
         };
     }, []);
 
-    // update manager variables
-    useEffect(() => {
-        if (manager) {
-            manager.size = canvasSize;
-            manager.transform = canvasTransform;
-            manager.items = items;
-        }
-    }, [canvasSize, canvasTransform, items]);
+    // keep items updated
+    if (manager) manager.items = items;
 }
 
 export default useCanvas;
