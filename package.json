@@ -1,5 +1,5 @@
 {
-  "name": "collabtool-fe",
+  "name": "hakuban-fe",
   "version": "0.0.1",
   "dependencies": {
     "@reduxjs/toolkit": "^1.6.2",
@@ -58,10 +58,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Richifg/CollabTool-FE.git"
+    "url": "git+https://github.com/Richifg/Hakuban-FE.git"
   },
   "bugs": {
-    "url": "https://github.com/Richifg/CollabTool-FE/issues"
+    "url": "https://github.com/Richifg/Hakuban-FE/issues"
   },
   "keywords": [
     "collaboration",
