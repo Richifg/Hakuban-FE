@@ -16,7 +16,7 @@
     pointer-events: none;
 }
 
-.form {
+.container {
     position: absolute;
     left: 50%;
     top: 50%;
@@ -26,9 +26,11 @@
     border-radius: 8px;
     background-color: $color-background-lightest;
     color: $color-background-contrast;
+    width: 100%;
+    max-width: min(90%, 500px);
 }
 
-.background {
+.header {
     background-color: $color-primary;
     color: $color-primary-contrast;
     padding: 20px;
@@ -36,58 +38,102 @@
     border-bottom-left-radius: 25px;
 }
 
+.title {
+    margin: 10px 0;
+}
+
 .logo {
     position: absolute;
     right: -20px;
     top: -27px;
-    font-size: 117px;
+    font-size: min(117px, 30vw);
     transform: rotate(309deg)
 }
 
 .content {
-    padding: 20px;
+    padding: 25px;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    & > *:not(button) {
+        width: 100%;
+        max-width: 350px;
+    }
+}
+.subtitle {
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: underline;
+    margin: 30px 0 15px;
+    &:first-child {
+        margin-top: 10px;
+    }
 }
 
 .inputContainer {
     display: flex;
     align-items: center;
+
+    input {
+        font-size: 14px;
+        flex-grow: 1;
+        margin-left: 10px;
+    }
+
+    button {
+        cursor: pointer;
+        background-color: transparent;
+        color: $color-primary;
+        outline: none;
+        border: none;
+        font-size: 30px;
+        padding: 2px 4px;
+        display: flex;
+        align-items: center;
+        border-radius: 4px;
+        &:hover {
+            background-color:  $color-background-light;
+        };
+        &:active {
+            background-color: $color-background;
+        }
+        
+    }
 }
 
 .randomButton {
-    cursor: pointer;
-    margin-right: 10px;
-    background-color: transparent;
-    color: $color-primary;
-    outline: none;
-    border: none;
-    font-size: 30px;
-    padding: 2px 4px;
-    display: flex;
-    align-items: center;
-    border-radius: 4px;
-    i {
-        transition: transform 0.2s;
-    }
-    &:hover {
-        background-color:  $color-background-light;
-    };
     &:active {
-        background-color: $color-background;
         i {
             animation: tumble 0.1s infinite;
         }
     }
-}
-@keyframes tumble {
-    33% { transform: translateY(3px) rotate(90deg)}
-    66% { transform: translateY(-3px) rotate(180deg)}
-    100% { transform: translateY(0px) rotate(270deg); }
+    @keyframes tumble {
+        33% { transform: translateY(3px) rotate(90deg)}
+        66% { transform: translateY(-3px) rotate(180deg)}
+        100% { transform: translateY(0px) rotate(270deg); }
+    }
 }
 
+.copyButton {
+    transition: transform 50ms;
+    &:active {
+        transform: scale(1.1);
+    }
+}
+
+
+.roomId {
+    margin: 0;
+    font-size: 25px;
+    background-color: $color-background;
+    padding: 5px;
+    border-radius: 4px;
+    font-family: monospace;
+    width: max-content;
+    margin-left: 10px;
+}
 
 .enterButton {
     align-self: end;
-    margin-top: 10px;
+    margin-top: 25px;
 }

@@ -57,4 +57,5 @@ export type IconName =
     | 'dice'
     | 'infinite'
     | 'connect'
-    | 'alert';
+    | 'alert'
+    | 'copy';

@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import kanban from '../../../assets/images/boards/kanban.png';
+import mindMap from '../../../assets/images/boards/mind_map.png';
+import flow from '../../../assets/images/boards/flow.png';
 
 import styles from './Carousel.module.scss';
 
-const slides = [kanban, kanban, kanban];
+const slides = [mindMap, kanban, flow];
+const alts = ['whiteboard mind map example', 'whiteboard kanban example', 'whiteboard flow example'];
 
 const Carousel = (): React.ReactElement => {
     const [slideOffset, setSlideOffset] = useState(0);
@@ -12,7 +15,7 @@ const Carousel = (): React.ReactElement => {
         const id = setTimeout(() => {
             const next = slideOffset < slides.length - 1 ? slideOffset + 1 : 0;
             setSlideOffset(next);
-        }, 7500);
+        }, 6000);
         return () => clearInterval(id);
     }, [slideOffset]);
 
@@ -23,6 +26,7 @@ const Carousel = (): React.ReactElement => {
                     key={index}
                     src={src}
                     className={`${styles.slide} ${styles[`state${(index + slideOffset) % slides.length}`]}`}
+                    alt={alts[index]}
                 />
             ))}
         </div>

@@ -4,12 +4,14 @@ interface UIState {
     showAvatarMenu: boolean;
     showChat: boolean;
     showWelcomeModal: boolean;
+    showShareLink: boolean;
 }
 
 const initialState: UIState = {
     showAvatarMenu: false,
     showChat: false,
     showWelcomeModal: true,
+    showShareLink: true,
 };
 
 const slice = createSlice({
@@ -25,9 +27,12 @@ const slice = createSlice({
         setShowWelcomeModal: (state, action: PayloadAction<boolean>) => {
             state.showWelcomeModal = action.payload;
         },
+        setShowShareLink: (state, action: PayloadAction<boolean>) => {
+            state.showShareLink = action.payload;
+        },
     },
 });
 
-export const { setShowAvatarMenu, setShowChat, setShowWelcomeModal } = slice.actions;
+export const { setShowAvatarMenu, setShowChat, setShowWelcomeModal, setShowShareLink } = slice.actions;
 
 export default slice.reducer;
