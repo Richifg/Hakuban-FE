@@ -25,7 +25,6 @@ const FontSizeSelector = ({ fontSize, fontFamily, onChange }: FontSizeSelector):
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         const font = e.currentTarget.value;
-        console.log('changing to', font);
         onChange(font, 'fontFamily');
     };
 

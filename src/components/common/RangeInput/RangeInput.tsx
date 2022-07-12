@@ -18,7 +18,6 @@ const RangeInput = ({ min, max, value, label, ...rest }: RangeInput): React.Reac
     // also, because native html input when styled does not show fill bar
     // had to calculate stuff here to make a custom fillbar
     const fillPercentage = (100 * (value - min)) / (max - min);
-    console.log(value, max, min, fillPercentage);
 
     // adjust position depending on fill (native thumb stops at edges and not at center)
     const left = `calc(${fillPercentage}% - ${(-5 + 10 * (fillPercentage / 100)).toFixed(1)}px)`;
