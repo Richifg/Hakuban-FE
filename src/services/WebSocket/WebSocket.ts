@@ -1,9 +1,11 @@
 import { store } from '../../store/store';
-import { setUserId, setError } from '../../store/slices/connectionSlice';
+import { setCurrentAction } from '../../store/slices/boardSlice';
+import { setItems, setSelectedItemIds, setDraggedItemId } from '../../store/slices/itemsSlice';
+import { setUserId, setError, connectToRoom, setItemsLock } from '../../store/slices/connectionSlice';
+import { addUsers, setUsers, removeUser, setOwnUser, setIsLoading } from '../../store/slices/usersSlice';
 import { addMessage, increaseUnreadMessages, setMessages } from '../../store/slices/chatSlice';
 import { BoardItem, UpdateData, WSMessage, LockData, User, ChatMessage } from '../../interfaces';
 import { processItemDeletions, processItemLocks, processItemUpdates } from '../../BoardStateMachine/BoardStateMachineUtils';
-import { addUsers, removeUser, setOwnUser, setIsLoading } from '../../store/slices/usersSlice';
 import { getSanitizedData, getDefaultUser, getNewId } from '../../utils';
 
 const url = process.env.REACT_APP_SERVER_URL;
@@ -24,14 +26,6 @@ class WebSocketService {
         const socket = new WebSocket(fullURL);
         this.socket = socket;
         const connectionPromise = new Promise<void>((resolve, reject) => {
-            socket.addEventListener('open', () => {
-                console.log('ws connection openned');
-            });
-            socket.addEventListener('error', (event) => {
-                console.log('error!', event);
-                reject('Service connection error');
-            });
-
             socket.addEventListener('message', (event) => {
                 const message = JSON.parse(event.data) as WSMessage;
                 const { type, userId } = message;
@@ -44,9 +38,9 @@ class WebSocketService {
                         case 'init':
                             const { items, ownId, users } = message.content;
                             this.id = ownId;
+                            store.dispatch(setUsers(users));
                             store.dispatch(setUserId(ownId));
                             store.dispatch(setOwnUser(getDefaultUser(ownId)));
-                            store.dispatch(addUsers(users));
                             // separate items in chat and boardItems
                             const boardItems = items.filter((item) => item.type !== 'chat') as BoardItem[];
                             processItemUpdates(boardItems, true);
@@ -95,6 +89,26 @@ class WebSocketService {
                             break;
                     }
                 }
+            });
+            socket.addEventListener('open', () => {
+                console.log('ws connection openned');
+            });
+            socket.addEventListener('close', () => {
+                console.log('socket closing');
+                if (store.getState().connection.isConnected) {
+                    // clean store before attempting reconnect
+                    store.dispatch(setCurrentAction('IDLE'));
+                    store.dispatch(setSelectedItemIds([]));
+                    store.dispatch(setDraggedItemId());
+                    store.dispatch(setItems([]));
+                    store.dispatch(setMessages([]));
+                    store.dispatch(setItemsLock({}));
+                    store.dispatch(connectToRoom(roomId, password, true));
+                }
+            });
+            socket.addEventListener('error', (event) => {
+                console.log('error!', event);
+                reject('Service connection error');
             });
         });
 
