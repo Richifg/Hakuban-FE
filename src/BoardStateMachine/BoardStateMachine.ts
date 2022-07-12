@@ -1,6 +1,7 @@
 import { store } from '../store/store';
 import { setCanvasSize } from '../store/slices/boardSlice';
 import { handleMouseDown, handleMouseMove, handleMouseUp, handleMouseWheel, handleKeyboard } from './userInputHandlers';
+import { isMobile } from '../utils';
 
 /* 
     Board is in one of many possible states (IDLE, PAN, DRAG, DRAW, etc)
@@ -23,7 +24,8 @@ const BoardStateMachine = {
     keyPress: handleKeyboard,
 
     windowResize(): void {
-        store.dispatch(setCanvasSize({ width: screen.availWidth, height: screen.availHeight }));
+        const [width, height] = isMobile() ? [screen.availWidth, screen.availHeight] : [window.innerWidth, window.innerHeight];
+        store.dispatch(setCanvasSize({ width, height }));
     },
 };
 
