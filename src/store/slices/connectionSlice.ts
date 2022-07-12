@@ -7,6 +7,7 @@ interface ConectionState {
     userId: string;
     roomId: string;
     isLoading: boolean;
+    isReconnecting: boolean;
     isConnected: boolean;
     dataToSync: { [key: string]: BoardItem | UpdateData };
     itemsLock: ItemsLock;
@@ -17,6 +18,7 @@ const initialState: ConectionState = {
     userId: '',
     roomId: '',
     isLoading: false,
+    isReconnecting: false,
     isConnected: false,
     dataToSync: {},
     itemsLock: {},
@@ -35,6 +37,9 @@ const slice = createSlice({
         },
         setIsLoading(state, action: PayloadAction<boolean>) {
             state.isLoading = action.payload;
+        },
+        setIsReconnecting(state, action: PayloadAction<boolean>) {
+            state.isReconnecting = action.payload;
         },
         setIsConnected(state, action: PayloadAction<boolean>) {
             state.isConnected = action.payload;
@@ -83,6 +88,7 @@ export const {
     setUserId,
     setRoomId,
     setIsLoading,
+    setIsReconnecting,
     setIsConnected,
     addSyncData,
     removeSyncData,
@@ -92,11 +98,13 @@ export const {
 } = slice.actions;
 
 export const connectToRoom =
-    (roomId: string, password?: string): AppThunk =>
+    (roomId: string, password?: string, isReconnect = false): AppThunk =>
     async (dispatch) => {
         dispatch(setError(''));
-        dispatch(setIsLoading(true));
-        dispatch(setIsConnected(false));
+        if (!isReconnect) {
+            dispatch(setIsLoading(true));
+            dispatch(setIsConnected(false));
+        } else dispatch(setIsReconnecting(true));
         try {
             await WSService.connect(roomId, password);
             dispatch(setIsConnected(true));

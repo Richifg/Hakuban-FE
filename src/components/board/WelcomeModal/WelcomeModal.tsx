@@ -79,7 +79,7 @@ const WelcomeModal = (): React.ReactElement => {
                                         <Icon name="copy" className={styles.copyButton} />
                                     </button>
                                 </Popup>
-                                <Input value={location.href} />
+                                <Input value={location.href} readOnly />
                             </span>
                         </>
                     )}
