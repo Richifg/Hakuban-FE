@@ -38,7 +38,7 @@ const slice = createSlice({
         setIsLoading(state, action: PayloadAction<boolean>) {
             state.isLoading = action.payload;
         },
-        setIsReconnecteing(state, action: PayloadAction<boolean>) {
+        setIsReconnecting(state, action: PayloadAction<boolean>) {
             state.isReconnecting = action.payload;
         },
         setIsConnected(state, action: PayloadAction<boolean>) {
@@ -88,7 +88,7 @@ export const {
     setUserId,
     setRoomId,
     setIsLoading,
-    setIsReconnecteing,
+    setIsReconnecting,
     setIsConnected,
     addSyncData,
     removeSyncData,
@@ -102,9 +102,9 @@ export const connectToRoom =
     async (dispatch) => {
         dispatch(setError(''));
         if (!isReconnect) {
-            dispatch(setIsLoading(false));
+            dispatch(setIsLoading(true));
             dispatch(setIsConnected(false));
-        } else dispatch(setIsReconnecteing(false));
+        } else dispatch(setIsReconnecting(true));
         try {
             await WSService.connect(roomId, password);
             dispatch(setIsConnected(true));
