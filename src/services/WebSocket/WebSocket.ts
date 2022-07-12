@@ -173,7 +173,9 @@ class WebSocketService {
 
     sendMessage(message: WSMessage): void {
         // TODO: add try hard here
-        this.socket?.send(JSON.stringify(message));
+        if (this.socket?.OPEN) {
+            this.socket.send(JSON.stringify(message));
+        }
     }
 
     disconnect(): void {
