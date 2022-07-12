@@ -1,6 +1,6 @@
 # ![hakuban logo](https://res.cloudinary.com/richi/image/upload/v1657562389/previews/hakuban_logo_zbhqqn.png) Hakuban-FE
 
-Client for the Hakuban app. An free online whiteboard for real-time collaboration.
+Client for the Hakuban app. A free online whiteboard for real-time collaboration.
 
 ## Built with:
   - [React](https://reactjs.org/)
