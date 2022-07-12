@@ -33,13 +33,7 @@ const ErrorScreen = ({ text, title = 'Error', onClose, onTryAgain }: ErrorScreen
                 <Icon name="alert" className={styles.icon} />
                 <p className={styles.title}>{title}</p>
                 <p className={styles.description}>{text}</p>
-                <Button
-                    className={styles.button}
-                    onClick={() => {
-                        console.log('onTryAgain', onTryAgain);
-                        onTryAgain();
-                    }}
-                >
+                <Button className={styles.button} onClick={onTryAgain}>
                     Try again
                 </Button>
                 <button className={styles.closeButton} onClick={onClose}>

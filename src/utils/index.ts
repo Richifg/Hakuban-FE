@@ -18,6 +18,7 @@ import isAreaInsideArea from './isAreaInsideArea';
 import isConnectableItem from './isConnectableItem';
 import isItemDraggable from './isItemDraggable';
 import isMainPoint from './isMainPoint';
+import isMobile from './isMobile';
 import isPointInsideArea from './isPointInsideArea';
 import isPointInsideLine from './isPointInsideLine';
 import isTextItem from './isTextItem';
@@ -44,6 +45,7 @@ export {
     isConnectableItem,
     isItemDraggable,
     isMainPoint,
+    isMobile,
     isPointInsideArea,
     isPointInsideLine,
     isTextItem,

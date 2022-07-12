@@ -38,7 +38,7 @@ const RoomPage = (): React.ReactElement => {
                     {showWelcomeModal && <WelcomeModal />}
                 </>
             )}
-            <LoadingScreen active={isLoading} closeDelay={1500} />
+            <LoadingScreen active={isLoading} closeDelay={1000} />
             <ErrorScreen text={error} onTryAgain={() => location.reload()} onClose={handleErrorClose} />
         </div>
     );
