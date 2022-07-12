@@ -33,7 +33,7 @@
 }
 
 $dot-size: 8px;
-$animation-duration: 6s;
+$animation-duration: 8s;
 .loader {
     display: inline-block;
     position: relative;
@@ -98,7 +98,7 @@ $animation-duration: 6s;
 }
 @keyframes fall {
     79% { transform: translateY(0%); }
-    95% { transform: translateY(5000%); }
+    95% { transform: translateY(4000%); }
    100% { transform: translateY(0%); }  
 }
 @keyframes appear {
@@ -107,4 +107,21 @@ $animation-duration: 6s;
     85% { transform: scale(1); }
     90% { transform: scale(0); }
     100% { transform: scale(0); }
+}
+
+@media (max-width: 600px) {
+    @keyframes shift {
+        25% { transform: translateX(0%); }
+        30% { transform: translateX(200%); }
+        50% { transform: translateX(200%); }
+        55% { transform: translateX(400%); }
+      76.5% { transform: translateX(400%); }
+        90% { transform: translateX(1000%); }
+       100% { transform: translateX(1000%); }
+    }
+    @keyframes fall {
+        79% { transform: translateY(0%); }
+        95% { transform: translateY(3000%); }
+       100% { transform: translateY(0%); }  
+    }
 }

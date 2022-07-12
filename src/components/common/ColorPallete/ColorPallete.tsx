@@ -21,7 +21,6 @@ const ColorSelector = ({ color, defaultOptions, onChange }: ColorSelector): Reac
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log('asd');
         const color = e.currentTarget.value;
         dispatch(addCustomColor(color));
     };
