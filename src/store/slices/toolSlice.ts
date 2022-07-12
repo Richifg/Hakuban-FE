@@ -19,10 +19,10 @@ const initialState: ToolsState = {
     selectedTool: 'POINTER',
     selectedShapeType: 'rect',
     shapeStyle: {
-        lineWidth: 1,
+        lineWidth: 3,
         linePattern: 0,
         lineColor: 'black',
-        fillColor: 'transparent',
+        fillColor: '#D3D3D3',
     },
     textStyle: {
         fontSize: 20,
