@@ -3,6 +3,8 @@ import { ShapeStyle, TextStyle, IconName } from '../../../../../interfaces';
 import { ColorPallete, MenuItem } from '../../../../common';
 import { TEXT_COLORS, FILL_STROKE_COLORS, NOTE_COLORS } from '../../../../../constants';
 
+import styles from './ColorSelector.module.scss';
+
 type ColorSelectorType = 'fill' | 'stroke' | 'note' | 'text';
 
 const settingsByType: {
@@ -28,7 +30,12 @@ const ColorSelector = ({ color, onChange, type }: ColorSelector): React.ReactEle
     };
 
     return (
-        <MenuItem type="sub" iconName={icon} style={{ color }}>
+        <MenuItem
+            type="sub"
+            iconName={icon}
+            style={{ color: color === 'transparent' ? 'white' : color }}
+            className={color === 'transparent' ? styles.transparent : ''}
+        >
             <ColorPallete defaultOptions={colors} color={color} onChange={handleChange} />
         </MenuItem>
     );
